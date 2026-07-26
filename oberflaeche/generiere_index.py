@@ -28,11 +28,21 @@ def main():
     #                    erreicht den Browser nie. Beschreibung und Urheber gehören dort
     #                    hinein: schema.org/Dataset wertet sie aus, aber sie würden den
     #                    Client-Download vervielfachen.
+    # Beschreibungen sind, anders als Titel und Kennungen, schutzfähige Texte ihrer
+    # Verfasser. Im Wortlaut veröffentlicht werden sie nur, wo die Quelle das
+    # ausdrücklich erlaubt — bei DataCite per CC0-Verzicht (messungen/register.md,
+    # Gate G5). Für HuggingFace ist die Reichweite der Erlaubnis außerhalb der
+    # Plattform offen, für ArcGIS-Einträge mit `custom`-Lizenz ebenfalls; von dort
+    # wird der Wortlaut zurückgehalten, bis das geklärt ist.
+    BESCHREIBUNG_FREIGEGEBEN = {"datacite"}
+    quelle_je_id = {i: q for i, q in db.execute("SELECT id, quelle FROM eintraege")}
+
     details = {}
     for r in db.execute("SELECT id, json FROM eintraege ORDER BY id"):
         e = json.loads(r["json"])
         d = {}
-        if (e.get("beschreibung") or "").strip():
+        if ((e.get("beschreibung") or "").strip()
+                and quelle_je_id.get(r["id"]) in BESCHREIBUNG_FREIGEGEBEN):
             d["beschreibung"] = e["beschreibung"]
         if e.get("urheber"):
             d["urheber"] = e["urheber"]
