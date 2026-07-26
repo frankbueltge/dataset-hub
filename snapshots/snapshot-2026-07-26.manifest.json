@@ -1,7 +1,7 @@
 {
   "tag": "snapshot-2026-07-26",
   "schema_version": "0.2.0",
-  "gebaut_am": "2026-07-26T17:56:07Z",
+  "gebaut_am": "2026-07-26T18:02:31Z",
   "zaehler": {
     "eintraege": "27318",
     "werke": "26436",
@@ -63,23 +63,23 @@
   "assets": [
     {
       "name": "hub-2026-07-26.sqlite.gz",
-      "sha256": "2f59e961927b81e75adc1dce17e84ee8bc04c7389e5520262c4777f1dc23b8e1",
+      "sha256": "d52b05780ce9c7ba6958d5a27af7ac0113f37a1aea5f712d31641cd5d78e2d9c",
       "bytes": 19335397
     },
     {
       "name": "details.json.gz",
-      "sha256": "907bb02301a398f4927a29b8461bbe316ecd8140558213b33e2ce7293ffe0f71",
-      "bytes": 3613692
+      "sha256": "dcd897a3b6f17d67afac9094f8211085df1bb569d3ae64a1be6c915c427d1104",
+      "bytes": 4466664
     },
     {
       "name": "eintraege.json.gz",
-      "sha256": "b8baf4072e9dd62428e42942780d9d660023e3f17cf203520ac50ef1aae19360",
-      "bytes": 1745678
+      "sha256": "8307afd4571fb14522d9b2e21fce028f88d64cc029cbd1d595a450ce116a1d70",
+      "bytes": 879634
     },
     {
       "name": "meta.json.gz",
-      "sha256": "de96d4fb2e61226af21a7fc9629e9800b950fe8a75a5f9192f53b64e76e1bac8",
-      "bytes": 635
+      "sha256": "05e3059e3ea01a0cb72862aae94c29049a8fbab62defd8c1da96738f3ab59860",
+      "bytes": 639
     },
     {
       "name": "arcgis-20260726T164554Z.jsonl.gz",
