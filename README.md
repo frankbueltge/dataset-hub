@@ -72,7 +72,7 @@ sqlite3 hub-<date>.sqlite "SELECT titel, zugang_url FROM eintraege
 
 ## Licensing
 
-- **Code:** PolyForm Noncommercial 1.0.0
+- **Code:** Apache 2.0
 - **Catalog metadata** (the compilation, its records and enrichments created here,
   including released snapshots): **CC0 1.0**
 
