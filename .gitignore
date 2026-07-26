@@ -6,3 +6,5 @@ fundstellen/*.jsonl.gz
 bestand/
 snapshots/build/
 oberflaeche/public/daten/
+urteil/kandidaten.jsonl
+urteil/stichprobe.jsonl
