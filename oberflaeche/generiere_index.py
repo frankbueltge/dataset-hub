@@ -42,8 +42,12 @@ def main():
             d["raeumlichkeit"] = e["raeumlichkeit"]
         if e.get("daten"):
             d["daten"] = e["daten"]
-        if d:
-            details[r["id"]] = d
+        # Zugriffs-URL, Quell-ID und Werk-Zugehörigkeit werden NUR auf den Einzelseiten
+        # gebraucht, nicht für Suche und Filter. Sie liegen deshalb hier statt im
+        # Browser-Index: URLs sind lang, und der Index wächst mit jedem Eintrag mit.
+        d["zugang_url"] = (e.get("zugang") or {}).get("url") or ""
+        d["quell_id"] = (e.get("fundstellen") or [{}])[0].get("quell_id") or ""
+        details[r["id"]] = d
 
     zeilen = []
     for r in db.execute("""
@@ -52,12 +56,14 @@ def main():
                zugang_http_status, status
         FROM eintraege ORDER BY id
     """):
+        # Schlanker Suchindex: nur was Suche, Filter und Ergebnisliste brauchen.
+        # url/quell_id/werk_id stehen in details.json (siehe oben) — sie würden den
+        # Browser-Download um rund ein Drittel aufblähen, ohne dort gebraucht zu werden.
         zeilen.append({
-            "i": r["id"], "w": r["werk_id"], "q": r["quelle"], "p": r["quell_id"],
+            "i": r["id"], "q": r["quelle"],
             "g": r["granularitaet"], "t": r["titel"], "h": r["herausgeber"] or "",
             "j": r["publikationsjahr"], "l": r["lizenz_id"] or "",
-            "u": r["zugang_url"], "v": r["zugang_geprueft"],
-            "s": r["zugang_http_status"], "z": r["status"],
+            "v": r["zugang_geprueft"], "s": r["zugang_http_status"], "z": r["status"],
         })
 
     meta = dict(db.execute("SELECT schluessel, wert FROM meta"))
