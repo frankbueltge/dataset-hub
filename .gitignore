@@ -5,3 +5,4 @@ __pycache__/
 fundstellen/*.jsonl.gz
 bestand/
 snapshots/build/
+oberflaeche/public/daten/

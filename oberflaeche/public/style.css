@@ -1,0 +1,163 @@
+:root {
+  --grund: #fbfbf9;
+  --flaeche: #ffffff;
+  --rand: #e3e2dd;
+  --text: #1b1b19;
+  --leise: #6a6a63;
+  --akzent: #2f5d50;
+  --akzent-schwach: #eaf1ee;
+  --warn: #8a5a1f;
+  --warn-schwach: #fbf1e2;
+  --offen: #6a6a63;
+  --offen-schwach: #f0efeb;
+  --radius: 10px;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --grund: #14150f;
+    --flaeche: #1c1e17;
+    --rand: #2f322a;
+    --text: #eceade;
+    --leise: #9b9a8e;
+    --akzent: #86c3ac;
+    --akzent-schwach: #1e2b26;
+    --warn: #d9a760;
+    --warn-schwach: #2b2418;
+    --offen: #9b9a8e;
+    --offen-schwach: #24261e;
+  }
+}
+
+* { box-sizing: border-box; }
+/* Muss vor den Klassenregeln stehen und sie überstimmen: eine display-Regel auf
+   einer Klasse schlägt sonst das hidden-Attribut aus dem Browser-Stylesheet. */
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--grund);
+  color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.innen { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+.sr {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+a { color: var(--akzent); }
+
+/* Kopf */
+.kopf {
+  border-bottom: 1px solid var(--rand);
+  background: var(--flaeche);
+  padding: 2rem 0 1.5rem;
+}
+.kopf h1 { margin: 0; font-size: 1.6rem; letter-spacing: -0.01em; }
+.unterzeile { margin: 0.4rem 0 1.2rem; color: var(--leise); max-width: 46rem; }
+.zaehler {
+  display: flex; flex-wrap: wrap; gap: 0 2.2rem; margin: 0;
+}
+.zaehler div { display: flex; flex-direction: column; }
+.zaehler dt { order: 2; font-size: 0.78rem; color: var(--leise); }
+.zaehler dd {
+  order: 1; margin: 0; font-size: 1.35rem; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Suche und Filter */
+.suchleiste { margin: 1.75rem 0 0.75rem; }
+#suche {
+  width: 100%; padding: 0.7rem 0.9rem; font-size: 1rem;
+  border: 1px solid var(--rand); border-radius: var(--radius);
+  background: var(--flaeche); color: var(--text);
+}
+#suche:focus-visible { outline: 2px solid var(--akzent); outline-offset: 1px; }
+.filter {
+  display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: end;
+  margin-top: 0.75rem;
+}
+.filter label {
+  display: flex; flex-direction: column; gap: 0.2rem;
+  font-size: 0.8rem; color: var(--leise);
+}
+.filter select {
+  padding: 0.35rem 0.5rem; font-size: 0.9rem; color: var(--text);
+  background: var(--flaeche); border: 1px solid var(--rand); border-radius: 7px;
+}
+.filter .kasten { flex-direction: row; align-items: center; gap: 0.4rem; }
+.knopf-leise {
+  padding: 0.35rem 0.7rem; font-size: 0.85rem; cursor: pointer;
+  color: var(--leise); background: transparent;
+  border: 1px solid var(--rand); border-radius: 7px;
+}
+.knopf-leise:hover { color: var(--text); }
+
+.trefferzeile {
+  margin: 1rem 0 0.5rem; font-size: 0.85rem; color: var(--leise);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ergebnisse */
+.ergebnisse { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+.treffer {
+  background: var(--flaeche); border: 1px solid var(--rand);
+  border-radius: var(--radius); padding: 0.9rem 1rem;
+}
+.treffer h3 { margin: 0 0 0.3rem; font-size: 1rem; line-height: 1.4; font-weight: 600; }
+.treffer h3 a { text-decoration: none; }
+.treffer h3 a:hover { text-decoration: underline; }
+.zeile-meta {
+  display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem;
+  font-size: 0.83rem; color: var(--leise);
+}
+.pid { font-family: var(--mono); font-size: 0.78rem; word-break: break-all; }
+.marken { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+.marke {
+  font-size: 0.72rem; padding: 0.13rem 0.5rem; border-radius: 999px;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.marke.bestaetigt { color: var(--akzent); background: var(--akzent-schwach); }
+.marke.versucht { color: var(--warn); background: var(--warn-schwach); }
+.marke.ungeprueft { color: var(--offen); background: var(--offen-schwach); }
+.marke.lizenz { color: var(--leise); border-color: var(--rand); }
+.marke.fassungen { color: var(--leise); border-color: var(--rand); }
+.leer-vermerk { font-style: italic; }
+
+.knopf-mehr {
+  display: block; width: 100%; margin: 1rem 0 0; padding: 0.7rem;
+  font-size: 0.9rem; cursor: pointer; color: var(--text);
+  background: var(--flaeche); border: 1px solid var(--rand); border-radius: var(--radius);
+}
+.knopf-mehr:hover { border-color: var(--akzent); }
+
+/* Bestand */
+.bestand { margin: 3rem 0 2rem; border-top: 1px solid var(--rand); padding-top: 1.5rem; }
+.bestand h2 { font-size: 1.1rem; margin: 0 0 0.5rem; }
+.bestand h3 { font-size: 0.82rem; color: var(--leise); margin: 0 0 0.4rem; font-weight: 600; }
+.hinweis {
+  background: var(--warn-schwach); border-left: 3px solid var(--warn);
+  padding: 0.7rem 0.9rem; border-radius: 0 7px 7px 0; font-size: 0.88rem; margin: 0 0 1.2rem;
+}
+.bestand-raster {
+  display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  font-size: 0.85rem;
+}
+.bestand-raster div > div > p { margin: 0 0 0.4rem; }
+.bestand-raster .kv { display: flex; justify-content: space-between; gap: 1rem; }
+.bestand-raster .kv span:last-child { font-variant-numeric: tabular-nums; color: var(--leise); }
+
+.fuss {
+  border-top: 1px solid var(--rand); padding-top: 1rem; padding-bottom: 2.5rem;
+  font-size: 0.82rem; color: var(--leise);
+}
+.fuss p { margin: 0.2rem 0; }
+.leise { color: var(--leise); }
+
+@media (max-width: 34rem) {
+  .zaehler { gap: 0 1.2rem; }
+  .zaehler dd { font-size: 1.15rem; }
+}
+
+.treffer.leer { color: var(--leise); line-height: 1.6; }
+.treffer.leer strong { color: var(--text); }

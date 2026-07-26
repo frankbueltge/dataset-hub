@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataset-Hub — Nachweis öffentlich verfügbarer Datensätze</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="kopf">
+  <div class="innen">
+    <h1>Dataset&#8209;Hub</h1>
+    <p class="unterzeile">Maschinenlesbarer Nachweis öffentlich verfügbarer Datensätze.
+      Die Oberfläche zeigt, was aufgenommen wurde — samt Prüfstand und Lücken.</p>
+    <dl class="zaehler" id="zaehler"></dl>
+  </div>
+</header>
+
+<main class="innen">
+
+  <section class="suchleiste">
+    <label class="feld-suche">
+      <span class="sr">Suche in Titel und Herausgeber</span>
+      <input type="search" id="suche" placeholder="Suchen in Titel und Herausgeber …"
+             autocomplete="off" spellcheck="false">
+    </label>
+    <div class="filter" id="filter">
+      <label>Prüfstand
+        <select id="f-geprueft">
+          <option value="">alle</option>
+          <option value="landing">bestätigt (2xx)</option>
+          <option value="versucht">versucht, nicht bestätigt</option>
+          <option value="none">ungeprüft</option>
+        </select>
+      </label>
+      <label>Lizenz
+        <select id="f-lizenz"><option value="">alle</option></select>
+      </label>
+      <label>Jahr ab
+        <select id="f-jahr"><option value="">alle</option></select>
+      </label>
+      <label>Granularität
+        <select id="f-gran"><option value="">alle</option></select>
+      </label>
+      <label class="kasten">
+        <input type="checkbox" id="f-fassungen"> nur Werke mit mehreren Fassungen
+      </label>
+      <button type="button" id="zuruecksetzen" class="knopf-leise">zurücksetzen</button>
+    </div>
+  </section>
+
+  <p class="trefferzeile" id="trefferzeile" aria-live="polite">lädt …</p>
+
+  <ol class="ergebnisse" id="ergebnisse"></ol>
+  <button type="button" id="mehr" class="knopf-mehr" hidden>weitere anzeigen</button>
+
+  <section class="bestand" id="bestand">
+    <h2>Bestand und Lücken</h2>
+    <p class="hinweis" id="luecke"></p>
+    <div class="bestand-raster">
+      <div><h3>Quellfenster</h3><div id="quellfenster"></div></div>
+      <div><h3>Verworfen</h3><div id="ablehnungen"></div></div>
+      <div><h3>Ausfälle</h3><div id="ausfaelle"></div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="fuss innen">
+  <p>Katalog-Metadaten CC0 · Code PolyForm NC 1.0.0 ·
+     <a href="https://github.com/frankbueltge/dataset-hub">Repository</a> ·
+     Snapshots als getaggte Releases (der Vertrag für Pipelines:
+     <a href="https://github.com/frankbueltge/dataset-hub/blob/main/SNAPSHOT-API.md">SNAPSHOT-API.md</a>)</p>
+  <p id="stand" class="leise"></p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
