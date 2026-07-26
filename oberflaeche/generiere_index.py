@@ -22,6 +22,29 @@ def main():
     db = sqlite3.connect(BESTAND / "hub.sqlite")
     db.row_factory = sqlite3.Row
 
+    # Zwei Dateien mit verschiedenem Zweck:
+    #   eintraege.json — schlank, geht an den Browser (Suche/Filter über den ganzen Bestand)
+    #   details.json   — reich, wird NUR beim Bauen gelesen (Einzelseiten, JSON-LD) und
+    #                    erreicht den Browser nie. Beschreibung und Urheber gehören dort
+    #                    hinein: schema.org/Dataset wertet sie aus, aber sie würden den
+    #                    Client-Download vervielfachen.
+    details = {}
+    for r in db.execute("SELECT id, json FROM eintraege ORDER BY id"):
+        e = json.loads(r["json"])
+        d = {}
+        if (e.get("beschreibung") or "").strip():
+            d["beschreibung"] = e["beschreibung"]
+        if e.get("urheber"):
+            d["urheber"] = e["urheber"]
+        if (e.get("lizenz") or {}).get("roh"):
+            d["lizenz_roh"] = e["lizenz"]["roh"]
+        if e.get("raeumlichkeit"):
+            d["raeumlichkeit"] = e["raeumlichkeit"]
+        if e.get("daten"):
+            d["daten"] = e["daten"]
+        if d:
+            details[r["id"]] = d
+
     zeilen = []
     for r in db.execute("""
         SELECT id, werk_id, quelle, quell_id, granularitaet, titel, herausgeber,
@@ -94,11 +117,15 @@ def main():
         "ausfaelle": ausfaelle,
     }, ensure_ascii=False, indent=2))
 
-    roh = (ZIEL / "eintraege.json").stat().st_size
-    komp = (ZIEL / "eintraege.json.gz").stat().st_size
+    (ZIEL / "details.json").write_text(json.dumps(details, ensure_ascii=False,
+                                                  separators=(",", ":")))
+
     print(f"{len(zeilen)} Einträge → {ZIEL}")
-    print(f"  eintraege.json     {roh / 1e6:.2f} MB")
-    print(f"  eintraege.json.gz  {komp / 1e6:.2f} MB")
+    for name in ("eintraege.json", "eintraege.json.gz", "details.json"):
+        print(f"  {name:<20} {(ZIEL / name).stat().st_size / 1e6:.2f} MB")
+    mit_beschreibung = sum(1 for d in details.values() if d.get("beschreibung"))
+    print(f"  details: {len(details)} Einträge, davon {mit_beschreibung} mit Beschreibung "
+          f"(erreicht den Browser nicht)")
 
 
 if __name__ == "__main__":
