@@ -5,6 +5,14 @@ Ablehnungsregister. Die Schranken erfinden nichts und raten nichts — sie prüf
 nur, ob die Quelle das Minimum wörtlich mitliefert.
 """
 AUSGESCHLOSSENE_STUFEN = {"purchase", "closed"}
+
+# Quellen, deren Nutzungsbedingungen der Aufnahme entgegenstehen oder ungeklärt sind.
+# Die Rohernten bleiben im Archiv (nichts wird gelöscht), aber die Einträge erscheinen
+# nicht im Bestand und damit nicht auf der Oberfläche. Rücknahme = Zeile entfernen.
+# Belege je Quelle: messungen/register.md, Abschnitt „Rechtliche Grundlage je Quelle".
+QUELLEN_ZURUECKGEHALTEN = {
+    "kaggle": "quelle-rechtlich-ungeklaert",
+}
 # DataCite: nur "findable" ist öffentlich. HuggingFace: "disabled"/"private" sind
 # quellenseitige Zustände mit derselben Bedeutung ("nicht öffentlich abrufbar"),
 # wiederverwendet statt eines eigenen Vokabulars je Quelle.
@@ -12,6 +20,9 @@ ZURUECKGEZOGENE_STATI = {"registered", "draft", "disabled", "private"}
 
 
 def pruefe(eintrag: dict):
+    quelle = (eintrag.get("fundstellen") or [{}])[0].get("quelle") or ""
+    if quelle in QUELLEN_ZURUECKGEHALTEN:
+        return QUELLEN_ZURUECKGEHALTEN[quelle]
     if not (eintrag.get("titel") or "").strip():
         return "kein-titel"
     zugang = eintrag.get("zugang") or {}

@@ -38,6 +38,35 @@ vorgeschlagene Priorität.
 3. Bulk-Bootstrap DataCite Public Data File (33 GiB, E-Mail-Registrierung durch
    Frank, ~650 GiB Verarbeitungsplatz): wann und wo verarbeiten?
 
+## Rechtliche Grundlage je Quelle (Gate G5, geprüft 2026-07-26)
+
+Kein Rechtsrat — gelesen, zitiert, und wo mehrdeutig, als mehrdeutig vermerkt.
+
+| Quelle | Fundstelle | Befund | Folge |
+|---|---|---|---|
+| **DataCite** | `support.datacite.org/docs/datacite-data-file-use-policy` | „To the extent possible under law, **DataCite e.V. has waived all copyright and related or neighboring rights** to DataCite Data File. The DataCite Data File includes all DOIs and deposited metadata in our database." — CC0, ausdrücklich auch Datenbankrechte | **frei.** Speichern, weiterveröffentlichen, Beschreibungen im Wortlaut: alles gedeckt |
+| **Kaggle** | `kaggle.com/terms`, Abschnitt Nutzungsbeschränkungen | Untersagt ist, die Dienste so zu nutzen, dass man *„‚Crawls,‘ ‚scrapes,‘ or ‚spiders‘ any page, data, or portion of or relating to the Services or Content (through use of manual or automated means)"* sowie *„Copies or stores any significant portion of the Content"* | **zurückgehalten.** Siehe unten |
+| **ArcGIS Hub** | Lizenz je Eintrag in der API (`license`, `structuredLicense`) | Discovery-Schicht über offene Verwaltungsdaten; jeder Eintrag trägt seine eigene Lizenz. Im geernteten Bestand: 635 CC-BY-4.0, 160 ODbL, 113 CC0, 54 CC-BY-SA, 18 PDDL — aber **3.180 `custom` und 86 `none`** | **bedingt.** Metadaten sind Fakten (Titel, Organisation, URL); Beschreibungen aus `custom`/`none`-Einträgen NICHT im Wortlaut veröffentlichen, bis die Einzellizenz ausgewertet wird |
+| **HuggingFace** | `huggingface.co/terms-of-service` | Für öffentliche Repositorien: *„you grant each User a perpetual, irrevocable, worldwide, royalty-free, non-exclusive license to use, display, publish, reproduce, distribute, and make derivative works of your Content **through our Services and functionalities**"* | **bedingt.** Der Zusatz „through our Services" lässt offen, ob die Erlaubnis außerhalb der Plattform trägt. Bei 20 Einträgen derzeit ohne Gewicht; vor einem größeren Lauf klären |
+
+### Kaggle: zurückgehalten (2026-07-26)
+
+Die 9.991 Einträge sind **aus dem Bestand genommen** (`schranken.py:
+QUELLEN_ZURUECKGEHALTEN`, Grundcode `quelle-rechtlich-ungeklaert`). Die Rohernten
+bleiben unangetastet im Archiv — nichts wird gelöscht, die Aufnahme wird ausgesetzt.
+
+Abwägung, offen dargelegt: Wir haben die **dokumentierte öffentliche API** genutzt
+(`/api/v1/datasets/list`), nicht die Website gescrapt — programmatischer Zugriff ist
+dort ersichtlich vorgesehen. Die zweite Klausel steht dem aber unabhängig davon
+entgegen: Wir speichern rund 10.000 Datensatz-Beschreibungen, und ob das ein
+„significant portion of the Content" ist, kann man kaum verneinen. Solange das nicht
+geklärt ist, wird nicht veröffentlicht.
+
+**Wege zurück:** (1) Anfrage an Kaggle mit Beschreibung des Vorhabens und Bitte um
+Bestätigung; (2) Beschränkung auf einen Umfang, der ersichtlich nicht „significant"
+ist; (3) endgültiges NO-GO. Bis dahin bleibt die Zeile in `QUELLEN_ZURUECKGEHALTEN` —
+sie zu entfernen ist die Rücknahme.
+
 ## Querbefund: das 10.000er-Fenster (2026-07-26)
 
 Fünf von sieben gemessenen Such-APIs kappen bei **exakt 10.000 erreichbaren Records**

@@ -58,6 +58,23 @@ class TestNormalisierungKaggle(unittest.TestCase):
 
 
 class TestSchrankenKaggle(unittest.TestCase):
+    """Prüft die generischen Schranken am Kaggle-Beispiel.
+
+    Die rechtliche Rückhaltung der Quelle (QUELLEN_ZURUECKGEHALTEN, 2026-07-26) greift
+    vor allen inhaltlichen Schranken und würde jeden Fall gleich ablehnen. Sie wird
+    hier gezielt ausgesetzt — die Rückhaltung selbst hat einen eigenen Test unten.
+    """
+
+    def setUp(self):
+        import schranken
+        self._gehalten = dict(schranken.QUELLEN_ZURUECKGEHALTEN)
+        schranken.QUELLEN_ZURUECKGEHALTEN.pop('kaggle', None)
+
+    def tearDown(self):
+        import schranken
+        schranken.QUELLEN_ZURUECKGEHALTEN.clear()
+        schranken.QUELLEN_ZURUECKGEHALTEN.update(self._gehalten)
+
     def test_vollstaendiger_eintrag_passiert(self):
         self.assertIsNone(pruefe(normalisiere_kaggle(fundstelle())))
 
@@ -76,3 +93,25 @@ class TestSchrankenKaggle(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestRechtlicheRueckhaltung(unittest.TestCase):
+    """Gate G5: eine Quelle mit ungeklärter Rechtslage erscheint nicht im Bestand.
+
+    Kaggles Nutzungsbedingungen untersagen, „any significant portion of the Content"
+    zu speichern (messungen/register.md, Abschnitt Rechtliche Grundlage). Bis das
+    geklärt ist, wird nichts von dort aufgenommen — die Rohernte bleibt im Archiv.
+    """
+
+    def test_kaggle_wird_zurueckgehalten(self):
+        import schranken
+        self.assertIn('kaggle', schranken.QUELLEN_ZURUECKGEHALTEN)
+        e = normalisiere_kaggle(fundstelle())
+        self.assertEqual(pruefe(e), 'quelle-rechtlich-ungeklaert')
+
+    def test_rueckhaltung_greift_vor_inhaltlichen_schranken(self):
+        """Auch ein sonst makelloser Eintrag bleibt draußen — und ein sonst
+        fehlerhafter wird mit dem RECHTLICHEN Grund abgelehnt, nicht mit dem
+        inhaltlichen: der Grundcode im Register muss den wahren Anlass nennen."""
+        e = normalisiere_kaggle(fundstelle(title=''))
+        self.assertEqual(pruefe(e), 'quelle-rechtlich-ungeklaert')

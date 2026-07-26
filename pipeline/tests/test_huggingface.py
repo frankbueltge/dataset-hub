@@ -109,13 +109,17 @@ class TestSchrankenHuggingfaceKonstruierteUrl(unittest.TestCase):
 
     def test_quelle_ohne_konstruierte_url_ist_von_der_auflage_unberuehrt(self):
         # Gegenprobe: eine Quelle mit wörtlicher URL (kein url_konstruiert-Merkmal)
-        # darf nicht durch diese Auflage blockiert werden.
-        from normalisiere import normalisiere_kaggle
-        roh = {"ref": "x/y", "title": "T", "creatorName": "A",
-               "url": "https://www.kaggle.com/datasets/x/y"}
-        fund = {"quelle": "kaggle", "quell_id": "x/y", "geerntet": "2026-07-26T12:00:00Z",
-                "adapter_version": "0.1.0", "roh": roh}
-        e = normalisiere_kaggle(fund)
+        # darf nicht durch diese Auflage blockiert werden. Als Kontrolle dient
+        # DataCite — Kaggle taugt dafür seit dem 26.07. nicht mehr, weil es aus
+        # rechtlichen Gründen zurückgehalten wird und schon daran scheitern würde.
+        from normalisiere import normalisiere_datacite
+        roh = {"doi": "10.5555/kontrolle", "titles": [{"title": "T"}],
+               "creators": [{"name": "A"}], "publisher": "P",
+               "url": "https://example.org/ds/1", "state": "findable",
+               "types": {"resourceTypeGeneral": "Dataset"}}
+        fund = {"quelle": "datacite", "quell_id": "10.5555/kontrolle",
+                "geerntet": "2026-07-26T12:00:00Z", "adapter_version": "0.1.0", "roh": roh}
+        e = normalisiere_datacite(fund)
         self.assertNotIn("url_konstruiert", e["zugang"])
         self.assertIsNone(pruefe(e))
 
