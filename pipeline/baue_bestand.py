@@ -33,6 +33,15 @@ def main():
     BESTAND.mkdir(exist_ok=True)
     fundstellen, alle_fundstellen = lade_fundstellen()
 
+    # Auflösungen VORAB laden und VOR der Schranken-Prüfung anheften: mindestens
+    # eine Quelle (HuggingFace, konstruierte Zugriffs-URL) macht die Aufnahme von
+    # einer bereits bestätigten Auflösung abhängig (schranken.py:
+    # 'konstruierte-url-ungeprueft'). Ohne diese Reihenfolge sähe schranken.pruefe()
+    # immer nur den Anfangszustand 'geprueft: none'.
+    aufloesungen = {}
+    for z in jsonl_lesen(PRUEFUNGEN / "aufloesungen.jsonl"):
+        aufloesungen[z["id"]] = z
+
     # Normalisieren + Schranken
     eintraege, abgelehnt = {}, []
     for schluessel in sorted(fundstellen):
@@ -42,6 +51,16 @@ def main():
             abgelehnt.append((fund, "keine-normalisierung-fuer-quelle"))
             continue
         e = normalisierer(fund)
+        a = aufloesungen.get(e["id"])
+        if a:
+            # 'versucht' unterscheidet "geprüft, Host antwortete nicht mit 2xx" von
+            # "nie geprüft" — ein 403 (Bot-Schutz) ist kein toter Link und kein Nicht-Versuch.
+            e["zugang"].update({
+                "geprueft": "landing" if a.get("ok") else "versucht",
+                "geprueft_am": a.get("datum", ""),
+                "http_status": a.get("http_status"),
+                "finale_url": a.get("finale_url", "") if a.get("ok") else "",
+            })
         grund = pruefe(e)
         if grund:
             abgelehnt.append((fund, grund))
@@ -66,22 +85,9 @@ def main():
             bekannt.add(schluessel)
             neu_abgelehnt += 1
 
-    # Auflösungen (letzte je id) an die Einträge heften
-    aufloesungen = {}
-    for z in jsonl_lesen(PRUEFUNGEN / "aufloesungen.jsonl"):
-        aufloesungen[z["id"]] = z
-    for eid, a in aufloesungen.items():
-        e = eintraege.get(eid)
-        if not e:
-            continue
-        # 'versucht' unterscheidet "geprüft, Host antwortete nicht mit 2xx" von
-        # "nie geprüft" — ein 403 (Bot-Schutz) ist kein toter Link und kein Nicht-Versuch.
-        e["zugang"].update({
-            "geprueft": "landing" if a.get("ok") else "versucht",
-            "geprueft_am": a.get("datum", ""),
-            "http_status": a.get("http_status"),
-            "finale_url": a.get("finale_url", "") if a.get("ok") else "",
-        })
+    # Auflösungen sind bereits oben (vor der Schranken-Prüfung) an die Einträge
+    # geheftet worden; hier nur noch für die Dedup-Stufe R3 (identische finale URL)
+    # weiterreichen.
 
     # Dedup R1–R4 + Journal
     journal = jsonl_lesen(JOURNAL / "entscheidungen.jsonl")

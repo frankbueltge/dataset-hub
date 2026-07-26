@@ -1,0 +1,15 @@
+{
+  "lauf": "arcgis-20260726T164554Z",
+  "quelle": "arcgis",
+  "adapter_version": "0.1.0",
+  "seit_modified": "2026/07/25",
+  "bis": "2026-07-26T16:45:56Z",
+  "seiten": 3,
+  "records": 300,
+  "seitengroesse": 100,
+  "gesamt_gemeldet_im_fenster": 33361,
+  "vollstaendig": false,
+  "hinweis": "Seitenkappe erreicht, weitere Seiten möglich",
+  "datei": "arcgis-20260726T164554Z.jsonl.gz",
+  "sha256": "e2b103e5beabe455ef3418a788fc10021fe205e8d5fcd9aad11d853f645fb249"
+}

@@ -1,0 +1,13 @@
+{
+  "lauf": "huggingface-20260726T164558Z",
+  "quelle": "huggingface",
+  "adapter_version": "0.1.0",
+  "bis": "2026-07-26T16:46:00Z",
+  "seiten": 3,
+  "records": 300,
+  "limit": 100,
+  "vollstaendig": false,
+  "hinweis": "Seitenkappe erreicht, weitere Seiten möglich (Cursor vorhanden)",
+  "datei": "huggingface-20260726T164558Z.jsonl.gz",
+  "sha256": "22ad450bb5ea432e3287049dab7972df29b36ea5d4383832be2ef1bad3150966"
+}
