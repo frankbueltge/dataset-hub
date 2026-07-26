@@ -1,0 +1,205 @@
+{
+  "quelle": "arcgis",
+  "beginn": "2026-07-26T15:08:16Z",
+  "abfragen": [
+    {
+      "zweck": "zaehler",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_seite1",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=100&page%5Bnumber%5D=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_seite51",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=100&page%5Bnumber%5D=51",
+      "http_status": 200
+    },
+    {
+      "zweck": "deep_paging_grenze_10000",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1&page%5Bnumber%5D=10000",
+      "http_status": 200
+    },
+    {
+      "zweck": "deep_paging_grenze_10001",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1&page%5Bnumber%5D=10001",
+      "http_status": 500
+    },
+    {
+      "zweck": "cursor_test_ablehnung",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bcursor%5D=1&page%5Bsize%5D=1",
+      "http_status": 400
+    },
+    {
+      "zweck": "sort_modified_desc_anomalie",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1&sort=-modified",
+      "http_status": 200
+    },
+    {
+      "zweck": "filter_modified_ungueltiges_format",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1&filter%5Bmodified%5D=%5B2026-07-25T00%3A00%3A00Z%20TO%20%2A%5D",
+      "http_status": 400
+    },
+    {
+      "zweck": "inkrement_filter_modified_seit_heute",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1&filter%5Bmodified%5D=2026/07/26",
+      "http_status": 200
+    },
+    {
+      "zweck": "inkrement_filter_modified_seit_gestern",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1&filter%5Bmodified%5D=2026/07/25",
+      "http_status": 200
+    },
+    {
+      "zweck": "sparse_fieldset_test",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=100&page%5Bnumber%5D=1&fields%5Bdatasets%5D=name,owner,orgName,organization,source,url,license,structuredLicense,modified,type,extent,itemExtent,metadata,itemId",
+      "http_status": 200
+    }
+  ],
+  "ausfaelle": [],
+  "zaehler": {
+    "total_meta_total": 21104782,
+    "total_stats_totalCount": 21104782,
+    "last_link": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1&page%5Bnumber%5D=21104783"
+  },
+  "rate_limit_header": {},
+  "stichprobe": {
+    "n": 200,
+    "ziehung": "Convenience: Seite 1 und Seite 51 (je size=100) der Standardsortierung (kein Zufallsparameter bekannt) — NICHT gleichverteilt"
+  },
+  "abdeckung": {
+    "n": 200,
+    "felder": {
+      "titel": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "urheber": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "herausgeber": {
+        "anzahl": 184,
+        "anteil": 0.92
+      },
+      "zugriffs_url": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "landingpage_url": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "lizenz": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "zeitraum_metadata_temporalfeld": {
+        "anzahl": 88,
+        "anteil": 0.44
+      },
+      "raeumlichkeit": {
+        "anzahl": 192,
+        "anteil": 0.96
+      },
+      "format_typ": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "aenderungsdatum": {
+        "anzahl": 200,
+        "anteil": 1.0
+      }
+    }
+  },
+  "was_zaehlt_als_dataset": {
+    "erlaeuterung": "Jeder Record ist ein AGOL-Item ODER ein einzelner Layer/eine Tabelle innerhalb eines Multi-Layer-Feature-Service — der `id`-Suffix (_0, _1, _22, ...) ist der Layer-Index. `itemId` identifiziert das zugrundeliegende AGOL-Item; wiederholte itemId = mehrere Layer desselben Service, je als eigener \"dataset\"-Record gezählt.",
+    "typ_verteilung": {
+      "Feature Layer": 177,
+      "Table": 19,
+      "Raster Layer": 3,
+      "Mosaic Layer": 1
+    },
+    "hubType_verteilung": {
+      "Feature Layer": 177,
+      "Table": 19,
+      "Raster Layer": 3,
+      "Mosaic Layer": 1
+    },
+    "eindeutige_itemId": {
+      "n_records": 200,
+      "n_eindeutige_itemId": 103,
+      "anteil_eindeutig": 0.515,
+      "records_mit_mehrfach_gezaehlter_itemId": 105
+    },
+    "beispiel_mehrfachzaehlung_top5": {
+      "28378457a7fd48aaba79459f9c4b6159": 45,
+      "23239f8ae8ca49128582e1e2e61c81cb": 23,
+      "9888cf5c375c41c5a2882e427132cf8a": 18,
+      "030596d9e3cd4e2083c5abbe7aa89ff0": 7,
+      "9318c967110549c6aceb2c6e7f80b0bc": 5
+    },
+    "herkunft_sector_verteilung": {
+      "(leer)": 97,
+      "National Government": 84,
+      "Local and State Government": 17,
+      "Nonprofit": 1,
+      "Esri": 1
+    },
+    "herkunft_region_verteilung": {
+      "US": 96,
+      "CA": 74,
+      "(leer)": 18,
+      "IE": 2,
+      "Asia": 2,
+      "WO": 2,
+      "NL": 1,
+      "AU": 1,
+      "PT": 1,
+      "Europe": 1,
+      "ES": 1,
+      "ZA": 1
+    },
+    "openData_flag_verteilung": {
+      "False": 169,
+      "True": 31
+    },
+    "access_verteilung": {
+      "public": 200
+    }
+  },
+  "maschinenlesbarkeit": {
+    "format": "JSON:API",
+    "paginierung": "page[number]/page[size] (Offset) — page[cursor] wird abgelehnt (400, \"'cursor' is an invalid 'page' parameter key\")",
+    "deep_paging_seite10000_size1_status": 200,
+    "deep_paging_seite10000_erfolgreich": true,
+    "deep_paging_seite10001_size1_status": 500,
+    "deep_paging_seite10001_fehlermeldung": "search_phase_execution_exception: [illegal_argument_exception] Reason: Result window is too large, from + size must be less than or equal to: [10000] but was [10001]. See the scroll api for a more efficient way to request large data sets. This limit can be set by changing the [index.max_result_window] index level setting.",
+    "harte_grenze": "from+size <= 10000 (Elasticsearch index.max_result_window) — expliziter HTTP-500-Fehler jenseits der Grenze, KEINE stille Leere"
+  },
+  "inkrement": {
+    "weg": "filter[modified]=YYYY/MM/DD — KUMULATIV \"modified seit diesem Datum\", nicht \"an diesem Tag\" (belegt: filter=2020/01/01 lieferte 18.296.466, nahe am Gesamtbestand)",
+    "filter_modified_format_hinweis": "Only dates in ISO format (YYYY/MM/DD) are allowed for 'modified' filter",
+    "sort_minus_modified_status": 200,
+    "sort_minus_modified_top_record": {
+      "name": "NSW Imagery Web Service GDA94",
+      "modified_epoch_ms": 32503680000000
+    },
+    "sort_minus_modified_anomalie": "Datenqualitätsproblem: 'neuestes' Record nach sort=-modified trägt ein Platzhalter-/Fehldatum weit in der Zukunft (epoch-ms >> heute) — sort=modified ist als Inkrement-Weg NICHT vertrauenswürdig, filter[modified] schon",
+    "seit_heute_total": 19012,
+    "seit_gestern_total": 32795,
+    "implizites_tagesvolumen_geschaetzt": 13783,
+    "hinweis_tagesvolumen": "berechnet als seit_gestern_total - seit_heute_total aus zwei gemessenen kumulativen Zählern; kein direkter Tageszähler vorhanden"
+  },
+  "effizienz_sparse_fieldset": {
+    "unterstuetzt": true,
+    "http_status": 200,
+    "bytes_default_seite1_100_records": 26156227,
+    "bytes_sparse_seite1_100_records": 445812,
+    "einsparung_anteil": 0.983,
+    "hinweis": "Default-Records bündeln das volle Feature-Service-Schema (layers/layer/fields/server/statistics) und werden dadurch pro Record sehr groß (Median dieser Stichprobe im zweistelligen KB-Bereich, einzelne Ausreißer > 8 MB pro Record); fields[datasets] reduziert den Payload drastisch, ohne die gemessenen Abdeckungsfelder zu verlieren."
+  },
+  "ende": "2026-07-26T15:08:38Z"
+}

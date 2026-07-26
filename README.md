@@ -59,7 +59,8 @@ The canonical design document (German) lives in the site repository:
 
 ## Using a snapshot (the query API)
 
-Download the newest `snapshot-*` release assets, check `manifest.json`
+Full contract for pipelines: [`SNAPSHOT-API.md`](SNAPSHOT-API.md). In short —
+download the newest `snapshot-*` release assets, check the manifest in `snapshots/`
 (`schema_version`, SHA-256), then query locally:
 
 ```bash
