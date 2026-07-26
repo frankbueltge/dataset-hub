@@ -1,0 +1,100 @@
+{
+  "quelle": "eudp",
+  "beginn": "2026-07-26T14:14:51Z",
+  "abfragen": [
+    {
+      "zweck": "zaehler_gesamt",
+      "url": "https://data.europa.eu/api/hub/search/search?limit=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "zaehler_dataset",
+      "url": "https://data.europa.eu/api/hub/search/search?filter=dataset&limit=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_seite0",
+      "url": "https://data.europa.eu/api/hub/search/search?filter=dataset&limit=100&page=0",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_seite50",
+      "url": "https://data.europa.eu/api/hub/search/search?filter=dataset&limit=100&page=50",
+      "http_status": 200
+    },
+    {
+      "zweck": "deep_paging_test",
+      "url": "https://data.europa.eu/api/hub/search/search?filter=dataset&limit=100&page=5000",
+      "http_status": 200
+    },
+    {
+      "zweck": "sort_modified_test",
+      "url": "https://data.europa.eu/api/hub/search/search?filter=dataset&limit=1&sort=modified%2Bdesc",
+      "http_status": 200
+    }
+  ],
+  "ausfaelle": [],
+  "zaehler": {
+    "gesamt": 1799040,
+    "filter_dataset": 1758685
+  },
+  "stichprobe": {
+    "n": 200,
+    "ziehung": "Convenience: Seite 0 und Seite 50 der Standardsortierung — NICHT gleichverteilt"
+  },
+  "abdeckung": {
+    "n": 200,
+    "felder": {
+      "titel": {
+        "anzahl": 199,
+        "anteil": 0.995
+      },
+      "urheber": {
+        "anzahl": 0,
+        "anteil": 0.0
+      },
+      "herausgeber": {
+        "anzahl": 99,
+        "anteil": 0.495
+      },
+      "zugriffs_url": {
+        "anzahl": 198,
+        "anteil": 0.99
+      },
+      "lizenz": {
+        "anzahl": 152,
+        "anteil": 0.76
+      },
+      "zeitraum": {
+        "anzahl": 0,
+        "anteil": 0.0
+      },
+      "raeumlichkeit": {
+        "anzahl": 0,
+        "anteil": 0.0
+      },
+      "format": {
+        "anzahl": 198,
+        "anteil": 0.99
+      },
+      "modified": {
+        "anzahl": 99,
+        "anteil": 0.495
+      }
+    }
+  },
+  "katalog_verteilung": {
+    "dataportaal-van-de-nederlandse-overheid": 100,
+    "data-gv-at": 53,
+    "dane-gov-pl": 47
+  },
+  "maschinenlesbarkeit": {
+    "format": "JSON",
+    "deep_paging_status_seite5000x100": 200
+  },
+  "inkrement": {
+    "sort_modified_status": 200,
+    "neuestes_modified": "2026-07-26T03:42:31.719000"
+  },
+  "ende": "2026-07-26T14:14:55Z"
+}

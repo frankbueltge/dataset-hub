@@ -1,0 +1,143 @@
+{
+  "quelle": "zenodo",
+  "beginn": "2026-07-26T14:17:34Z",
+  "abfragen": [
+    {
+      "zweck": "zaehler",
+      "url": "https://zenodo.org/api/records?type=dataset&size=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_neueste_s1",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_neueste_s2",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=2",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_neueste_s3",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=3",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_neueste_s4",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=4",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_rang4900_s197",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=197",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_rang4900_s198",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=198",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_rang4900_s199",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=199",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_rang4900_s200",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=200",
+      "http_status": 200
+    },
+    {
+      "zweck": "deep_paging_test",
+      "url": "https://zenodo.org/api/records?type=dataset&size=25&page=401",
+      "http_status": 400
+    },
+    {
+      "zweck": "oai_pmh_identify",
+      "url": "https://zenodo.org/oai2d?verb=Identify",
+      "http_status": 200
+    },
+    {
+      "zweck": "inkrement_updated_24h",
+      "url": "https://zenodo.org/api/records?type=dataset&size=1&q=updated%3A%5B2026-07-25%20TO%20%2A%5D",
+      "http_status": 200
+    }
+  ],
+  "ausfaelle": [],
+  "zaehler": {
+    "typ_dataset": 663596
+  },
+  "rate_limit_header": {
+    "x-ratelimit-limit": "30",
+    "x-ratelimit-remaining": "29",
+    "x-ratelimit-reset": "1785075516"
+  },
+  "stichprobe": {
+    "n": 200,
+    "ziehung": "Convenience: 100 neueste + 100 ab Rang ~4900 (kein Zufallsparameter; anonym max. size=25) — NICHT gleichverteilt"
+  },
+  "abdeckung": {
+    "n": 200,
+    "felder": {
+      "titel": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "urheber": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "herausgeber": {
+        "anzahl": 0,
+        "anteil": 0.0
+      },
+      "zugriffs_url_landing": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "datei_liste": {
+        "anzahl": 175,
+        "anteil": 0.875
+      },
+      "lizenz": {
+        "anzahl": 198,
+        "anteil": 0.99
+      },
+      "zeitraum": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "raeumlichkeit": {
+        "anzahl": 0,
+        "anteil": 0.0
+      },
+      "doi": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "konzept_doi": {
+        "anzahl": 191,
+        "anteil": 0.955
+      }
+    }
+  },
+  "zugangs_verteilung": {
+    "open": 175,
+    "restricted": 24,
+    "embargoed": 1
+  },
+  "maschinenlesbarkeit": {
+    "format": "JSON",
+    "max_size_anonym": 25,
+    "deep_paging_status_rang10025": 400
+  },
+  "inkrement": {
+    "oai_pmh_identify_status": 200,
+    "oai_pmh_identify_ok": true,
+    "updated_query": {
+      "http_status": 200,
+      "updates_seit_gestern": 1022
+    }
+  },
+  "ende": "2026-07-26T14:18:13Z"
+}

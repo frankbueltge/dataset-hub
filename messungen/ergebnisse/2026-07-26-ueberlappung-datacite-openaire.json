@@ -1,0 +1,827 @@
+{
+  "quelle": "ueberlappung-datacite-openaire",
+  "beginn": "2026-07-26T14:15:19Z",
+  "abfragen": [
+    {
+      "zweck": "doi_lookup_je_eintrag",
+      "url_muster": "https://api.openaire.eu/search/datasets?format=json&doi=<doi>&size=1",
+      "drossel_s": 1.2
+    }
+  ],
+  "ausfaelle": [],
+  "eingabe": {
+    "rohdatei": "rohdaten/datacite-stichprobe.json.gz",
+    "dois": 200
+  },
+  "ergebnis": {
+    "dois_gesamt": 200,
+    "erfolgreich_geprueft": 200,
+    "in_openaire_gefunden": 199,
+    "http_fehler": 0,
+    "ausfaelle": 0,
+    "anteil_gefunden": 0.995
+  },
+  "einzel": [
+    {
+      "doi": "10.21258/1053230",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.fit3d_sd_autoana.139973.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.bolometer.4580.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.ha3.158289.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57745/tdoxn5",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/pzd-0sl-vbr",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15156/bio/sh3429358.08fu",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.5281/zenodo.7712970",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.nb3arm.73388.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.fir_reff.116521.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.eb-npa.159540.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.21258/1638421",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.5883/bold:ace6177",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.48597/dk2h-4e8w",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/x27-52p-w6r",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/n34-1xl-1wn",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.nb4_ib_2d_lhdcxslos_grp7.137437.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.78rfxf",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.cdp.20130516.2116",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.25549/examiner-c44-30888",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.60712/si-id407583.2",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/axx-kbx-9m4",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15156/bio/sh0810146.10fu",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.fmd.87541.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.nb5avg_fraction.106838.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/95j-6ag-9ac",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.ichpw.176535.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.12763/azrdrm/5vuwzi",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.gkaf44",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.rf_spec_broad.138380.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15156/bio/sh332771.07fu",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.radmwe.122619.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.25549/pcra-c14-59550",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.impmon.154702.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_comb_4_raw.123326.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.ficxs-2.165775.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.up5kyn",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.eb-npa-c.939526.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_comb_4_cutoff.136437.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.13145/bacdive126387.20230509.8",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mapping_cxs7.107693.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.ctrldisp2.939426.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.langmuir8.113153.21",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.nb3pwr.63422.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.cece.149843.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_ray_set1.144461.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.nb4prf_ub_3d.175419.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.6084/m9.figshare.12874416.v1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.25549/gar-c81-28101",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.nbel-rt.131054.230",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.6084/m9.figshare.29621291",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.langmuir4.136280.3",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.tsmesh_m.169334.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.7931/2k4q-ge15",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.echdiag.124561.2",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.102rvuv.84088.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.rdmm6q",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.radh.132912.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.tz66ru",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.langmuir5.139797.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_ray_set1.184844.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.ux5yz3",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/8zc-tbk-40n",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.lhdcxs9a-sif.143620.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.gaspuff.70499.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.fc_eth_test.181411.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.pha-we7000.102773.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.heating_flg.193588.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.vsfmnd",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.lhdgauss_ray_mwrm2.179875.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.eb-npa.177868.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.libp.119395.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.cxswpi7.131998.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.brems.54744.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.brems.13947.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.7925/drs1.duchas_5194008",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.7910/dvn/rrxcr3/itfejy",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.nbel-rt.124535.191",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.21233/h6v6-t410",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.10-o_r_01.166143.3",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.thomson.29944.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.ha2.63053.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.nbpwr_tot_temporal.122247.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.5517/ccvcq0x",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.nb5a_fraction.117028.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/rtk-7rx-wvq",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.vmec_status.106450.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/nzz-9zt-2fg",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.magnetics.58010.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.109lvuv.59237.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/k4j-tm4-85s",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.ech.86186.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.ecei1.140899.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.5281/zenodo.10237334",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.3jgckx",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_comb_2_cutoff.66291.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.48597/vdu6-zpyy",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/y4l-cnq-etv",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/0hn-svs-c9q",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.pci_ch4_fft.138682.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.axuvd-pxi.915086.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/mgg-q6n-gnr",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15156/bio/sh527711.07fu",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.4-o_ru01.176014.26",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_9o_r_iamp.153233.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.6jke45",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.34816/efa.archives.835127",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.crystal3.118851.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.48580/dgxcw",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57745/ziwrcb",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.ctrldisp2.165936.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.4o-bc02-r01.186977.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/5z7-7g0-pew",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.25934/pr00005942.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.7910/dvn/29236/koud9o",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.ip.145650.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/tga-eht-xs9",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.ovpnh0",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.7910/dvn/b4whrq/0kfa00",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.nbcurrent.182332.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.13145/bacdive18710.20221219.7.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.5281/zenodo.7319270",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.mwscat2.159790.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.17026/dans-zpv-3xkd",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.34808/9n99-jq12",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.17188/1188004",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.ctrldisp3.152310.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.7910/dvn/9c3sw3",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.fhuuem",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.17026/dans-23k-grf8",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.libp.58126.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/5ye-afv-8yy",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.echpw.185907.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.7925/drs1.duchas_5121980",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.8h6rxn",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/2pz-ehl-2qy",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.hrw94z",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.hdlp.181429.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.ip.71223.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.impmon.65159.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_9o_r_ray_out.167323.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.mir5.925684.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.7amb6j",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.25549/inscriptifact-ouc111156831",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/zzb-pn8-f1d",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.tsmesh.129567.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.dgaspuff.129509.13",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.brems.10676.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.106rvuv.113619.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.nb3arm.145513.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.nb4_ib_2d_lhdcxslosint_grp7.150660.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.p5jt88",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.6084/m9.figshare.25853098",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.102rvuv.70465.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.langmuir6.158498.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.fpellet.161382.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.soxmos_peak.188347.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/3q4-1y5-3k2",
+      "openaire_treffer": 0
+    },
+    {
+      "doi": "10.13145/bacdive124870.20190402.4",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.pha.73966.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.5281/zenodo.7950652",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.cxsmap7_ti.167933.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.z7m9ma",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.imp01.57349.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.echpw.188032.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.ficxs_1.183431.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.102rvuv.154721.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15156/bio/sh1880560.08fu",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.fig.138609.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.tsmesh_h.120034.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.dts.51445.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/l8z-lat-ne9",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.6073/pasta/c423bbc06273c17327646922970547f9",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_comb_3_spectrum.161983.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.2p5-u_l01.182415.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15468/dl.nm54ap",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.zeff_nb4_ib.147292.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.ech.153515.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.brems.142097.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.3535/454-07l-49z",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.nb2pwr_temporal.80401.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.heating_flg.190258.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.radh.153079.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.mwrm-comb.140492.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.26093/cds/vizier.74000603",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.firdac.98401.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.hico2.107183.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.radhpxi.185248.4",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.nb2arm.921012.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.sdnpa.110142.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_comb_8_cutoff.81554.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.25549/kada-c126-22270",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_comb_r_vp.146344.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mapping_ts.115983.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.5517/ccdc.csd.cc2fxxt3",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.60712/si-id22024.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.15156/bio/sh1167927.09fu",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.fpellet.128445.1",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.10-o_r_01.187346.3",
+      "openaire_treffer": 1
+    },
+    {
+      "doi": "10.57451/lhd.a.mwrm_comb_5_spectrum.134037.1",
+      "openaire_treffer": 1
+    }
+  ],
+  "ende": "2026-07-26T14:20:13Z"
+}

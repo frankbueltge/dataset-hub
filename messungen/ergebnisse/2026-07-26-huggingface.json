@@ -1,0 +1,83 @@
+{
+  "quelle": "huggingface",
+  "beginn": "2026-07-26T14:15:16Z",
+  "abfragen": [
+    {
+      "zweck": "header_check",
+      "url": "https://huggingface.co/api/datasets?limit=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "zaehl_iteration",
+      "url": "https://huggingface.co/api/datasets?limit=1000",
+      "hinweis": "Folge-Cursor via Link-Header, Kappe 120 Seiten à 1000"
+    },
+    {
+      "zweck": "stichprobe",
+      "url": "https://huggingface.co/api/datasets?limit=200&full=true",
+      "http_status": 200
+    },
+    {
+      "zweck": "inkrement_sort_lastModified",
+      "url": "https://huggingface.co/api/datasets?limit=1&sort=lastModified&direction=-1",
+      "http_status": 200
+    }
+  ],
+  "ausfaelle": [],
+  "header_befund": {
+    "x_total_count": null,
+    "link_header_vorhanden": true
+  },
+  "zaehler": {
+    "iteriert": 120000,
+    "seiten": 120,
+    "vollstaendig": false,
+    "hinweis": "Iteration bei Kappe (120 Seiten) gestoppt — tatsächlicher Bestand GRÖSSER als 120000"
+  },
+  "stichprobe": {
+    "n": 200,
+    "ziehung": "Convenience: erste 200 der Standardsortierung, full=true — NICHT gleichverteilt"
+  },
+  "abdeckung": {
+    "n": 200,
+    "felder": {
+      "id": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "autor_im_namensraum": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "lizenz": {
+        "anzahl": 163,
+        "anteil": 0.815
+      },
+      "beschreibung": {
+        "anzahl": 196,
+        "anteil": 0.98
+      },
+      "lastModified": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "createdAt": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "explizites_url_feld": {
+        "anzahl": 0,
+        "anteil": 0.0
+      },
+      "downloads_zaehler": {
+        "anzahl": 200,
+        "anteil": 1.0
+      }
+    }
+  },
+  "inkrement": {
+    "http_status": 200,
+    "neuestes_lastModified": "2026-07-26T14:16:32.000Z"
+  },
+  "ende": "2026-07-26T14:16:34Z"
+}

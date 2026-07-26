@@ -1,0 +1,84 @@
+{
+  "quelle": "datacite",
+  "beginn": "2026-07-26T14:14:43Z",
+  "abfragen": [
+    {
+      "zweck": "zaehler",
+      "url": "https://api.datacite.org/dois?resource-type-id=dataset&page%5Bsize%5D=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe",
+      "url": "https://api.datacite.org/dois?resource-type-id=dataset&random=true&page%5Bsize%5D=200",
+      "http_status": 200
+    },
+    {
+      "zweck": "cursor_test",
+      "url": "https://api.datacite.org/dois?resource-type-id=dataset&page%5Bcursor%5D=1&page%5Bsize%5D=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "inkrement_updated_24h",
+      "url": "https://api.datacite.org/dois?resource-type-id=dataset&query=updated:%5B2026-07-25T14:14:49Z%20TO%20*%5D&page%5Bsize%5D=1",
+      "http_status": 200
+    }
+  ],
+  "ausfaelle": [],
+  "zaehler": {
+    "typ_dataset": 72676246
+  },
+  "facetten": {},
+  "rate_limit_header": {},
+  "rohdatei": "rohdaten/datacite-stichprobe.json.gz",
+  "stichprobe": {
+    "n": 200,
+    "ziehung": "random=true (API-seitig zufällig)"
+  },
+  "abdeckung": {
+    "n": 200,
+    "felder": {
+      "titel": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "urheber": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "herausgeber": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "zugriffs_url": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "lizenz": {
+        "anzahl": 176,
+        "anteil": 0.88
+      },
+      "zeitraum": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "raeumlichkeit": {
+        "anzahl": 122,
+        "anteil": 0.61
+      },
+      "format_oder_groesse": {
+        "anzahl": 152,
+        "anteil": 0.76
+      }
+    }
+  },
+  "maschinenlesbarkeit": {
+    "format": "JSON:API",
+    "cursor_paginierung": true
+  },
+  "inkrement": {
+    "weg": "query=updated:[T-24h TO *]",
+    "http_status": 200,
+    "updates_24h_typ_dataset": 13310
+  },
+  "ende": "2026-07-26T14:14:49Z"
+}

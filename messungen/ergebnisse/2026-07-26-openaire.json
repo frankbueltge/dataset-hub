@@ -1,0 +1,111 @@
+{
+  "quelle": "openaire",
+  "beginn": "2026-07-26T14:14:55Z",
+  "abfragen": [
+    {
+      "zweck": "graph_api_test",
+      "url": "https://api.openaire.eu/graph/v1/researchProducts?type=dataset&pageSize=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "graph_api_test",
+      "url": "https://api.openaire.eu/graph/researchProducts?type=dataset&pageSize=1",
+      "http_status": 405
+    },
+    {
+      "zweck": "zaehler",
+      "url": "https://api.openaire.eu/search/datasets?format=json&size=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_seite1",
+      "url": "https://api.openaire.eu/search/datasets?format=json&size=50&page=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_seite2",
+      "url": "https://api.openaire.eu/search/datasets?format=json&size=50&page=2",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_seite3",
+      "url": "https://api.openaire.eu/search/datasets?format=json&size=50&page=3",
+      "http_status": 200
+    },
+    {
+      "zweck": "stichprobe_seite4",
+      "url": "https://api.openaire.eu/search/datasets?format=json&size=50&page=4",
+      "http_status": 200
+    },
+    {
+      "zweck": "deep_paging_test",
+      "url": "https://api.openaire.eu/search/datasets?format=json&size=50&page=250",
+      "http_status": 400
+    }
+  ],
+  "ausfaelle": [],
+  "graph_api": [
+    {
+      "url": "https://api.openaire.eu/graph/v1/researchProducts?type=dataset&pageSize=1",
+      "http_status": 200,
+      "numFound": 106128765
+    },
+    {
+      "url": "https://api.openaire.eu/graph/researchProducts?type=dataset&pageSize=1",
+      "http_status": 405
+    }
+  ],
+  "zaehler": {
+    "datasets": 106128765
+  },
+  "rate_limit_header": {
+    "x-ratelimit-used": "4",
+    "x-ratelimit-limit": "7199"
+  },
+  "stichprobe": {
+    "n": 200,
+    "ziehung": "Convenience: Seiten 1–4 der Standardsortierung — NICHT gleichverteilt"
+  },
+  "abdeckung": {
+    "n": 200,
+    "felder": {
+      "titel": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "urheber": {
+        "anzahl": 195,
+        "anteil": 0.975
+      },
+      "herausgeber": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "zugriffs_url": {
+        "anzahl": 197,
+        "anteil": 0.985
+      },
+      "lizenz_an_instanz": {
+        "anzahl": 97,
+        "anteil": 0.485
+      },
+      "zeitraum": {
+        "anzahl": 200,
+        "anteil": 1.0
+      },
+      "pid_doi": {
+        "anzahl": 0,
+        "anteil": 0.0
+      }
+    }
+  },
+  "zugangsrecht_verteilung": {
+    "Open Access": 161,
+    "Restricted": 39
+  },
+  "maschinenlesbarkeit": {
+    "format": "JSON (verschachteltes oaf-Schema)",
+    "deep_paging_status_seite250x50": 400
+  },
+  "ende": "2026-07-26T14:15:04Z"
+}

@@ -1,0 +1,106 @@
+{
+  "quelle": "datagov-klaerung",
+  "beginn": "2026-07-26T14:15:04Z",
+  "abfragen": [
+    {
+      "zweck": "ckan_v3_package_search",
+      "url": "https://catalog.data.gov/api/3/action/package_search?rows=1",
+      "http_status": 404
+    },
+    {
+      "zweck": "ckan_ohne_version",
+      "url": "https://catalog.data.gov/api/action/package_search?rows=1",
+      "http_status": 404
+    },
+    {
+      "zweck": "ckan_site_read",
+      "url": "https://catalog.data.gov/api/3/action/site_read",
+      "http_status": 404
+    },
+    {
+      "zweck": "api_wurzel",
+      "url": "https://catalog.data.gov/api/3",
+      "http_status": 404
+    },
+    {
+      "zweck": "katalog_html",
+      "url": "https://catalog.data.gov/dataset",
+      "http_status": 200
+    },
+    {
+      "zweck": "www_startseite",
+      "url": "https://www.data.gov/",
+      "http_status": 200
+    },
+    {
+      "zweck": "entwickler_seite",
+      "url": "https://data.gov/developers/",
+      "http_status": 404
+    },
+    {
+      "zweck": "api_data_gov",
+      "url": "https://api.data.gov/",
+      "http_status": 200
+    }
+  ],
+  "ausfaelle": [],
+  "befunde": [
+    {
+      "name": "ckan_v3_package_search",
+      "url": "https://catalog.data.gov/api/3/action/package_search?rows=1",
+      "http_status": 404,
+      "content_type": "application/json",
+      "antwort_anfang": "{\"detail\":{},\"message\":\"Not Found\"}\n"
+    },
+    {
+      "name": "ckan_ohne_version",
+      "url": "https://catalog.data.gov/api/action/package_search?rows=1",
+      "http_status": 404,
+      "content_type": "application/json",
+      "antwort_anfang": "{\"detail\":{},\"message\":\"Not Found\"}\n"
+    },
+    {
+      "name": "ckan_site_read",
+      "url": "https://catalog.data.gov/api/3/action/site_read",
+      "http_status": 404,
+      "content_type": "application/json",
+      "antwort_anfang": "{\"detail\":{},\"message\":\"Not Found\"}\n"
+    },
+    {
+      "name": "api_wurzel",
+      "url": "https://catalog.data.gov/api/3",
+      "http_status": 404,
+      "content_type": "application/json",
+      "antwort_anfang": "{\"detail\":{},\"message\":\"Not Found\"}\n"
+    },
+    {
+      "name": "katalog_html",
+      "url": "https://catalog.data.gov/dataset",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "antwort_anfang": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <!-- datalayer injection -->\n  \n  \n  <!-- end datalayer injection -->\n  <!-- Google analytics -->\n  <script nonce=\"_s_Jpsc0ep7WGjSQTvaJPQDqyewxqopl\">(function"
+    },
+    {
+      "name": "www_startseite",
+      "url": "https://www.data.gov/",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "antwort_anfang": "\n\n<!DOCTYPE html>\n\n<html class=\"no-js datagov\" dir=\"ltr\" lang=\"en\">\n\n\n\n<head>\n  <!-- Basic Page Needs\n    ================================================== -->\n  <meta charset=\"utf-8\" />\n  <meta http"
+    },
+    {
+      "name": "entwickler_seite",
+      "url": "https://data.gov/developers/",
+      "http_status": 404,
+      "content_type": "text/html; charset=utf-8",
+      "antwort_anfang": "\n\n<!DOCTYPE html>\n\n<html class=\"no-js datagov\" dir=\"ltr\" lang=\"en\">\n\n\n\n<head>\n  <!-- Basic Page Needs\n    ================================================== -->\n  <meta charset=\"utf-8\" />\n  <meta http"
+    },
+    {
+      "name": "api_data_gov",
+      "url": "https://api.data.gov/",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "html_titel": "api.data.gov"
+    }
+  ],
+  "ende": "2026-07-26T14:15:08Z"
+}
