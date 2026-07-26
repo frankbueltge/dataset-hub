@@ -53,6 +53,13 @@ jobs:
       - name: Tests
         run: python3 -m unittest discover -s pipeline/tests
 
+      - name: Oberflächendaten erzeugen
+        # Muss VOR dem Snapshot laufen: baue_snapshot.py nimmt die erzeugten Dateien
+        # als Release-Assets mit, aus denen frankbueltge.de beim Bauen liest. Fehlt
+        # dieser Schritt, veröffentlicht der Snapshot den Stand von gestern.
+        working-directory: oberflaeche
+        run: python3 generiere_index.py
+
       - name: Snapshot bauen
         working-directory: pipeline
         run: python3 baue_snapshot.py
@@ -92,3 +99,21 @@ jobs:
               --title "Snapshot $TAG" \
               --notes-file "$MANIFEST"
           fi
+
+      - name: Site über den neuen Stand benachrichtigen
+        # Ohne diesen Anstoß baut frankbueltge.de erst beim nächsten eigenen Push neu
+        # und zeigt so lange einen älteren Registerstand. Fehlt das Token, wird das
+        # vermerkt statt still übergangen.
+        env:
+          SITE_DISPATCH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$SITE_DISPATCH_TOKEN" ]; then
+            echo "::warning::SITE_DISPATCH_TOKEN fehlt — die Site wurde NICHT neu gebaut und zeigt weiter den vorherigen Registerstand."
+            exit 0
+          fi
+          curl -sS -X POST \
+            -H "Authorization: Bearer $SITE_DISPATCH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/frankbueltge/frankbueltge.de/dispatches \
+            -d '{"event_type":"dataset-snapshot"}' \
+            -w "  Dispatch-Status: %{http_code}\n"
