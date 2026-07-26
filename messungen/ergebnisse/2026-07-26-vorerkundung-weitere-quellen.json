@@ -1,0 +1,248 @@
+{
+  "quelle": "vorerkundung-weitere-quellen",
+  "beginn": "2026-07-26T14:37:43Z",
+  "abfragen": [
+    {
+      "zweck": "socrata_discovery_us",
+      "url": "https://api.us.socrata.com/api/catalog/v1?only=datasets&limit=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "socrata_discovery_eu",
+      "url": "https://api.eu.socrata.com/api/catalog/v1?only=datasets&limit=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "opendatasoft_netzwerk",
+      "url": "https://data.opendatasoft.com/api/explore/v2.1/catalog/datasets?limit=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "dataverse_harvard",
+      "url": "https://dataverse.harvard.edu/api/search?q=*&type=dataset&per_page=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "openml",
+      "url": "https://www.openml.org/api/v1/json/data/list/limit/1",
+      "http_status": 504
+    },
+    {
+      "zweck": "kaggle_unauthentifiziert",
+      "url": "https://www.kaggle.com/api/v1/datasets/list?page=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "arcgis_hub",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1",
+      "http_status": 200
+    },
+    {
+      "zweck": "awesome_public_datasets_repo",
+      "url": "https://api.github.com/repos/awesomedata/awesome-public-datasets",
+      "http_status": 200
+    },
+    {
+      "zweck": "awesome_public_datasets_readme",
+      "url": "https://api.github.com/repos/awesomedata/awesome-public-datasets/readme",
+      "http_status": 200
+    },
+    {
+      "zweck": "curran_data_repo",
+      "url": "https://api.github.com/repos/curran/data",
+      "http_status": 200
+    },
+    {
+      "zweck": "curran_data_readme",
+      "url": "https://api.github.com/repos/curran/data/readme",
+      "http_status": 200
+    }
+  ],
+  "ausfaelle": [],
+  "proben": [
+    {
+      "name": "socrata_discovery_us",
+      "url": "https://api.us.socrata.com/api/catalog/v1?only=datasets&limit=1",
+      "http_status": 200,
+      "befund": {
+        "resultSetSize": 10000
+      }
+    },
+    {
+      "name": "socrata_discovery_eu",
+      "url": "https://api.eu.socrata.com/api/catalog/v1?only=datasets&limit=1",
+      "http_status": 200,
+      "befund": {
+        "resultSetSize": 5584
+      }
+    },
+    {
+      "name": "opendatasoft_netzwerk",
+      "url": "https://data.opendatasoft.com/api/explore/v2.1/catalog/datasets?limit=1",
+      "http_status": 200,
+      "befund": {
+        "total_count": 100886
+      }
+    },
+    {
+      "name": "dataverse_harvard",
+      "url": "https://dataverse.harvard.edu/api/search?q=*&type=dataset&per_page=1",
+      "http_status": 200,
+      "befund": {
+        "total_count": 301465
+      }
+    },
+    {
+      "name": "openml",
+      "url": "https://www.openml.org/api/v1/json/data/list/limit/1",
+      "http_status": 504,
+      "antwort_anfang": "<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r"
+    },
+    {
+      "name": "kaggle_unauthentifiziert",
+      "url": "https://www.kaggle.com/api/v1/datasets/list?page=1",
+      "http_status": 200,
+      "befund": {
+        "n_in_antwort": 20,
+        "hat_url_feld": true,
+        "hat_lizenz_feld": true,
+        "hat_urheber_feld": true
+      }
+    },
+    {
+      "name": "arcgis_hub",
+      "url": "https://hub.arcgis.com/api/v3/datasets?page%5Bsize%5D=1",
+      "http_status": 200,
+      "befund": {
+        "meta_schluessel": [
+          "apiRoot",
+          "datasetsMatching",
+          "page",
+          "queryParameters",
+          "request",
+          "resourceRoot",
+          "stats",
+          "took",
+          "total"
+        ],
+        "stats": {
+          "totalCount": 21104755,
+          "count": 1,
+          "aggs": {}
+        },
+        "total": 21104755,
+        "daten_anzahl_in_antwort": 1
+      }
+    }
+  ],
+  "datagov_data_json": {
+    "http_status": 404
+  },
+  "listen": [
+    {
+      "name": "awesome_public_datasets",
+      "letzter_push": "2026-07-13T21:46:55Z",
+      "stars": 77735,
+      "links_im_readme": 897,
+      "eindeutige_domains": 661
+    },
+    {
+      "name": "curran_data",
+      "letzter_push": "2025-12-25T17:19:49Z",
+      "stars": 531,
+      "links_im_readme": 55,
+      "eindeutige_domains": 41
+    }
+  ],
+  "link_rot_stichprobe": {
+    "n": 20,
+    "ziehung": "jeder 44. Link des README, deterministisch",
+    "status_klassen": {
+      "2xx": 17,
+      "4xx": 3
+    },
+    "einzel": [
+      {
+        "url": "https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg",
+        "status": 200
+      },
+      {
+        "url": "http://www.ncbi.nlm.nih.gov/taxonomy",
+        "status": 200
+      },
+      {
+        "url": "https://www.esrl.noaa.gov/gmd/grad/stardata.html",
+        "status": 200
+      },
+      {
+        "url": "https://ooni.torproject.org/data/",
+        "status": 200
+      },
+      {
+        "url": "https://www.apo-tokyo.org/wedo/productivity-measurement/",
+        "status": 200
+      },
+      {
+        "url": "https://brightkey.co/en/rankings/dataset",
+        "status": 200
+      },
+      {
+        "url": "https://data.nasdaq.com/",
+        "status": 200
+      },
+      {
+        "url": "https://github.com/lukeslp/strange-places-dataset",
+        "status": 200
+      },
+      {
+        "url": "http://www.data.gov.gr/",
+        "status": 404
+      },
+      {
+        "url": "https://openmercantil.es/descargas",
+        "status": 200
+      },
+      {
+        "url": "http://www.huduser.gov/portal/datasets/pdrdatas.html",
+        "status": 202
+      },
+      {
+        "url": "https://openpaymentsdata.cms.gov",
+        "status": 200
+      },
+      {
+        "url": "https://github.com/mhmoodlan/arabic-font-classification/releases/tag/v0.1.0",
+        "status": 200
+      },
+      {
+        "url": "http://data.nhm.ac.uk/",
+        "status": 403
+      },
+      {
+        "url": "http://wordbank.stanford.edu/",
+        "status": 200
+      },
+      {
+        "url": "https://biometry.nci.nih.gov/cdas/plco/",
+        "status": 200
+      },
+      {
+        "url": "https://azuremarketplace.microsoft.com/en-us/marketplace/apps?source=datamarket&filters=pricing-free&page=1",
+        "status": 403
+      },
+      {
+        "url": "http://www.indiemap.org/",
+        "status": 200
+      },
+      {
+        "url": "https://isitsafetotravel.org/",
+        "status": 200
+      },
+      {
+        "url": "http://cricsheet.org/",
+        "status": 200
+      }
+    ]
+  },
+  "ende": "2026-07-26T14:38:25Z"
+}

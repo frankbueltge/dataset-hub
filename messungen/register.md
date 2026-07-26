@@ -13,6 +13,21 @@ Messprotokoll in `ergebnisse/`. Ein NO-GO ist ein gültiges, bleibendes Messerge
 | **data.gov** | 2026-07-26 | **NO-GO derzeit** — Wiedervorlage | Alle CKAN-API-Pfade 404 (strukturierte JSON-404s); Weboberfläche lebt. Kein maschinenlesbarer Erntepfad belegt. US-Lücke wird bis dahin ausgewiesen. |
 | re3data | 2026-07-26 | Quelle der Quellen (kein Gate nötig) | 3.516 Repositorien per API; dient ab Phase 2 als Registry-Abgleich und Lieferant von Messaufträgen, nie direkt als Datensatzquelle. |
 
+## Kandidaten aus der Vorerkundung (2026-07-26) — volle Messung ausstehend
+
+Details: `ergebnisse/2026-07-26-vorerkundung-weitere-quellen.md`. Reihenfolge =
+vorgeschlagene Priorität.
+
+| Kandidat | Stichproben-Befund | Messauftrag |
+|---|---|---|
+| ArcGIS Hub | 21,1 Mio. laut `meta.total` | Was zählt als „dataset"? Feldabdeckung, Inkrement, Volliteration |
+| Kaggle | unauthentifiziert nutzbar; wörtliche URL + Lizenz + Urheber je Record | Zähler (Iteration), Rate-Limits, Inkrement-Weg |
+| Socrata Discovery (US/EU) | US-Zähler exakt 10.000 → mutmaßlich gekappt; EU 5.584 | echten Zählweg klären (Facetten/domains), Feldabdeckung; US-Lücken-Relevanz |
+| Dataverse-Netzwerk | Harvard allein 301.465 | DataCite-Überlappung messen (entscheidet Kern vs. Anreicherung) |
+| OpenDataSoft-Netzwerk | 100.886 im Portalnetz | Feldabdeckung, Inkrement |
+| OpenML | HTTP 504 am Messtag (Ausfall, kein Urteil) | Wiedervorlage |
+| Kuratierte Listen (awesome-public-datasets, curran/data u. ä.) | 897 Links/661 Domains bzw. 55/41; Link-Rot 15 % (n=20) | eigene Familie: Listen-Parser + Pflicht-Auflösung + Urteilsroutine; primär Quelle-von-Quellen |
+
 ## Offene Entscheidungen
 
 1. **HuggingFace-Ausnahme** (siehe oben) — Franks Entscheidung.
