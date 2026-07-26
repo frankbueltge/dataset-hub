@@ -49,10 +49,29 @@ def main():
         manifeste.append({k: d.get(k) for k in
                           ("quelle", "seit", "bis", "records", "vollstaendig")})
 
-    ablehnungen = [dict(r) for r in db.execute(
-        "SELECT grund, COUNT(*) n FROM ablehnungen GROUP BY grund ORDER BY n DESC")]
+    # Das Ablehnungsregister ist append-only: ein Eintrag, der beim ersten Bau an einer
+    # Schranke scheiterte und später — etwa nach erfolgreicher HTTP-Auflösung — doch
+    # aufgenommen wurde, behält sein Ablehnungs-EREIGNIS. Die Ereigniszahl ist deshalb
+    # keine Aussage darüber, was aktuell draußen ist. Beides wird getrennt ausgewiesen,
+    # statt die größere Zahl als „verworfen" zu zeigen.
+    im_bestand = {(q, p) for q, p in db.execute("SELECT quelle, quell_id FROM eintraege")}
+    aktuell = {}
+    ereignisse_gesamt = 0
+    for r in db.execute("SELECT quelle, quell_id, grund FROM ablehnungen"):
+        ereignisse_gesamt += 1
+        if (r["quelle"], r["quell_id"]) not in im_bestand:
+            aktuell[r["grund"]] = aktuell.get(r["grund"], 0) + 1
+    ablehnungen = sorted(({"grund": g, "n": n} for g, n in aktuell.items()),
+                         key=lambda x: -x["n"])
+    ablehnungen_meta = {
+        "ereignisse_gesamt": ereignisse_gesamt,
+        "aktuell_verworfen": sum(aktuell.values()),
+        "spaeter_doch_aufgenommen": ereignisse_gesamt - sum(aktuell.values()),
+    }
     ausfaelle = [dict(r) for r in db.execute(
         "SELECT datum, quelle, fehler, kontext FROM ausfaelle ORDER BY datum DESC LIMIT 50")]
+    quellen = [dict(r) for r in db.execute(
+        "SELECT quelle, COUNT(*) n FROM eintraege GROUP BY quelle ORDER BY n DESC")]
     db.close()
 
     (ZIEL / "eintraege.json").write_text(json.dumps(zeilen, ensure_ascii=False,
@@ -69,7 +88,9 @@ def main():
                      "aufgeloest_versucht", "aufgeloest_bestaetigt")},
         "mehrfassungs_werke": len(fassungen),
         "quellfenster": manifeste,
+        "quellen": quellen,
         "ablehnungen": ablehnungen,
+        "ablehnungen_meta": ablehnungen_meta,
         "ausfaelle": ausfaelle,
     }, ensure_ascii=False, indent=2))
 

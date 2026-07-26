@@ -1,16 +1,24 @@
 {
   "tag": "snapshot-2026-07-26",
   "schema_version": "0.2.0",
-  "gebaut_am": "2026-07-26T15:07:51Z",
+  "gebaut_am": "2026-07-26T16:53:47Z",
   "zaehler": {
-    "eintraege": "13010",
-    "werke": "12128",
-    "fundstellen": "13010",
-    "abgelehnt_gesamt": "0",
-    "aufgeloest_versucht": "200",
-    "aufgeloest_bestaetigt": "144"
+    "eintraege": "13297",
+    "werke": "12415",
+    "fundstellen": "13670",
+    "abgelehnt_gesamt": "280",
+    "aufgeloest_versucht": "220",
+    "aufgeloest_bestaetigt": "164"
   },
   "quellfenster": [
+    {
+      "lauf": "arcgis-20260726T164554Z",
+      "quelle": "arcgis",
+      "seit": null,
+      "bis": "2026-07-26T16:45:56Z",
+      "records": 300,
+      "vollstaendig": false
+    },
     {
       "lauf": "datacite-20260726T150046Z",
       "quelle": "datacite",
@@ -18,18 +26,49 @@
       "bis": "2026-07-26T15:01:34Z",
       "records": 13010,
       "vollstaendig": true
+    },
+    {
+      "lauf": "huggingface-20260726T164558Z",
+      "quelle": "huggingface",
+      "seit": null,
+      "bis": "2026-07-26T16:46:00Z",
+      "records": 300,
+      "vollstaendig": false
+    },
+    {
+      "lauf": "kaggle-20260726T164544Z",
+      "quelle": "kaggle",
+      "seit": null,
+      "bis": "2026-07-26T16:45:47Z",
+      "records": 60,
+      "vollstaendig": false
     }
   ],
   "assets": [
     {
       "name": "hub-2026-07-26.sqlite.gz",
-      "sha256": "69b2fedd93d9830a4d82e2cb5f261bcbbffa244511ec67678683c099ee08926d",
-      "bytes": 13445710
+      "sha256": "c29b9811246651cfb63ab0ded434727323262284c3e6deb877713ad0749c3521",
+      "bytes": 13647563
+    },
+    {
+      "name": "arcgis-20260726T164554Z.jsonl.gz",
+      "sha256": "e2b103e5beabe455ef3418a788fc10021fe205e8d5fcd9aad11d853f645fb249",
+      "bytes": 45346
     },
     {
       "name": "datacite-20260726T150046Z.jsonl.gz",
       "sha256": "55564b4a299292d37ceb95e61731bbba0d1ed69b9238c65b493c6e77e35024db",
       "bytes": 4538315
+    },
+    {
+      "name": "huggingface-20260726T164558Z.jsonl.gz",
+      "sha256": "22ad450bb5ea432e3287049dab7972df29b36ea5d4383832be2ef1bad3150966",
+      "bytes": 274991
+    },
+    {
+      "name": "kaggle-20260726T164544Z.jsonl.gz",
+      "sha256": "cf8abcc3466d3fa41e1cba30d79388e522810212ae19eafd564112ee26ea830f",
+      "bytes": 16501
     }
   ]
 }

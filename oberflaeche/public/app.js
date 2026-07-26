@@ -193,17 +193,36 @@ function bestandFuellen() {
     `geprüft, davon ${zahl(z.aufgeloest_bestaetigt)} bestätigt. Der Rest trägt sichtbar ` +
     `„ungeprüft“ — nicht „in Ordnung“.`;
 
-  $('quellfenster').innerHTML = (meta.quellfenster || []).map((f) =>
-    `<p><strong>${escape(f.quelle)}</strong><br>
-     ${escape(f.seit)} – ${escape(f.bis)}<br>
-     ${zahl(f.records)} Fundstellen ·
-     ${f.vollstaendig ? 'Lauf vollständig' : '<strong>Lauf unvollständig</strong>'}</p>`
+  const proQuelle = new Map((meta.quellen || []).map((q) => [q.quelle, q.n]));
+  const nachQuelle = new Map();
+  for (const f of meta.quellfenster || []) {
+    const v = nachQuelle.get(f.quelle) || { records: 0, unvollstaendig: 0, laeufe: 0 };
+    v.records += f.records || 0;
+    v.laeufe += 1;
+    if (!f.vollstaendig) v.unvollstaendig += 1;
+    nachQuelle.set(f.quelle, v);
+  }
+  $('quellfenster').innerHTML = [...nachQuelle].map(([quelle, v]) =>
+    `<p><strong>${escape(quelle)}</strong> — ${zahl(proQuelle.get(quelle) || 0)} Einträge<br>
+     ${zahl(v.records)} Fundstellen aus ${zahl(v.laeufe)} ${v.laeufe === 1 ? 'Lauf' : 'Läufen'}<br>
+     ${v.unvollstaendig
+        ? `<strong>${v.laeufe === 1
+             ? 'Lauf unvollständig'
+             : `${zahl(v.unvollstaendig)} von ${zahl(v.laeufe)} Läufen unvollständig`}</strong>
+           — Bestand dieser Quelle ist angeschnitten`
+        : (v.laeufe === 1 ? 'Lauf vollständig' : 'alle Läufe vollständig')}</p>`
   ).join('') || '<p class="leise">keine Erntemanifeste</p>';
 
-  $('ablehnungen').innerHTML = (meta.ablehnungen || []).length
+  const am = meta.ablehnungen_meta || {};
+  $('ablehnungen').innerHTML = ((meta.ablehnungen || []).length
     ? meta.ablehnungen.map((a) =>
         `<div class="kv"><span>${escape(a.grund)}</span><span>${zahl(a.n)}</span></div>`).join('')
-    : '<p class="leise">bisher nichts verworfen</p>';
+    : '<p class="leise">derzeit nichts verworfen</p>')
+    + (am.spaeter_doch_aufgenommen
+      ? `<p class="leise" style="margin-top:.5rem">Das Register ist ein Ereignisprotokoll und
+         wird nie umgeschrieben: ${zahl(am.ereignisse_gesamt)} Ablehnungen insgesamt, davon
+         ${zahl(am.spaeter_doch_aufgenommen)} später doch aufgenommen (Zugriffsweg bestätigt).</p>`
+      : '');
 
   $('ausfaelle').innerHTML = (meta.ausfaelle || []).length
     ? meta.ausfaelle.slice(0, 6).map((a) =>
