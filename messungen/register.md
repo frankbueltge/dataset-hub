@@ -52,8 +52,16 @@ Kein Rechtsrat — gelesen, zitiert, und wo mehrdeutig, als mehrdeutig vermerkt.
 ### Kaggle: zurückgehalten (2026-07-26)
 
 Die 9.991 Einträge sind **aus dem Bestand genommen** (`schranken.py:
-QUELLEN_ZURUECKGEHALTEN`, Grundcode `quelle-rechtlich-ungeklaert`). Die Rohernten
-bleiben unangetastet im Archiv — nichts wird gelöscht, die Aufnahme wird ausgesetzt.
+QUELLEN_ZURUECKGEHALTEN`, Grundcode `quelle-rechtlich-ungeklaert`), und die Inhalte
+sind **gelöscht** — Rohernten aus Release und Arbeitsverzeichnis, Kennungen aus
+Ablehnungs- und Fundstellen-Tabelle.
+
+Die erste Fassung dieses Eintrags hieß „die Rohernten bleiben im Archiv". Das war
+falsch: Wenn das Speichern wesentlicher Teile untersagt ist, ist auch das Archiv
+Speichern — und unseres liegt öffentlich (Frank, 2026-07-26; siehe
+`VERFAHRENSNOTIZEN.md`). Erhalten bleiben nur die Ernte-Manifeste und ein
+Sammeleintrag im Ablehnungsregister: unsere Buchführung über unser eigenes Handeln,
+ohne Fremdinhalt.
 
 Abwägung, offen dargelegt: Wir haben die **dokumentierte öffentliche API** genutzt
 (`/api/v1/datasets/list`), nicht die Website gescrapt — programmatischer Zugriff ist

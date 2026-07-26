@@ -27,6 +27,39 @@ Verzeichnis verhindern soll. Der Vermerk hier ist die Korrektur.
 **nie `git add -A` oder Verzeichnis-weites `git add`** — nur explizite Pfadlisten der
 Dateien, die zum jeweiligen Commit gehören.
 
+## 2026-07-26 — „Im Archiv behalten" war keine Ausnahme vom Speichern (Kaggle)
+
+Nach dem Rückzug der Kaggle-Einträge hieß es hier zunächst: aus dem Bestand genommen,
+**Rohernte bleibt im Archiv**. Frank hat den Widerspruch benannt: Wenn die Bedingungen
+das Speichern wesentlicher Teile untersagen, ist auch das Archiv Speichern — und unser
+Archiv liegt öffentlich auf GitHub. Die Rohernten waren als Release-Dateien sogar
+selbst veröffentlicht.
+
+Der Befund war zutreffend. Kaggle-Inhalte lagen an drei Stellen öffentlich:
+zwei Roherntedateien im Release, 9.991 Ablehnungszeilen mit Kennungen und 10.056
+Fundstellen-Zeilen im Snapshot.
+
+**Gelöscht:** die beiden Roherntedateien (Release und lokal); die Kennungen aus
+Ablehnungs- und Fundstellen-Tabelle.
+
+**Behalten:** die Ernte-Manifeste (Lauf, Zeitpunkt, Anzahl, Prüfsumme) und ein
+Sammeleintrag im Ablehnungsregister. Das ist **unsere Buchführung über unser eigenes
+Handeln**, kein Fremdinhalt — und genau der Teil, der die Nachprüfbarkeit trägt.
+
+**Bewusster Eingriff in ein append-only-Register**, hier begründet: Die
+Unantastbarkeit schützt davor, Geschichte stillschweigend hübscher zu machen. Hier
+wurde Material Dritter entfernt, das wir nicht speichern dürfen, und durch einen
+Eintrag ersetzt, der den Vorgang *vollständiger* beschreibt als 9.991 gleichlautende
+Zeilen. Der Eingriff steht im Git-Verlauf und hier.
+
+**Offen und ehrlich vermerkt:** Der Git-Verlauf des Repos enthält die früheren
+Fassungen des Ablehnungsregisters mit den Einzelkennungen. Sie zu tilgen hieße,
+die Historie umzuschreiben — verhältnismäßig wäre das nur, wenn es um mehr ginge als
+um eine Liste von Kennungen. Falls das gewünscht wird, ist es eine eigene Entscheidung.
+
+**Regel daraus:** „Wir veröffentlichen es nicht, wir behalten es nur" ist keine
+Rechtsposition. Wo Speichern untersagt ist, ist Speichern untersagt — auch still.
+
 ## 2026-07-26 — Die Convenience-Stichprobe hat eine Lücke verdeckt (ArcGIS)
 
 Das Messprotokoll ArcGIS wies **100 % Zugriffs-URL** aus (n=200, zwei Seiten der

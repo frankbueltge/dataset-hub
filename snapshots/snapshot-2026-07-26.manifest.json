@@ -1,12 +1,12 @@
 {
   "tag": "snapshot-2026-07-26",
   "schema_version": "0.2.0",
-  "gebaut_am": "2026-07-26T18:50:03Z",
+  "gebaut_am": "2026-07-26T19:22:17Z",
   "zaehler": {
     "eintraege": "17327",
     "werke": "16445",
-    "fundstellen": "29666",
-    "abgelehnt_gesamt": "10408",
+    "fundstellen": "19610",
+    "abgelehnt_gesamt": "417",
     "aufgeloest_versucht": "220",
     "aufgeloest_bestaetigt": "164"
   },
@@ -63,23 +63,23 @@
   "assets": [
     {
       "name": "hub-2026-07-26.sqlite.gz",
-      "sha256": "79d91d47b0c1ffdb6e4328229d65a092bc1ac471f2ab97ae59a031208ef33157",
-      "bytes": 17095301
+      "sha256": "14be1cfa66c2413742ae788a14a65256edb7935214972186eb6a7ac2400136fa",
+      "bytes": 16600374
     },
     {
       "name": "details.json.gz",
-      "sha256": "9aa36257fe1654d0ceb8c19259525efa5530a8cc70997bcc3cecf9e76a6a5a4e",
+      "sha256": "35a10f8ee9a2c747809969ad2344d8dd9031f5f5be7b3fbe750204c2d118a8ce",
       "bytes": 3653864
     },
     {
       "name": "eintraege.json.gz",
-      "sha256": "67e3690869468eb6db19725cc9a672dfa05496052dc3c3e9c454a36acc19aea2",
+      "sha256": "333819574608f11f13535ca31bf3092f2197f1afd571ccdbb37f2a61d6bbfc66",
       "bytes": 570829
     },
     {
       "name": "meta.json.gz",
-      "sha256": "fe39ab6bd29607f87a043a9accca2bbdf9a202583918a8bcb7de013137ca5874",
-      "bytes": 657
+      "sha256": "a067e4913270db700273c7d8bb13734ff829e0f2125ed2a769753a29439fc331",
+      "bytes": 653
     },
     {
       "name": "arcgis-20260726T164554Z.jsonl.gz",
@@ -100,16 +100,6 @@
       "name": "huggingface-20260726T164558Z.jsonl.gz",
       "sha256": "22ad450bb5ea432e3287049dab7972df29b36ea5d4383832be2ef1bad3150966",
       "bytes": 274991
-    },
-    {
-      "name": "kaggle-20260726T164544Z.jsonl.gz",
-      "sha256": "cf8abcc3466d3fa41e1cba30d79388e522810212ae19eafd564112ee26ea830f",
-      "bytes": 16501
-    },
-    {
-      "name": "kaggle-20260726T173348Z.jsonl.gz",
-      "sha256": "247097474dcd426d7aeed81eef8c6ef9d6bc805ecac32775d8b1ee6da330ac7d",
-      "bytes": 2248949
     }
   ]
 }
