@@ -75,6 +75,31 @@ Bestätigung; (2) Beschränkung auf einen Umfang, der ersichtlich nicht „signi
 ist; (3) endgültiges NO-GO. Bis dahin bleibt die Zeile in `QUELLEN_ZURUECKGEHALTEN` —
 sie zu entfernen ist die Rücknahme.
 
+### Der Adapter wird gar nicht gebraucht (Befund 2026-07-26, abends)
+
+Auf Franks Frage „werden die von anderen auch verlinkt" gemessen: **Kaggle registriert
+seine Datensätze selbst als DOIs bei DataCite.** Abfrage
+`api.datacite.org/dois?query=publisher:"Kaggle"&resource-type-id=dataset` →
+**62.274 Treffer**, Präfix `10.34740`, Beispiel `10.34740/kaggle/dsv/18364137` mit
+`url = https://www.kaggle.com/dsv/18364137`.
+
+Damit liegen die Metadaten dieser Datensätze **in DataCites CC0-Bestand** — durch
+Kaggles eigene, bewusste Handlung. Wir bekommen sie also ohnehin, über den
+DataCite-Adapter, rechtlich einwandfrei und in **sechsfacher Menge** gegenüber den
+9.991, die wir über die API genommen hatten. Im bisherigen 24-Stunden-Fenster sind
+bereits 48 solcher Einträge im Bestand.
+
+**Konsequenz:** Der Kaggle-Adapter (`pipeline/ernte_kaggle.py`) ist überflüssig, nicht
+nur zurückgehalten. Er bleibt vorerst als Code stehen, wird aber nicht betrieben; die
+Abdeckung entsteht über DataCite. Die Lehre ist allgemeiner: **Bevor eine Quelle einen
+eigenen Adapter bekommt, prüfen, ob sie ihre Metadaten bereits in ein offenes Register
+einspeist.** Das ist nicht nur sauberer, sondern meist auch vollständiger — und es
+erspart genau die Grauzone, in die wir hier geraten sind.
+
+*(Nebenbefund: `kaggle.com/robots.txt` liefert keine robots.txt, sondern die
+Startseiten-HTML — eine maschinenlesbare Crawling-Regel existiert dort am
+Standardpfad nicht.)*
+
 ## Querbefund: das 10.000er-Fenster (2026-07-26)
 
 Fünf von sieben gemessenen Such-APIs kappen bei **exakt 10.000 erreichbaren Records**
