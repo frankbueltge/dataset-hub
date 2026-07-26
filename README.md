@@ -12,8 +12,10 @@ Two uses, equally weighted:
 The register grows continuously through gated automatic intake; everything admitted
 automatically is visibly marked unverified.
 
-**Status: Phase 1 — measurement.** No harvest adapters exist yet. Every source is
-measured and gated *before* an adapter may be built; the results live in `messungen/`.
+**Status: Phase 2 — core in operation.** Schema v0.1.0 is frozen (`schema/`), the
+first adapter (DataCite, incremental) is live, and snapshots are published as
+tagged releases. Every source is measured and gated *before* an adapter may be
+built; measurements and the GO/NO-GO register live in `messungen/`.
 
 ## Design
 
@@ -42,11 +44,30 @@ The canonical design document (German) lives in the site repository:
 
 | Path | Content |
 |---|---|
+| `schema/` | Frozen schema v0.1.0 (`SCHEMA.md` + JSON Schemas, DCAT-mapped) |
+| `pipeline/` | Harvest/build pipeline (Python 3, stdlib only) + offline tests |
+| `fundstellen/manifeste/` | Manifests of every harvest run (counts, SHA-256, completeness flag) |
+| `pruefungen/` | HTTP resolution results for access URLs (append-only) |
+| `register/` | Rejections (with reason codes) and outages — first-class outputs |
+| `journal/` | Judgment events (merges); rollback = git revert + rebuild |
+| `snapshots/` | Snapshot manifests; data ships as release assets (`snapshot-YYYY-MM-DD`) |
 | `messungen/TEMPLATE.md` | Measurement protocol template incl. gate thresholds |
-| `messungen/skripte/` | Deterministic measurement scripts (Python 3, stdlib only) |
+| `messungen/skripte/` | Deterministic measurement scripts |
 | `messungen/ergebnisse/` | Measurement results (JSON written by the scripts, reports in Markdown) |
 | `messungen/rohdaten/` | Raw API samples (gzip) backing every reported number |
 | `messungen/register.md` | GO / NO-GO register per source |
+
+## Using a snapshot (the query API)
+
+Download the newest `snapshot-*` release assets, check `manifest.json`
+(`schema_version`, SHA-256), then query locally:
+
+```bash
+gunzip hub-<date>.sqlite.gz
+sqlite3 hub-<date>.sqlite "SELECT titel, zugang_url FROM eintraege
+  WHERE id IN (SELECT id FROM eintraege_fts WHERE eintraege_fts MATCH 'climate')
+  AND lizenz_id LIKE 'cc%' LIMIT 20;"
+```
 
 ## Licensing
 
