@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/frankbueltge/dataset-hub/schema/eintrag.schema.json",
   "title": "Eintrag",
-  "description": "Abgeleiteter, normalisierter Katalogeintrag (Schema v0.1.0). Leere Felder bedeuten: von der Quelle nicht angegeben.",
+  "description": "Abgeleiteter, normalisierter Katalogeintrag (Schema v0.2.0). Leere Felder bedeuten: von der Quelle nicht angegeben.",
   "type": "object",
   "required": ["id", "titel", "zugang", "identifikatoren", "status", "fundstellen"],
   "properties": {
@@ -40,7 +40,7 @@
       "properties": {
         "stufe": {"enum": ["open", "registration", "request", "embargoed", "purchase", "closed", ""]},
         "url": {"type": "string"},
-        "geprueft": {"enum": ["none", "landing", "download"]},
+        "geprueft": {"enum": ["none", "versucht", "landing", "download"]},
         "geprueft_am": {"type": "string"},
         "http_status": {"type": ["integer", "null"]},
         "finale_url": {"type": "string"}

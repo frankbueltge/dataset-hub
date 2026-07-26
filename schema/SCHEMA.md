@@ -1,4 +1,11 @@
-# Schema v0.1.0 — eingefroren 2026-07-26
+# Schema v0.2.0 — Stand 2026-07-26
+
+**Änderung 0.1.0 → 0.2.0 (additiv):** `zugang.geprueft` erhält den Wert `versucht`.
+Anlass: Beim ersten Auflösungslauf antworteten 53 von 200 Zugriffswegen mit HTTP 403 —
+alle vom selben Host (GBIF), der automatisierten Zugriff generell abweist, während
+seine API dieselbe Ressource mit 200 ausliefert. Ohne eigenen Wert sähe „geprüft, Host
+verweigert" aus wie „nie geprüft" — genau die Verwechslung, die die Regel „Ausfälle
+vermerken, nie überbrücken" verbietet.
 
 Maßgebliches Design: `frankbueltge.de → docs/superpowers/specs/2026-07-26-dataset-hub-design.md`.
 Versionierung: SemVer. Brechende Änderungen erhöhen die Major-Version; Pipelines der
@@ -48,8 +55,11 @@ Prüfung oder Urteilsroutine sie belegt).
 
 ### Vokabular `zugang.geprueft`
 
-`none` (nicht geprüft) · `landing` (Landing-URL per HTTP aufgelöst, 2xx) ·
-`download` (Datenabruf geprüft). Ein Eintrag behauptet nie mehr, als geprüft wurde.
+`none` (nicht geprüft) · **`versucht`** (aufgelöst, aber nicht bestätigt: der Host
+antwortete nicht mit 2xx — `http_status` sagt warum; 403 heißt meist Bot-Schutz, nicht
+toter Link) · `landing` (Landing-URL per HTTP aufgelöst, 2xx) · `download` (Datenabruf
+geprüft). Ein Eintrag behauptet nie mehr, als geprüft wurde — und nie weniger, als
+tatsächlich versucht wurde.
 
 ## Harte Schranken der Auto-Aufnahme
 

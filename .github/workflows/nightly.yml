@@ -1,0 +1,94 @@
+name: Nächtliche Ernte
+
+# Deterministisch, ohne Modellbeteiligung (Bauregel: kein Modell-API-Aufruf in der
+# Pipeline). Urteilsschritte laufen getrennt als Claude-Code-Routine unter dem Abo.
+
+on:
+  schedule:
+    - cron: "20 3 * * *"
+  workflow_dispatch:
+    inputs:
+      seit:
+        description: "Startzeitpunkt des Erntefensters (ISO, UTC). Leer = letzte 24 h."
+        required: false
+      budget:
+        description: "Anzahl Zugriffswege, die aufgelöst werden"
+        required: false
+        default: "500"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  ernte:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Ernte (inkrementell)
+        working-directory: pipeline
+        run: |
+          if [ -n "${{ inputs.seit }}" ]; then
+            python3 ernte_datacite.py --seit "${{ inputs.seit }}"
+          else
+            python3 ernte_datacite.py
+          fi
+
+      - name: Zugriffswege auflösen (Budget)
+        working-directory: pipeline
+        run: python3 aufloese.py --budget "${{ inputs.budget || 500 }}"
+
+      - name: Bestand bauen
+        working-directory: pipeline
+        run: python3 baue_bestand.py
+
+      - name: Tests
+        run: python3 -m unittest discover -s pipeline/tests
+
+      - name: Snapshot bauen
+        working-directory: pipeline
+        run: python3 baue_snapshot.py
+
+      - name: Register, Manifeste und Prüfungen committen
+        run: |
+          git config user.name "Dataset-Hub"
+          git config user.email "hub@dataset-hub.invalid"
+          git add fundstellen/manifeste register pruefungen snapshots/*.json journal || true
+          if git diff --cached --quiet; then
+            echo "nichts zu committen"
+          else
+            git commit -m "chore(nightly): Ernte, Auflösungen, Register und Snapshot-Manifest"
+            git push
+          fi
+
+      - name: Snapshot veröffentlichen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="snapshot-$(date -u +%Y-%m-%d)"
+          MANIFEST="snapshots/$TAG.manifest.json"
+          # Assets: Bestand + alle Rohernten dieses Laufs
+          FILES=$(python3 -c "
+          import json, pathlib
+          m = json.load(open('$MANIFEST'))
+          for a in m['assets']:
+              for basis in ('snapshots/build', 'fundstellen'):
+                  p = pathlib.Path(basis) / a['name']
+                  if p.exists():
+                      print(p)
+          ")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" $FILES --clobber
+          else
+            gh release create "$TAG" $FILES \
+              --title "Snapshot $TAG" \
+              --notes-file "$MANIFEST"
+          fi

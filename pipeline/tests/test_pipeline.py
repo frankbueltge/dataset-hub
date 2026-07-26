@@ -79,6 +79,19 @@ class TestSchranken(unittest.TestCase):
         self.assertEqual(pruefe(e), "quellstatus-nicht-oeffentlich")
 
 
+class TestAufloesungsStatus(unittest.TestCase):
+    """'versucht' darf nie wie 'none' aussehen (Regel: Ausfälle vermerken, nie überbrücken)."""
+
+    def test_enum_kennt_versucht(self):
+        import json
+        import pathlib
+        schema = json.loads((pathlib.Path(__file__).resolve().parent.parent.parent
+                             / "schema" / "eintrag.schema.json").read_text())
+        werte = schema["properties"]["zugang"]["properties"]["geprueft"]["enum"]
+        self.assertIn("versucht", werte)
+        self.assertIn("none", werte)
+
+
 class TestDedupe(unittest.TestCase):
     def _eintraege(self):
         a = normalisiere_datacite(fundstelle("10.5555/a"))

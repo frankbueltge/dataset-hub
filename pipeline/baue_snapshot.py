@@ -42,7 +42,8 @@ def main():
         "schema_version": meta.get("schema_version"),
         "gebaut_am": jetzt(),
         "zaehler": {k: meta.get(k) for k in
-                    ("eintraege", "werke", "fundstellen", "abgelehnt_gesamt", "aufgeloest")},
+                    ("eintraege", "werke", "fundstellen", "abgelehnt_gesamt",
+                     "aufgeloest_versucht", "aufgeloest_bestaetigt")},
         "quellfenster": quellfenster,
         "assets": [{"name": a.name, "sha256": sha256_datei(a), "bytes": a.stat().st_size}
                    for a in assets],

@@ -74,8 +74,10 @@ def main():
         e = eintraege.get(eid)
         if not e:
             continue
+        # 'versucht' unterscheidet "geprüft, Host antwortete nicht mit 2xx" von
+        # "nie geprüft" — ein 403 (Bot-Schutz) ist kein toter Link und kein Nicht-Versuch.
         e["zugang"].update({
-            "geprueft": "landing" if a.get("ok") else "none",
+            "geprueft": "landing" if a.get("ok") else "versucht",
             "geprueft_am": a.get("datum", ""),
             "http_status": a.get("http_status"),
             "finale_url": a.get("finale_url", "") if a.get("ok") else "",
@@ -140,8 +142,10 @@ def main():
                  ("fundstellen", len(alle_fundstellen)),
                  ("abgelehnt_gesamt", len(abgelehnt)),
                  ("abgelehnt_neu", neu_abgelehnt),
-                 ("aufgeloest", sum(1 for e in eintraege.values()
-                                    if e["zugang"]["geprueft"] != "none"))):
+                 ("aufgeloest_versucht", sum(1 for e in eintraege.values()
+                                             if e["zugang"]["geprueft"] != "none")),
+                 ("aufgeloest_bestaetigt", sum(1 for e in eintraege.values()
+                                               if e["zugang"]["geprueft"] in ("landing", "download")))):
         db.execute("INSERT INTO meta VALUES (?,?)", (k, str(v)))
     db.commit()
     db.close()
