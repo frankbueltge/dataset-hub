@@ -35,7 +35,7 @@ solange `messungen/register.md` für die Quelle kein GO enthält. Gates stehen i
   o. Ä. in Commits/PRs/Inhalten.
 - Git-Identität: `Frank Bültge <f.bueltge@gmail.com>` — NIEMALS `frank@bueltge.de`
   (gehört einer anderen realen Person).
-- Lizenz: Code PolyForm NC 1.0.0, Katalog-Metadaten CC0 (Frank, 2026-07-26).
+- Lizenz: Code Apache 2.0, Werke/Texte CC BY 4.0, Katalog-Metadaten CC0 (Frank, 2026-07-26).
 
 ## Kommandos
 
