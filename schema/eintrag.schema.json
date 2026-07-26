@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/frankbueltge/dataset-hub/schema/eintrag.schema.json",
+  "title": "Eintrag",
+  "description": "Abgeleiteter, normalisierter Katalogeintrag (Schema v0.1.0). Leere Felder bedeuten: von der Quelle nicht angegeben.",
+  "type": "object",
+  "required": ["id", "titel", "zugang", "identifikatoren", "status", "fundstellen"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^dh-[0-9a-f]{16}$"},
+    "werk_id": {"type": "string"},
+    "fassung_id": {"type": "string"},
+    "granularitaet": {"enum": ["collection", "dataset", "file", "service", ""]},
+    "titel": {"type": "string"},
+    "beschreibung": {"type": "string"},
+    "urheber": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {"name": {"type": "string"}, "orcid": {"type": "string"}}
+      }
+    },
+    "herausgeber": {"type": "string"},
+    "publikationsjahr": {"type": ["integer", "null"]},
+    "daten": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {"datum": {"type": "string"}, "typ": {"type": "string"}}
+      }
+    },
+    "raeumlichkeit": {"type": "array"},
+    "lizenz": {
+      "type": "object",
+      "properties": {"id": {"type": "string"}, "roh": {"type": "array"}}
+    },
+    "zugang": {
+      "type": "object",
+      "required": ["stufe", "url", "geprueft"],
+      "properties": {
+        "stufe": {"enum": ["open", "registration", "request", "embargoed", "purchase", "closed", ""]},
+        "url": {"type": "string"},
+        "geprueft": {"enum": ["none", "landing", "download"]},
+        "geprueft_am": {"type": "string"},
+        "http_status": {"type": ["integer", "null"]},
+        "finale_url": {"type": "string"}
+      }
+    },
+    "identifikatoren": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["schema", "wert"],
+        "properties": {"schema": {"type": "string"}, "wert": {"type": "string"}}
+      }
+    },
+    "relationen": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {"typ": {"type": "string"}, "ziel_schema": {"type": "string"}, "ziel": {"type": "string"}}
+      }
+    },
+    "quell_status": {"type": "string"},
+    "status": {"enum": ["ungeprueft", "geprueft", "markiert", "zurueckgezogen"]},
+    "fundstellen": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["quelle", "quell_id", "geerntet"],
+        "properties": {
+          "quelle": {"type": "string"},
+          "quell_id": {"type": "string"},
+          "geerntet": {"type": "string"},
+          "adapter_version": {"type": "string"}
+        }
+      }
+    }
+  }
+}

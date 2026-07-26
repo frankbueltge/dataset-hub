@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/frankbueltge/dataset-hub/schema/fundstelle.schema.json",
+  "title": "Fundstelle",
+  "description": "Ein Eintrag eines Quellkatalogs, wörtlich und unveränderlich (Schema v0.1.0)",
+  "type": "object",
+  "required": ["quelle", "quell_id", "geerntet", "adapter_version", "roh"],
+  "properties": {
+    "quelle": {"type": "string", "minLength": 1},
+    "quell_id": {"type": "string", "minLength": 1},
+    "geerntet": {"type": "string", "format": "date-time"},
+    "adapter_version": {"type": "string"},
+    "roh": {"type": "object", "description": "Quellmetadaten wörtlich, unverändert"}
+  },
+  "additionalProperties": false
+}

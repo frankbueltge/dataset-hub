@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .DS_Store
 .venv/
+fundstellen/*.jsonl.gz
+bestand/
+snapshots/build/
