@@ -1,0 +1,13 @@
+{
+  "lauf": "kaggle-20260726T173348Z",
+  "quelle": "kaggle",
+  "adapter_version": "0.1.0",
+  "bis": "2026-07-26T17:42:09Z",
+  "seiten": 500,
+  "records": 9996,
+  "seitengroesse": 20,
+  "vollstaendig": false,
+  "hinweis": "Seitenkappe erreicht, weitere Seiten möglich",
+  "datei": "kaggle-20260726T173348Z.jsonl.gz",
+  "sha256": "247097474dcd426d7aeed81eef8c6ef9d6bc805ecac32775d8b1ee6da330ac7d"
+}

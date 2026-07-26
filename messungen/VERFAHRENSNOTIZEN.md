@@ -27,6 +27,45 @@ Verzeichnis verhindern soll. Der Vermerk hier ist die Korrektur.
 **nie `git add -A` oder Verzeichnis-weites `git add`** — nur explizite Pfadlisten der
 Dateien, die zum jeweiligen Commit gehören.
 
+## 2026-07-26 — Die Convenience-Stichprobe hat eine Lücke verdeckt (ArcGIS)
+
+Das Messprotokoll ArcGIS wies **100 % Zugriffs-URL** aus (n=200, zwei Seiten der
+Standardsortierung). Im ersten größeren Erntelauf (6.000 Fundstellen → 4.434 Einträge)
+scheiterten **137 Einträge an der Schranke `keine-zugangs-url`** — rund 3 %.
+
+Kein Widerspruch, sondern die vorhergesagte Schwäche: Die Stichprobe war ausdrücklich
+als Convenience-Ziehung markiert („kein Zufallsparameter in der API bekannt"), und
+genau solche Ziehungen unterschätzen seltene Ausfälle. Die Schranke hat gehalten und
+das Fehlende sichtbar ins Ablehnungsregister geschrieben, statt es durchzulassen.
+
+**Regel daraus:** Eine Feldabdeckung aus einer Convenience-Stichprobe ist eine
+Untergrenze für Probleme, keine Zusage. Deckungswerte von 100 % aus solchen Ziehungen
+werden im Register künftig als „100 % in der Stichprobe (Convenience — Ausreißer
+möglich)" geführt, nicht als Eigenschaft der Quelle.
+
+## 2026-07-26 — HEAD ist kein Befund über die Ressource (400 falsche Negative)
+
+Nach der ersten großen Kaggle-Ernte meldete der Auflösungslauf **0 von 400 erfolgreich**
+— zuvor waren es 144 von 200 gewesen. Der Sprung war das Alarmsignal.
+
+Ursache: `aufloese.py` prüfte mit HTTP HEAD und wich nur bei 405/403/501 auf GET aus.
+**Kaggle antwortet auf HEAD mit 404 und auf GET mit 200** (nachgemessen an derselben
+URL). Alle 400 Einträge waren erreichbar und wurden trotzdem als „geprüft, nicht
+bestätigt (404)" vermerkt — genau das falsche Negativ, das im Bestand später wie
+Link-Rot ausgesehen hätte.
+
+Behoben: **Jedem Nicht-2xx aus HEAD wird jetzt mit GET nachgegangen.** Ein
+HEAD-Fehlschlag ist ein Befund über die Methode, nicht über die Ressource. Nach der
+Korrektur: 450 von 450 bestätigt.
+
+Zusätzlich: `aufloese.py --wiederholen` versucht gescheiterte Prüfungen erneut
+(bestätigte bleiben unangetastet). Das Protokoll bleibt append-only — ein neuer
+Eintrag überschreibt den alten nicht, sondern löst ihn ab; `baue_bestand.py` nimmt
+je Eintrag den letzten Stand.
+
+**Regel daraus:** Ein plötzlicher Sprung in einer Erfolgsquote ist zuerst ein Verdacht
+gegen das eigene Messverfahren, nicht gegen die Welt.
+
 ## 2026-07-26 — Erster Auflösungslauf: 403 ist kein toter Link
 
 53 von 200 Zugriffswegen antworteten mit HTTP 403, alle vom selben Host (GBIF).

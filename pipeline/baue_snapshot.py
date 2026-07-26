@@ -27,7 +27,22 @@ def main():
     with open(db_pfad, "rb") as f_in, gzip.open(sqlite_gz, "wb") as f_out:
         shutil.copyfileobj(f_in, f_out)
 
-    assets = [sqlite_gz]
+    # Die Oberflächen-Daten reisen als Release-Dateien mit: die Site holt sie beim Bauen,
+    # statt sie in ihrer Git-Historie mitzuschleppen (14 MB je Stand, nächtlich wachsend).
+    # Erzeugt werden sie von oberflaeche/generiere_index.py; fehlen sie, wird das vermerkt
+    # statt stillschweigend ein Snapshot ohne Oberflächendaten zu veröffentlichen.
+    oberflaeche = SNAPSHOTS.parent / "oberflaeche" / "public" / "daten"
+    fehlend = []
+    for name in ("eintraege.json", "meta.json", "details.json"):
+        quelle = oberflaeche / name
+        if quelle.exists():
+            ziel = BUILD / name
+            with open(quelle, "rb") as f_in, gzip.open(str(ziel) + ".gz", "wb") as f_out:
+                shutil.copyfileobj(f_in, f_out)
+        else:
+            fehlend.append(name)
+
+    assets = [sqlite_gz] + sorted(BUILD.glob("*.json.gz"))
     quellfenster = []
     for m in sorted(MANIFESTE.glob("*.json")):
         manifest = json.loads(m.read_text())
@@ -48,6 +63,8 @@ def main():
         "assets": [{"name": a.name, "sha256": sha256_datei(a), "bytes": a.stat().st_size}
                    for a in assets],
     }
+    if fehlend:
+        manifest["oberflaechendaten_fehlen"] = fehlend
     manifest_pfad = SNAPSHOTS / f"{tag}.manifest.json"
     manifest_pfad.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
 

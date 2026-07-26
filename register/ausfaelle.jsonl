@@ -1,3 +1,5 @@
 {"datum": "2026-07-26T16:45:47Z", "quelle": "kaggle", "lauf": "kaggle-20260726T164544Z", "fehler": "Seitenkappe erreicht", "kontext": "max_seiten=3"}
 {"datum": "2026-07-26T16:45:56Z", "quelle": "arcgis", "lauf": "arcgis-20260726T164554Z", "fehler": "Seitenkappe erreicht", "kontext": "max_seiten=3"}
 {"datum": "2026-07-26T16:46:00Z", "quelle": "huggingface", "lauf": "huggingface-20260726T164558Z", "fehler": "Seitenkappe erreicht", "kontext": "max_seiten=3"}
+{"datum": "2026-07-26T17:34:37Z", "quelle": "arcgis", "lauf": "arcgis-20260726T173351Z", "fehler": "Seitenkappe erreicht", "kontext": "max_seiten=60"}
+{"datum": "2026-07-26T17:42:09Z", "quelle": "kaggle", "lauf": "kaggle-20260726T173348Z", "fehler": "Seitenkappe erreicht", "kontext": "max_seiten=500"}

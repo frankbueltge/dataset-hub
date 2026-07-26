@@ -1,14 +1,14 @@
 {
   "tag": "snapshot-2026-07-26",
   "schema_version": "0.2.0",
-  "gebaut_am": "2026-07-26T16:53:47Z",
+  "gebaut_am": "2026-07-26T17:56:07Z",
   "zaehler": {
-    "eintraege": "13297",
-    "werke": "12415",
-    "fundstellen": "13670",
-    "abgelehnt_gesamt": "280",
-    "aufgeloest_versucht": "220",
-    "aufgeloest_bestaetigt": "164"
+    "eintraege": "27318",
+    "werke": "26436",
+    "fundstellen": "29666",
+    "abgelehnt_gesamt": "417",
+    "aufgeloest_versucht": "670",
+    "aufgeloest_bestaetigt": "614"
   },
   "quellfenster": [
     {
@@ -17,6 +17,14 @@
       "seit": null,
       "bis": "2026-07-26T16:45:56Z",
       "records": 300,
+      "vollstaendig": false
+    },
+    {
+      "lauf": "arcgis-20260726T173351Z",
+      "quelle": "arcgis",
+      "seit": null,
+      "bis": "2026-07-26T17:34:37Z",
+      "records": 6000,
       "vollstaendig": false
     },
     {
@@ -42,18 +50,46 @@
       "bis": "2026-07-26T16:45:47Z",
       "records": 60,
       "vollstaendig": false
+    },
+    {
+      "lauf": "kaggle-20260726T173348Z",
+      "quelle": "kaggle",
+      "seit": null,
+      "bis": "2026-07-26T17:42:09Z",
+      "records": 9996,
+      "vollstaendig": false
     }
   ],
   "assets": [
     {
       "name": "hub-2026-07-26.sqlite.gz",
-      "sha256": "c29b9811246651cfb63ab0ded434727323262284c3e6deb877713ad0749c3521",
-      "bytes": 13647563
+      "sha256": "2f59e961927b81e75adc1dce17e84ee8bc04c7389e5520262c4777f1dc23b8e1",
+      "bytes": 19335397
+    },
+    {
+      "name": "details.json.gz",
+      "sha256": "907bb02301a398f4927a29b8461bbe316ecd8140558213b33e2ce7293ffe0f71",
+      "bytes": 3613692
+    },
+    {
+      "name": "eintraege.json.gz",
+      "sha256": "b8baf4072e9dd62428e42942780d9d660023e3f17cf203520ac50ef1aae19360",
+      "bytes": 1745678
+    },
+    {
+      "name": "meta.json.gz",
+      "sha256": "de96d4fb2e61226af21a7fc9629e9800b950fe8a75a5f9192f53b64e76e1bac8",
+      "bytes": 635
     },
     {
       "name": "arcgis-20260726T164554Z.jsonl.gz",
       "sha256": "e2b103e5beabe455ef3418a788fc10021fe205e8d5fcd9aad11d853f645fb249",
       "bytes": 45346
+    },
+    {
+      "name": "arcgis-20260726T173351Z.jsonl.gz",
+      "sha256": "1f33c33561e738368926d6393312ea4e8d444dd52ba884ae514b9a0eeb2ca37e",
+      "bytes": 985153
     },
     {
       "name": "datacite-20260726T150046Z.jsonl.gz",
@@ -69,6 +105,11 @@
       "name": "kaggle-20260726T164544Z.jsonl.gz",
       "sha256": "cf8abcc3466d3fa41e1cba30d79388e522810212ae19eafd564112ee26ea830f",
       "bytes": 16501
+    },
+    {
+      "name": "kaggle-20260726T173348Z.jsonl.gz",
+      "sha256": "247097474dcd426d7aeed81eef8c6ef9d6bc805ecac32775d8b1ee6da330ac7d",
+      "bytes": 2248949
     }
   ]
 }

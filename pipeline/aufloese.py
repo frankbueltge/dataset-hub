@@ -28,18 +28,34 @@ def lade_eintraege():
 
 
 def loese_auf(url: str):
-    """HEAD zuerst; bei Methoden-Problemen GET ohne Körperlesen."""
+    """HEAD zuerst (billig), aber jedem Nicht-2xx wird mit GET nachgegangen.
+
+    HEAD ist im Web unzuverlässig implementiert: Kaggle etwa antwortet auf HEAD mit
+    404 und auf GET mit 200 (gemessen 2026-07-26 — 400 Einträge waren dadurch
+    fälschlich als nicht erreichbar vermerkt). Ein HEAD-Fehlschlag ist deshalb kein
+    Befund über die Ressource, sondern nur über die Methode; erst das GET zählt.
+    """
     status, _, _, finale = hole(url, timeout=20, versuche=1, accept="*/*",
                                 methode="HEAD", koerper_lesen=False)
-    if status in (405, 403, 501):
-        status, _, _, finale = hole(url, timeout=20, versuche=1, accept="*/*",
+    if not (200 <= status < 300):
+        status, _, _, finale = hole(url, timeout=25, versuche=1, accept="*/*",
                                     koerper_lesen=False)
     return status, finale
 
 
-def main(budget: int, drossel: float):
+def main(budget: int, drossel: float, wiederholen: bool = False):
     pfad = PRUEFUNGEN / "aufloesungen.jsonl"
-    schon = {z["id"] for z in jsonl_lesen(pfad)}
+    # Letzter Stand je id — das Protokoll bleibt append-only, ein neuer Eintrag
+    # überschreibt den alten nicht, sondern löst ihn ab (baue_bestand nimmt den letzten).
+    letzte = {}
+    for z in jsonl_lesen(pfad):
+        letzte[z["id"]] = z
+    if wiederholen:
+        # Nur bestätigte Prüfungen überspringen: gescheiterte werden erneut versucht.
+        # Nötig, wenn ein Fehler im Prüfverfahren selbst falsche Negative erzeugt hat.
+        schon = {i for i, z in letzte.items() if z.get("ok")}
+    else:
+        schon = set(letzte)
     eintraege = lade_eintraege()
     kandidaten = [e for e in eintraege.values()
                   if e["id"] not in schon and e["zugang"]["url"]]
@@ -71,5 +87,7 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--budget", type=int, default=200)
     p.add_argument("--drossel", type=float, default=0.3)
+    p.add_argument("--wiederholen", action="store_true",
+                   help="gescheiterte Prüfungen erneut versuchen (bestätigte bleiben)")
     a = p.parse_args()
-    main(a.budget, a.drossel)
+    main(a.budget, a.drossel, a.wiederholen)
