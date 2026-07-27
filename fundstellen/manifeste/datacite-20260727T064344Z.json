@@ -1,0 +1,13 @@
+{
+  "lauf": "datacite-20260727T064344Z",
+  "quelle": "datacite",
+  "adapter_version": "0.1.0",
+  "seit": "2026-07-26T06:43:44Z",
+  "bis": "2026-07-27T06:45:02Z",
+  "seiten": 13,
+  "records": 12915,
+  "gesamt_gemeldet_im_fenster": 12907,
+  "vollstaendig": true,
+  "datei": "datacite-20260727T064344Z.jsonl.gz",
+  "sha256": "536e55a2a47943795f3e23769ca63a098caa0acd496d65373ab204e5f60a414f"
+}

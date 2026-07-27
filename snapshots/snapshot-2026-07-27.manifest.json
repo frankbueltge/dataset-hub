@@ -1,0 +1,98 @@
+{
+  "tag": "snapshot-2026-07-27",
+  "schema_version": "0.2.0",
+  "gebaut_am": "2026-07-27T06:53:04Z",
+  "zaehler": {
+    "eintraege": "12915",
+    "werke": "11502",
+    "fundstellen": "12915",
+    "abgelehnt_gesamt": "0",
+    "aufgeloest_versucht": "699",
+    "aufgeloest_bestaetigt": "382"
+  },
+  "quellfenster": [
+    {
+      "lauf": "arcgis-20260726T164554Z",
+      "quelle": "arcgis",
+      "seit": null,
+      "bis": "2026-07-26T16:45:56Z",
+      "records": 300,
+      "vollstaendig": false
+    },
+    {
+      "lauf": "arcgis-20260726T173351Z",
+      "quelle": "arcgis",
+      "seit": null,
+      "bis": "2026-07-26T17:34:37Z",
+      "records": 6000,
+      "vollstaendig": false
+    },
+    {
+      "lauf": "datacite-20260726T150046Z",
+      "quelle": "datacite",
+      "seit": "2026-07-25T15:00:46Z",
+      "bis": "2026-07-26T15:01:34Z",
+      "records": 13010,
+      "vollstaendig": true
+    },
+    {
+      "lauf": "datacite-20260727T064344Z",
+      "quelle": "datacite",
+      "seit": "2026-07-26T06:43:44Z",
+      "bis": "2026-07-27T06:45:02Z",
+      "records": 12915,
+      "vollstaendig": true
+    },
+    {
+      "lauf": "huggingface-20260726T164558Z",
+      "quelle": "huggingface",
+      "seit": null,
+      "bis": "2026-07-26T16:46:00Z",
+      "records": 300,
+      "vollstaendig": false
+    },
+    {
+      "lauf": "kaggle-20260726T164544Z",
+      "quelle": "kaggle",
+      "seit": null,
+      "bis": "2026-07-26T16:45:47Z",
+      "records": 60,
+      "vollstaendig": false
+    },
+    {
+      "lauf": "kaggle-20260726T173348Z",
+      "quelle": "kaggle",
+      "seit": null,
+      "bis": "2026-07-26T17:42:09Z",
+      "records": 9996,
+      "vollstaendig": false
+    }
+  ],
+  "assets": [
+    {
+      "name": "hub-2026-07-27.sqlite.gz",
+      "sha256": "fd1e12455a5f8751988ed01586282eb114692ec471f4b75032b9bf04fbac89f1",
+      "bytes": 21805404
+    },
+    {
+      "name": "details.json.gz",
+      "sha256": "c6b64607e06540f40271367f5cf0557a4ca354255549be1ccd2b003c57383457",
+      "bytes": 4145930
+    },
+    {
+      "name": "eintraege.json.gz",
+      "sha256": "843bebca14beae5fb99200da90cff6a1549d24bd902c2ffb55207ec49ce23d04",
+      "bytes": 533389
+    },
+    {
+      "name": "meta.json.gz",
+      "sha256": "fb27caf70cf549f171cdb3f2ee27d69911918c7577f79d87c2d784071a0ba9d2",
+      "bytes": 656
+    },
+    {
+      "name": "datacite-20260727T064344Z.jsonl.gz",
+      "sha256": "536e55a2a47943795f3e23769ca63a098caa0acd496d65373ab204e5f60a414f",
+      "bytes": 7422638
+    }
+  ]
+}
