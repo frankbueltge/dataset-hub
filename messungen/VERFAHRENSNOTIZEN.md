@@ -3,6 +3,47 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-07-27 — Der nächtliche Lauf ersetzte den Bestand, statt ihn zu ergänzen
+
+**Was passierte:** Der erste automatische Lauf war erfolgreich — und schrumpfte den
+Bestand von **17.327 auf 12.915 Einträge**. Ursache: Die Rohernten (`fundstellen/*.jsonl.gz`)
+liegen bewusst nicht in Git, sondern als Release-Assets. Auf GitHubs Rechner mit frischem
+Checkout sah der Lauf deshalb **nur seine eigene Ernte der letzten 24 Stunden** und baute
+den Bestand daraus neu.
+
+**Der schlimmere Teil:** Die Ernte-Manifeste liegen sehr wohl in Git. Das Snapshot-Manifest
+wies deshalb weiterhin **alle sieben Erntefenster** aus — der Snapshot behauptete einen
+Inhalt, den er nicht hatte. Ein zu kleiner Bestand ist ein Mangel; ein Bestand, der mehr
+behauptet, als in ihm steckt, ist ein Fehler der Sorte, gegen die dieses Projekt gebaut ist.
+
+**Behoben, zweifach:**
+1. Der nächtliche Lauf holt die Rohernten des letzten Releases zurück, bevor er erntet.
+   Schlägt das fehl, wird es als Warnung protokolliert, nicht verschwiegen.
+2. `baue_snapshot.py` führt je Erntefenster `rohernte_im_bau` mit und schreibt bei
+   Fehlern `rohernten_nicht_im_bau` samt Hinweis ins Manifest. Ein Snapshot kann jetzt
+   klein sein, aber nicht mehr lügen.
+
+**Regel daraus:** Was in Git liegt (Manifeste) und was daneben liegt (Rohernten), driftet
+auseinander, sobald ein anderer Rechner baut. Jede Aussage über einen Bestand muss aus dem
+Bestand selbst kommen, nie aus seiner Buchführung.
+
+## 2026-07-27 — GitHubs Zeitplan ist ein Vorschlag, kein Termin
+
+Die Urteilsroutine (geplant 06:02 UTC) lief um 06:05 und fand keinen Bestand. Der
+nächtliche Lauf (geplant 03:20) startete erst um **06:43** — 3½ Stunden zu spät. Geplante
+GitHub-Actions-Läufe sind ausdrücklich „best effort" und werden bei Last verschoben.
+
+Die Routine hat sich dabei **richtig verhalten**: Ursache geprüft (Workflow-Läufe abgefragt,
+`total_count: 0` festgestellt), nichts überbrückt, nichts committet, Befund hier vermerkt.
+
+**Behoben:** `kandidaten.py --aus-snapshot` holt den jüngsten veröffentlichten Bestand
+selbst. Der Snapshot IST der vorgesehene Datenweg (`SNAPSHOT-API.md`) — ihn zu nutzen ist
+kein Behelf. Die Routine hängt damit nicht mehr an einer Uhrzeit, sondern am jeweils
+neuesten veröffentlichten Stand; welcher das war, steht in `urteil/vorlage.json`.
+
+**Regel daraus:** Eine Routine, die auf eine andere wartet, darf nicht auf deren Uhrzeit
+bauen, sondern nur auf deren veröffentlichtes Ergebnis.
+
 ## 2026-07-27 — Urteilsroutine ohne Bestand: „Nachts" hat nicht stattgefunden
 
 **Was passierte:** Die Urteilsroutine startete wie im Startauftrag vorgesehen mit

@@ -18,16 +18,57 @@ Bereits beurteilte Paare werden übersprungen: Das Journal führt `merge` UND
 `kein_merge`, damit dieselbe Frage nicht monatlich neu gestellt wird.
 """
 import argparse
+import gzip
 import itertools
 import json
+import os
 import random
 import re
 import sqlite3
+import sys
+import pathlib
 import unicodedata
+import urllib.request
 
-from hub_lib import BESTAND, JOURNAL, WURZEL, jetzt, jsonl_lesen
+from hub_lib import BESTAND, JOURNAL, UA, WURZEL, jetzt, jsonl_lesen
 
 URTEIL = WURZEL / "urteil"
+REPO = "frankbueltge/dataset-hub"
+
+
+def snapshot_holen() -> pathlib.Path:
+    """Holt den jüngsten veröffentlichten Bestand.
+
+    Die Urteilsroutine läuft in einem frischen Checkout, in dem `bestand/` (gitignored)
+    nie existiert — sie kann also nicht auf einen lokalen Bau warten. Am 27.07. ist das
+    aufgefallen: Der nächtliche Lauf startete mit 3½ Stunden Verspätung (GitHubs
+    Zeitplan ist bestenfalls ein Vorschlag), die Routine lief davor und fand nichts.
+
+    Der veröffentlichte Snapshot IST der vorgesehene Datenweg (SNAPSHOT-API.md) — ihn zu
+    nutzen ist kein Behelf, sondern der Vertrag. Welcher Stand beurteilt wurde, steht
+    anschließend in `urteil/vorlage.json`.
+    """
+    kopf = {"User-Agent": UA, "Accept": "application/vnd.github+json"}
+    if os.environ.get("GITHUB_TOKEN"):
+        kopf["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
+
+    def hole(url, roh=False):
+        with urllib.request.urlopen(urllib.request.Request(url, headers=kopf), timeout=120) as r:
+            return r.read() if roh else json.loads(r.read())
+
+    releases = [r for r in hole(f"https://api.github.com/repos/{REPO}/releases")
+                if r["tag_name"].startswith("snapshot-") and not r["draft"]]
+    if not releases:
+        sys.exit("AUSFALL: kein Snapshot-Release gefunden — das ist kein leeres Register.")
+    rel = sorted(releases, key=lambda r: r["tag_name"], reverse=True)[0]
+    asset = next((a for a in rel["assets"] if a["name"].endswith(".sqlite.gz")), None)
+    if not asset:
+        sys.exit(f"AUSFALL: im Release {rel['tag_name']} fehlt der Bestand (*.sqlite.gz).")
+    BESTAND.mkdir(exist_ok=True)
+    ziel = BESTAND / "hub.sqlite"
+    print(f"… beurteilt wird {rel['tag_name']} ({asset['size'] / 1e6:.0f} MB)", flush=True)
+    ziel.write_bytes(gzip.decompress(hole(asset["browser_download_url"], roh=True)))
+    return ziel, rel["tag_name"]
 
 
 def normalisiere_titel(titel: str) -> str:
@@ -117,8 +158,11 @@ def merge_kandidaten(eintraege, beurteilt):
     return kandidaten
 
 
-def main(stichprobe_n: int, max_kandidaten: int, saat: int):
+def main(stichprobe_n: int, max_kandidaten: int, saat: int, aus_snapshot: bool):
     URTEIL.mkdir(exist_ok=True)
+    stand = "lokaler Bau"
+    if aus_snapshot or not (BESTAND / "hub.sqlite").exists():
+        _, stand = snapshot_holen()
     db = sqlite3.connect(BESTAND / "hub.sqlite")
     db.row_factory = sqlite3.Row
     eintraege = lade(db)
@@ -160,6 +204,7 @@ def main(stichprobe_n: int, max_kandidaten: int, saat: int):
         "bereits_beurteilte_paare": len(beurteilt),
         "stichprobe": len(gezogen),
         "saat": saat,
+        "beurteilter_stand": stand,
     }
     (URTEIL / "vorlage.json").write_text(json.dumps(bericht, indent=2,
                                                     ensure_ascii=False) + "\n")
@@ -175,5 +220,8 @@ if __name__ == "__main__":
     p.add_argument("--max-kandidaten", type=int, default=40)
     p.add_argument("--saat", type=int, required=True,
                    help="Zufallssaat (z. B. YYYYMMDD) — macht den Lauf reproduzierbar")
+    p.add_argument("--aus-snapshot", action="store_true",
+                   help="den jüngsten veröffentlichten Bestand holen statt eines lokalen Baus "
+                        "(Standard, wenn lokal keiner existiert)")
     a = p.parse_args()
-    main(a.stichprobe, a.max_kandidaten, a.saat)
+    main(a.stichprobe, a.max_kandidaten, a.saat, a.aus_snapshot)

@@ -43,14 +43,24 @@ def main():
             fehlend.append(name)
 
     assets = [sqlite_gz] + sorted(BUILD.glob("*.json.gz"))
-    quellfenster = []
+    quellfenster, fehlende_rohernten = [], []
     for m in sorted(MANIFESTE.glob("*.json")):
         manifest = json.loads(m.read_text())
-        quellfenster.append({k: manifest.get(k) for k in
-                             ("lauf", "quelle", "seit", "bis", "records", "vollstaendig")})
-        rohdatei = MANIFESTE.parent / manifest["datei"]
-        if rohdatei.exists():
-            assets.append(rohdatei)
+        # Ein Erntefenster darf nur behauptet werden, wenn seine Rohernte beim Bau
+        # tatsächlich vorlag. Am 27.07. war das nicht so: Die Manifeste liegen in Git,
+        # die Rohernten nur in den Releases — der nächtliche Lauf sah auf fremdem
+        # Rechner nur seine eigene Ernte und baute 12.915 statt 17.327 Einträge, während
+        # das Manifest weiter alle sieben Fenster auswies. Ein Snapshot, der mehr
+        # behauptet, als in ihm steckt, ist schlimmer als ein kleiner Snapshot.
+        dateien = manifest.get("dateien") or ([manifest["datei"]] if manifest.get("datei") else [])
+        vorhanden = [d for d in dateien if (MANIFESTE.parent / d).exists()]
+        eintrag = {k: manifest.get(k) for k in
+                   ("lauf", "quelle", "seit", "bis", "records", "vollstaendig")}
+        eintrag["rohernte_im_bau"] = bool(vorhanden) and len(vorhanden) == len(dateien)
+        if not eintrag["rohernte_im_bau"]:
+            fehlende_rohernten.append(manifest.get("lauf"))
+        quellfenster.append(eintrag)
+        assets.extend(MANIFESTE.parent / d for d in vorhanden)
 
     manifest = {
         "tag": tag,
@@ -65,6 +75,12 @@ def main():
     }
     if fehlend:
         manifest["oberflaechendaten_fehlen"] = fehlend
+    if fehlende_rohernten:
+        manifest["rohernten_nicht_im_bau"] = fehlende_rohernten
+        manifest["hinweis"] = (
+            f"{len(fehlende_rohernten)} Erntelauf/-läufe sind in diesem Bestand NICHT "
+            "enthalten — ihre Rohernten lagen beim Bau nicht vor. Die Zähler beziehen "
+            "sich nur auf das tatsächlich Gebaute.")
     manifest_pfad = SNAPSHOTS / f"{tag}.manifest.json"
     manifest_pfad.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
 

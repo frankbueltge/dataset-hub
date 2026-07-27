@@ -33,6 +33,27 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Bisherige Rohernten aus dem letzten Release zurückholen
+        # Die Rohernten liegen NICHT in Git (zu groß), sondern als Release-Assets. Ohne
+        # diesen Schritt sieht der Lauf auf GitHubs Rechner nur seine eigene frische
+        # Ernte und ERSETZT den Bestand, statt ihn zu ergänzen — am 27.07. schrumpfte er
+        # so von 17.327 auf 12.915 Einträge. Fehlschlag ist hier kein Beinbruch, aber er
+        # wird vermerkt: der Snapshot weist danach selbst aus, welche Erntefenster fehlen.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p fundstellen
+          VORHER=$(gh release list --limit 20 --json tagName --jq \
+            '[.[] | select(.tagName | startswith("snapshot-"))] | sort_by(.tagName) | reverse | .[0].tagName')
+          if [ -z "$VORHER" ]; then
+            echo "::warning::Kein früheres Snapshot-Release — der Bestand beginnt bei dieser Ernte."
+          else
+            echo "Hole Rohernten aus $VORHER"
+            gh release download "$VORHER" --pattern '*.jsonl.gz' --dir fundstellen --clobber \
+              || echo "::warning::Rohernten aus $VORHER nicht ladbar — der Bestand wird unvollständig gebaut und weist das im Manifest aus."
+            ls -1 fundstellen/*.jsonl.gz 2>/dev/null | wc -l | xargs echo "  zurückgeholte Rohernten:"
+          fi
+
       - name: Ernte (inkrementell)
         working-directory: pipeline
         run: |

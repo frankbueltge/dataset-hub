@@ -13,8 +13,14 @@ Schranken, Bestandsbau. Die Routine bekommt fertige Vorlagen und gibt Urteile zu
 
 ```bash
 git pull
-cd pipeline && python3 kandidaten.py --saat $(date -u +%Y%m%d)
+cd pipeline && python3 kandidaten.py --saat $(date -u +%Y%m%d) --aus-snapshot
 ```
+
+`--aus-snapshot` holt den **jüngsten veröffentlichten Bestand** — nicht einen lokalen Bau,
+den es in deinem Checkout gar nicht gibt. Damit hängst du nicht daran, ob die nächtliche
+Ernte pünktlich war (sie ist es oft nicht: GitHubs Zeitplan ist „best effort", am 27.07.
+lief sie 3½ Stunden zu spät). Welchen Stand du beurteilt hast, steht in
+`urteil/vorlage.json` unter `beurteilter_stand` — nenne ihn in der Commit-Nachricht.
 
 Das erzeugt drei Dateien in `urteil/`:
 
@@ -72,12 +78,16 @@ Zugriffsweg zum angekündigten Datensatz? Ist die Zuordnung plausibel?
 ### 3. Abschluss
 
 ```bash
-cd pipeline && python3 baue_bestand.py && python3 -m unittest discover -s tests
-cd ../oberflaeche && python3 generiere_index.py
+python3 -m unittest discover -s pipeline/tests
 ```
 
-Dann committen (nur explizite Pfade, nie `git add -A`) und pushen. Der Site-Build läuft
-ohnehin um 03:50 UTC.
+Dann **nur das Journal** committen (`journal/entscheidungen.jsonl`, dazu ggf.
+`messungen/VERFAHRENSNOTIZEN.md`) und pushen — explizite Pfade, nie `git add -A`.
+
+**Du baust den Bestand nicht selbst.** Urteile sind Journal-Ereignisse; sie wirken beim
+nächsten nächtlichen Bau, der sie anwendet. Das ist so gewollt: Dein Beitrag ist das
+Urteil, nicht der Bau — und ein halb gebauter Bestand aus einer Urteilssitzung wäre
+schlimmer als gar keiner.
 
 ## Verbindliche Regeln
 
