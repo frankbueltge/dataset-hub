@@ -3,6 +3,45 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-07-27 — Urteilsroutine ohne Bestand: „Nachts" hat nicht stattgefunden
+
+**Was passierte:** Die Urteilsroutine startete wie im Startauftrag vorgesehen mit
+`cd pipeline && python3 kandidaten.py --saat 20260727`. Das Skript brach ab:
+
+```
+sqlite3.OperationalError: unable to open database file
+```
+
+`bestand/hub.sqlite` existiert in diesem Checkout nicht, weil `bestand/` gitignored
+ist und lokal nie gebaut wurde. `fundstellen/*.jsonl.gz` (ebenfalls gitignored,
+laut `schema/SCHEMA.md` nur als Snapshot-Release-Assets abgelegt) fehlen aus
+demselben Grund. Ursache geprüft, nicht vermutet: `actions_list
+list_workflow_runs` für `.github/workflows/nightly.yml` und für das Repository
+insgesamt meldet `total_count: 0` — der Workflow ist laut `list_workflows` seit
+2026-07-26T17:08:21+02:00 aktiv und für 03:20 UTC täglich geplant, ist zum
+Zeitpunkt dieses Laufs (2026-07-27T06:05 UTC, also nach der geplanten Zeit) aber
+**noch kein einziges Mal gelaufen**. Der einzige vorhandene Datenstand ist die
+manuell veröffentlichte Release `snapshot-2026-07-26` vom Vortag.
+
+**Nicht getan:** Kein Rückgriff auf die Release-Assets von `snapshot-2026-07-26`
+(`hub-2026-07-26.sqlite.gz`, die Rohernte-`*.jsonl.gz`), um `bestand/` und
+`fundstellen/` lokal nachzubauen und die Urteilsroutine damit doch laufen zu
+lassen. Das wäre ein Überbrücken des eigentlichen Befunds (die nächtliche Ernte
+hat nicht stattgefunden) gewesen und hätte Urteile auf einen einen Tag alten,
+nicht als „fertig geprüft" ausgewiesenen Stand gestützt — dazu bräuchte ohnehin
+Schritt 4 (`baue_bestand.py`) dieselben lokal fehlenden `fundstellen/*.jsonl.gz`
+für einen echten Neubau, den ein einmaliger Asset-Download nicht liefert.
+
+**Ergebnis:** Keine Kandidaten beurteilt, keine Stichprobe gesichtet, nichts
+committet oder gepusht. `journal/entscheidungen.jsonl` ist unverändert leer.
+
+**Regel/Prüfauftrag daraus:** Vor der nächsten Urteilsroutine klären, warum der
+geplante `schedule`-Trigger in `.github/workflows/nightly.yml` nicht ausgelöst
+hat (Actions für das Repo aktiviert? erster Cron-Lauf nach Anlage eines neuen
+Workflows kann verzögert sein — aber nicht ergebnislos ausbleiben). Bis geklärt:
+die Urteilsroutine bricht bei fehlendem `bestand/hub.sqlite` ab, statt sich aus
+Release-Assets zu behelfen.
+
 ## 2026-07-26 — Commits haben fremde Arbeitsdateien eingesammelt
 
 **Was passierte:** Während eine parallele Messsitzung (ArcGIS Hub, Kaggle) im selben
