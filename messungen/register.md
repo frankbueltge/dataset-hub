@@ -49,6 +49,34 @@ Kein Rechtsrat — gelesen, zitiert, und wo mehrdeutig, als mehrdeutig vermerkt.
 | **ArcGIS Hub** | Lizenz je Eintrag in der API (`license`, `structuredLicense`) | Discovery-Schicht über offene Verwaltungsdaten; jeder Eintrag trägt seine eigene Lizenz. Im geernteten Bestand: 635 CC-BY-4.0, 160 ODbL, 113 CC0, 54 CC-BY-SA, 18 PDDL — aber **3.180 `custom` und 86 `none`** | **bedingt.** Metadaten sind Fakten (Titel, Organisation, URL); Beschreibungen aus `custom`/`none`-Einträgen NICHT im Wortlaut veröffentlichen, bis die Einzellizenz ausgewertet wird |
 | **HuggingFace** | `huggingface.co/terms-of-service` | Für öffentliche Repositorien: *„you grant each User a perpetual, irrevocable, worldwide, royalty-free, non-exclusive license to use, display, publish, reproduce, distribute, and make derivative works of your Content **through our Services and functionalities**"* | **bedingt.** Der Zusatz „through our Services" lässt offen, ob die Erlaubnis außerhalb der Plattform trägt. Bei 20 Einträgen derzeit ohne Gewicht; vor einem größeren Lauf klären |
 
+### Nachtrag 2026-07-27: Richtlinie erneut gelesen
+
+Anlass: Der Bulk-Abbau aus dem DataCite Public Data File hat die Nutzung von einer
+API-Ernte (13.010 Einträge) auf einen Massen-Extrakt verschoben (56.620.404 gelesen,
+16.443 aufgenommen). Bei dieser Größenordnung trägt das Datenbankherstellerrecht
+(§ 87b UrhG) die Frage, nicht mehr das Urheberrecht am Einzeldatensatz.
+
+Der CC0-Verzicht gilt unverändert und deckt ausdrücklich auch Datenbankrechte. Drei
+Punkte der Richtlinie standen aber noch nicht im Register:
+
+1. **Nicht gedeckt: Persönlichkeitsrechte.** Der Verzicht erstreckt sich ausdrücklich
+   NICHT auf „rights of individuals featured in the data, including privacy and
+   publicity rights". Die Urhebernamen und ORCID-Kennungen im Bestand sind damit
+   unsere Verantwortung, nicht durch CC0 freigestellt. Stand 27.07.: **20.082
+   verschiedene Namen, 15.240 ORCID-Nennungen** im Kernbestand. Abgedeckt über die
+   Datenschutzerklärung der Site (Art.-21-Widerspruch, Entfernungsweg, Archiv-Hinweis).
+2. **Nicht gedeckt: die verlinkten Ressourcen selbst.** Der Verzicht betrifft die
+   Metadaten, nicht die Datensätze, auf die sie zeigen. Das Register verweist nur —
+   es kopiert keine Inhalte der Zielressourcen.
+3. **Community-Normen (erbeten, nicht verpflichtend):** Namensnennung von DataCite als
+   Quelle, keine sinnentstellende Veränderung, Rückmeldung zur Nutzung. Die
+   Namensnennung ist am 27.07. auf der Registerseite ergänzt worden — nicht weil sie
+   verlangt wird, sondern weil dieselbe Ökologie für ihre eigenen Werke auf
+   Namensnennung besteht.
+
+Ebenfalls vermerkt: DataCite gibt keine Gewährleistung und übernimmt keine Haftung
+für die Nutzung der Datei.
+
 ### Kaggle: zurückgehalten (2026-07-26)
 
 Die 9.991 Einträge sind **aus dem Bestand genommen** (`schranken.py:
@@ -62,6 +90,14 @@ Speichern — und unseres liegt öffentlich (Frank, 2026-07-26; siehe
 `VERFAHRENSNOTIZEN.md`). Erhalten bleiben nur die Ernte-Manifeste und ein
 Sammeleintrag im Ablehnungsregister: unsere Buchführung über unser eigenes Handeln,
 ohne Fremdinhalt.
+
+**Nachtrag 2026-07-27:** Die Löschung betraf die Ernten, nicht die Messrohdaten —
+vier Dateien (rund 117 KB, größte mit 200 Datensätzen) lagen weiter in
+`messungen/rohdaten/`. Sie sind jetzt entfernt. Damit ist die Kaggle-Messung
+(`2026-07-26-kaggle.md`) **nicht mehr durch Rohdaten gedeckt**; ihre Zahlen bleiben
+im Bericht, sind aber nicht nachrechenbar. Das ist der Preis der strengeren Lesart
+und hier gewollt. In der Git-Historie bleiben die Dateien abrufbar; sie dafür
+umzuschreiben wäre unverhältnismäßig.
 
 Abwägung, offen dargelegt: Wir haben die **dokumentierte öffentliche API** genutzt
 (`/api/v1/datasets/list`), nicht die Website gescrapt — programmatischer Zugriff ist

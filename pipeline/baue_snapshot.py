@@ -33,7 +33,7 @@ def main():
     # statt stillschweigend ein Snapshot ohne Oberflächendaten zu veröffentlichen.
     oberflaeche = SNAPSHOTS.parent / "oberflaeche" / "public" / "daten"
     fehlend = []
-    for name in ("eintraege.json", "meta.json", "details.json"):
+    for name in ("eintraege.json", "meta.json", "details.json", "werke.json", "liste.json"):
         quelle = oberflaeche / name
         if quelle.exists():
             ziel = BUILD / name
@@ -66,9 +66,16 @@ def main():
         "tag": tag,
         "schema_version": meta.get("schema_version"),
         "gebaut_am": jetzt(),
+        # "eintraege" ist der GANZE Bestand — er steckt vollständig in hub-*.sqlite.gz,
+        # dem Haupt-Asset. "kernbestand" ist die kuratierte Auswahl (Neufassung §4,
+        # Stufe 2); NUR sie steckt in den mitreisenden eintraege.json/details.json, die
+        # die Website baut. Beide Zahlen stehen hier, damit niemand die kleinere für
+        # den Bestand hält oder die größere für das, was die Site zeigt.
         "zaehler": {k: meta.get(k) for k in
                     ("eintraege", "werke", "fundstellen", "abgelehnt_gesamt",
-                     "aufgeloest_versucht", "aufgeloest_bestaetigt")},
+                     "aufgeloest_versucht", "aufgeloest_bestaetigt",
+                     "kernbestand", "kernbestand_regel", "kernbestand_urteil",
+                     "kernbestand_grenzfaelle_offen")},
         "quellfenster": quellfenster,
         "assets": [{"name": a.name, "sha256": sha256_datei(a), "bytes": a.stat().st_size}
                    for a in assets],

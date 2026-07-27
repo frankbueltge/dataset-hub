@@ -1,0 +1,686 @@
+{
+  "fassung": 1,
+  "datum": "2026-07-27",
+  "erzeugt": "2026-07-27T10:37:49Z",
+  "zweck": "Aufnahmeschranke Stufe 1 der Neufassung des Registerzwecks (frankbueltge.de → docs/design/2026-07-27-register-neufassung.md, §4). Einträge dieser Herausgeber werden NICHT aufgenommen — es sei denn, der Eintrag bezeichnet die Sammlung statt des Einzelstücks (granularitaet 'collection' oder 'series').",
+  "grundlage": "messungen/ergebnisse/2026-07-27-herausgeber-gesamt.json",
+  "kriterium": {
+    "eintraege_je_titelmuster_mindestens": 100,
+    "eintraege_mindestens": 200,
+    "erlaeuterung": "Einträge geteilt durch verschiedene Titelmuster; Ziffernfolgen im Titel zu '#' normalisiert. Gekappte Zählungen entscheiden nicht mit."
+  },
+  "abgeleitet_von": "messungen/skripte/leite_massenherausgeber_ab.py",
+  "herausgeber": [
+    {
+      "name": "National Institute for Fusion Science (NIFS)",
+      "herkunft": "regel",
+      "n": 29198792,
+      "titel_muster_verschieden": 270,
+      "eintraege_je_muster": 108143.7,
+      "granularitaet": {
+        "Dataset": 29198792
+      },
+      "titel_beispiele": [
+        "LHD labCAMAC #71041.1",
+        "LHD labCAMAC #71042.1",
+        "LHD labCAMAC #71043.1"
+      ],
+      "grund": "29,198,792 Einträge auf 270 Titelmuster (108,144 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Distributed System of Scientific Collections",
+      "herkunft": "urteil",
+      "n": 5030937,
+      "titel_muster_verschieden": 53925,
+      "titel_muster_gekappt": true,
+      "titel_beispiele": [
+        "Psorergatoides molossi Lukoschus, Rosmalen & Fain, 1973",
+        "Psorergates callipidis Lukoschus, Fain & Beaujean, 1967",
+        "Psorergatoides guyanensis Lukoschus, Louppen & Fauran, 1979"
+      ],
+      "grund": "5.030.937 Einträge; die Titel sind zoologische und botanische Binomen mit Autorschaft ('Psorergatoides molossi Lukoschus, Rosmalen & Fain, 1973'), also Bestimmungen einzelner physischer Belege, nicht Namen von Datensätzen. In der lokalen Ernte vom 26.07. verteilen sich 3.079 Einträge auf 300 Titelmuster, das häufigste 126-mal wiederholt — dieselbe Art auf verschiedenen Belegexemplaren. DiSSCo ist erklärtermaßen die Digitalisierungs-Infrastruktur europäischer Sammlungen; ein DOI je Sammlungsbeleg ist ihr Zweck. Maschinell nicht entscheidbar, weil die Musterzählung bei 50.000 gekappt hat und das gemessene Verhältnis (93,3 je Muster) deshalb nur eine Obergrenze ist."
+    },
+    {
+      "name": "The Global Biodiversity Information Facility",
+      "herkunft": "regel",
+      "n": 4007397,
+      "titel_muster_verschieden": 1314,
+      "eintraege_je_muster": 3049.8,
+      "granularitaet": {
+        "Dataset": 4007397
+      },
+      "titel_beispiele": [
+        "Occurrence Download",
+        "Occurrence Download",
+        "Occurrence Download"
+      ],
+      "grund": "4,007,397 Einträge auf 1,314 Titelmuster (3,050 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "UNITE Community",
+      "herkunft": "regel",
+      "n": 3201093,
+      "titel_muster_verschieden": 29,
+      "eintraege_je_muster": 110382.5,
+      "granularitaet": {
+        "Dataset": 3201093
+      },
+      "titel_beispiele": [
+        "SH395560.07FU",
+        "SH395561.07FU",
+        "SH1761615.08FU"
+      ],
+      "grund": "3,201,093 Einträge auf 29 Titelmuster (110,383 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Cambridge Crystallographic Data Centre",
+      "herkunft": "regel",
+      "n": 1177402,
+      "titel_muster_verschieden": 6,
+      "eintraege_je_muster": 196233.7,
+      "granularitaet": {
+        "Dataset": 1177402
+      },
+      "titel_beispiele": [
+        "CCDC 195205: Experimental Crystal Structure Determination",
+        "CCDC 101311: Experimental Crystal Structure Determination",
+        "CCDC 117545: Experimental Crystal Structure Determination"
+      ],
+      "grund": "1,177,402 Einträge auf 6 Titelmuster (196,234 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Environmental Molecular Sciences Laboratory",
+      "herkunft": "regel",
+      "n": 492888,
+      "titel_muster_verschieden": 25,
+      "eintraege_je_muster": 19715.5,
+      "granularitaet": {
+        "Dataset": 492888
+      },
+      "titel_beispiele": [
+        "Data From EMSL Project 51710: Opportunities linking omics and structural biology at PNNL: Excelling at Cryo-EM",
+        "Data from EMSL Project 50717",
+        "Data for EMSL Project 50717 from January 2020"
+      ],
+      "grund": "492,888 Einträge auf 25 Titelmuster (19,716 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Leibniz Institute DSMZ - German Collection of Microorganisms and Cell Cultures",
+      "herkunft": "regel",
+      "n": 461091,
+      "titel_muster_verschieden": 245,
+      "eintraege_je_muster": 1882.0,
+      "granularitaet": {
+        "Dataset": 461091
+      },
+      "titel_beispiele": [
+        "StrainInfo SI-ID 42352.2",
+        "StrainInfo SI-ID 42355.2",
+        "StrainInfo SI-ID 42370.2"
+      ],
+      "grund": "461,091 Einträge auf 245 Titelmuster (1,882 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Birmensdorf, Swiss Federal Research Institute WSL",
+      "herkunft": "regel",
+      "n": 339725,
+      "titel_muster_verschieden": 4,
+      "eintraege_je_muster": 84931.2,
+      "granularitaet": {
+        "Dataset": 339725
+      },
+      "titel_beispiele": [
+        "Swiss national forest inventory - Result table No. 206375",
+        "Swiss national forest inventory - Result table No. 206379",
+        "Swiss national forest inventory - Result table No. 206374"
+      ],
+      "grund": "339,725 Einträge auf 4 Titelmuster (84,931 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Data MIRRI",
+      "herkunft": "regel",
+      "n": 314639,
+      "titel_muster_verschieden": 2,
+      "eintraege_je_muster": 157319.5,
+      "granularitaet": {
+        "Dataset": 314639
+      },
+      "titel_beispiele": [
+        "MIRRI0137112.json",
+        "MIRRI0137699.json",
+        "MIRRI0137698"
+      ],
+      "grund": "314,639 Einträge auf 2 Titelmuster (157,320 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Leibniz Institute for Astrophysics Potsdam (AIP)",
+      "herkunft": "regel",
+      "n": 193637,
+      "titel_muster_verschieden": 336,
+      "eintraege_je_muster": 576.3,
+      "granularitaet": {
+        "Dataset": 193637
+      },
+      "titel_beispiele": [
+        "Stacklist",
+        "Obslist",
+        "4XMM DR11s"
+      ],
+      "grund": "193,637 Einträge auf 336 Titelmuster (576 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Birmensdorf, Institut fédéral de recherches WSL",
+      "herkunft": "regel",
+      "n": 153881,
+      "titel_muster_verschieden": 3,
+      "eintraege_je_muster": 51293.7,
+      "granularitaet": {
+        "Dataset": 153881
+      },
+      "titel_beispiele": [
+        "Inventaire forestier national suisse - Tableau no 822078",
+        "Inventaire forestier national suisse - Tableau no 900741",
+        "Inventaire forestier national suisse - Tableau no 839103"
+      ],
+      "grund": "153,881 Einträge auf 3 Titelmuster (51,294 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Birmensdorf, Istituto federale di ricerca WSL",
+      "herkunft": "regel",
+      "n": 153881,
+      "titel_muster_verschieden": 3,
+      "eintraege_je_muster": 51293.7,
+      "granularitaet": {
+        "Dataset": 153881
+      },
+      "titel_beispiele": [
+        "Inventario forestale nazionale svizzero - Tabella n. 864444",
+        "Inventario forestale nazionale svizzero - Tabella n. 802127",
+        "Inventario forestale nazionale svizzero - Tabella n. 869710"
+      ],
+      "grund": "153,881 Einträge auf 3 Titelmuster (51,294 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Birmensdorf, Eidg. Forschungsanstalt WSL",
+      "herkunft": "regel",
+      "n": 153881,
+      "titel_muster_verschieden": 3,
+      "eintraege_je_muster": 51293.7,
+      "granularitaet": {
+        "Dataset": 153881
+      },
+      "titel_beispiele": [
+        "Schweizerisches Landesforstinventar - Ergebnistabelle Nr. 207565",
+        "Schweizerisches Landesforstinventar - Ergebnistabelle Nr. 207567",
+        "Schweizerisches Landesforstinventar - Ergebnistabelle Nr. 207570"
+      ],
+      "grund": "153,881 Einträge auf 3 Titelmuster (51,294 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "PISCO MN",
+      "herkunft": "regel",
+      "n": 105742,
+      "titel_muster_verschieden": 629,
+      "eintraege_je_muster": 168.1,
+      "granularitaet": {
+        "Dataset": 105742
+      },
+      "titel_beispiele": [
+        "MARINe/PISCO: Intertidal: MARINe Long-Term Monitoring Surveys: Photo Plots and Transects Summarized",
+        "MARINe/PISCO: Intertidal: MARINe Long-Term Monitoring Surveys: Sea Stars and Katharina",
+        "MARINe/PISCO: Intertidal: MARINe Long-Term Monitoring Surveys: Sea Stars and Katharina"
+      ],
+      "grund": "105,742 Einträge auf 629 Titelmuster (168 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Institut français d'archéologie orientale",
+      "herkunft": "regel",
+      "n": 60448,
+      "titel_muster_verschieden": 604,
+      "eintraege_je_muster": 100.1,
+      "granularitaet": {
+        "Dataset": 60448
+      },
+      "titel_beispiele": [
+        "TÔD_pv_2004_02164",
+        "TÔD_pv_2004_02165",
+        "TÔD_pv_2004_02169"
+      ],
+      "grund": "60,448 Einträge auf 604 Titelmuster (100 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Chandra X-ray Center/SAO",
+      "herkunft": "regel",
+      "n": 59123,
+      "titel_muster_verschieden": 7,
+      "eintraege_je_muster": 8446.1,
+      "granularitaet": {
+        "Dataset": 59123
+      },
+      "titel_beispiele": [
+        "Chandra X-ray Observatory ObsId 49825",
+        "Chandra X-ray Observatory ObsId 49838",
+        "Chandra X-ray Observatory ObsId 49843"
+      ],
+      "grund": "59,123 Einträge auf 7 Titelmuster (8,446 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "TOPMed",
+      "herkunft": "regel",
+      "n": 42379,
+      "titel_muster_verschieden": 6,
+      "eintraege_je_muster": 7063.2,
+      "granularitaet": {
+        "Dataset": 42379
+      },
+      "titel_beispiele": [
+        "NWD457531.b38.irc.v1.cram.crai",
+        "NWD764611.freeze5.v1.vcf.gz.csi",
+        "NWD747721.freeze5.v1.vcf.gz"
+      ],
+      "grund": "42,379 Einträge auf 6 Titelmuster (7,063 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Diplomatische Dokumente der Schweiz | Documents Diplomatiques Suisses | Documenti Diplomatici Svizzeri | Diplomatic Documents of Switzerland",
+      "herkunft": "regel",
+      "n": 34966,
+      "titel_muster_verschieden": 1,
+      "eintraege_je_muster": 34966.0,
+      "granularitaet": {
+        "Dataset": 34966
+      },
+      "titel_beispiele": [
+        "dodis.ch/1319",
+        "dodis.ch/1320",
+        "dodis.ch/1321"
+      ],
+      "grund": "34,966 Einträge auf 1 Titelmuster (34,966 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "FIZ Karlsruhe - Leibniz Institute for Information Infrastructure",
+      "herkunft": "regel",
+      "n": 27280,
+      "titel_muster_verschieden": 1,
+      "eintraege_je_muster": 27280.0,
+      "granularitaet": {
+        "Dataset": 27280
+      },
+      "titel_beispiele": [
+        "CSD 2112365: Experimental Crystal Structure Determination",
+        "CSD 2076165: Experimental Crystal Structure Determination",
+        "CSD 2076166: Experimental Crystal Structure Determination"
+      ],
+      "grund": "27,280 Einträge auf 1 Titelmuster (27,280 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "SXS Collaboration",
+      "herkunft": "regel",
+      "n": 9591,
+      "titel_muster_verschieden": 4,
+      "eintraege_je_muster": 2397.8,
+      "granularitaet": {
+        "Dataset": 9591
+      },
+      "titel_beispiele": [
+        "SXS Rerun Waveforms",
+        "SXS Rerun Waveforms",
+        "Binary black-hole simulation SXS:BBH:3712"
+      ],
+      "grund": "9,591 Einträge auf 4 Titelmuster (2,398 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "TUNI",
+      "herkunft": "regel",
+      "n": 5377,
+      "titel_muster_verschieden": 4,
+      "eintraege_je_muster": 1344.2,
+      "granularitaet": {
+        "Dataset": 5377
+      },
+      "titel_beispiele": [
+        "AK0067 / A-K -kokoelma, Kansanperinteen arkisto",
+        "AK0066 / A-K -kokoelma, Kansanperinteen arkisto",
+        "AK0617 / A-K -kokoelma, Kansanperinteen arkisto"
+      ],
+      "grund": "5,377 Einträge auf 4 Titelmuster (1,344 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Consiglio Nazionale delle Ricerche",
+      "herkunft": "urteil",
+      "n": 4871,
+      "titel_muster_verschieden": 520,
+      "titel_muster_gekappt": false,
+      "titel_beispiele": [
+        "A 40-3",
+        "A 40-4",
+        "A-10-238"
+      ],
+      "grund": "4.871 Einträge auf 520 Titelmuster (9,4 je Muster) — unter jeder mechanischen Schwelle, aber die Titel sind reine Inventarnummern eines epigraphischen Korpus: 'Ja #' 824-mal, 'CIH #' 695-mal, 'al-Jawf #.#' 177-mal, dazu Formen wie 'A 40-3' und 'A-10-238'. Das ist ein Katalog einzelner Objekte, ein Identifikator je Inschrift. Die Schwelle greift hier nicht, weil der Herausgeber klein ist, nicht weil die Einträge Datensätze wären."
+    },
+    {
+      "name": "FIZ Karlsruhe – Leibniz Institute for Information Infrastructure",
+      "herkunft": "regel",
+      "n": 1436,
+      "titel_muster_verschieden": 1,
+      "eintraege_je_muster": 1436.0,
+      "granularitaet": {
+        "Dataset": 1436
+      },
+      "titel_beispiele": [
+        "CSD 1860645: Experimental Crystal Structure Determination",
+        "CSD 1885476: Experimental Crystal Structure Determination",
+        "CSD 1885477: Experimental Crystal Structure Determination"
+      ],
+      "grund": "1,436 Einträge auf 1 Titelmuster (1,436 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Deutsches Historisches Institut Paris",
+      "herkunft": "regel",
+      "n": 1163,
+      "titel_muster_verschieden": 1,
+      "eintraege_je_muster": 1163.0,
+      "granularitaet": {
+        "Dataset": 1163
+      },
+      "titel_beispiele": [
+        "Gallia Pontificia online: Ludwig Falkenstein, Reims I: Erzbischöfe, bearbeitet von Robert Friedrich und Sebastian Gensicke, herausgegeben von Rolf Große, Paris ",
+        "Gallia Pontificia online: Ludwig Falkenstein, Reims I: Erzbischöfe, bearbeitet von Robert Friedrich und Sebastian Gensicke, herausgegeben von Rolf Große, Paris ",
+        "Gallia Pontificia online: Ludwig Falkenstein, Reims I: Erzbischöfe, bearbeitet von Robert Friedrich und Sebastian Gensicke, herausgegeben von Rolf Große, Paris "
+      ],
+      "grund": "1,163 Einträge auf 1 Titelmuster (1,163 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "xxx",
+      "herkunft": "regel",
+      "n": 1102,
+      "titel_muster_verschieden": 11,
+      "eintraege_je_muster": 100.2,
+      "granularitaet": {
+        "Dataset": 1102
+      },
+      "titel_beispiele": [
+        "Rice agronomy experiment data - Test data",
+        "Rice agronomy experiment data - Test data",
+        "=cmd|' /C calc'!xxx"
+      ],
+      "grund": "1,102 Einträge auf 11 Titelmuster (100 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "EMSL",
+      "herkunft": "regel",
+      "n": 900,
+      "titel_muster_verschieden": 1,
+      "eintraege_je_muster": 900.0,
+      "granularitaet": {
+        "Dataset": 900
+      },
+      "titel_beispiele": [
+        "Data for EMSL Project 51287 from July 2025",
+        "Data for EMSL Project 51287 from July 2025",
+        "Data for EMSL Project 51287 from July 2025"
+      ],
+      "grund": "900 Einträge auf 1 Titelmuster (900 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Cell Image Library",
+      "herkunft": "regel",
+      "n": 806,
+      "titel_muster_verschieden": 4,
+      "eintraege_je_muster": 201.5,
+      "granularitaet": {
+        "Dataset": 806
+      },
+      "titel_beispiele": [
+        "CCDB_1025.jpg",
+        "CCDB_1025.jpg",
+        "CCDB_1024.jpg"
+      ],
+      "grund": "806 Einträge auf 4 Titelmuster (202 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "Styrelsen for Dataforsyning og Infrastruktur",
+      "herkunft": "regel",
+      "n": 636,
+      "titel_muster_verschieden": 1,
+      "eintraege_je_muster": 636.0,
+      "granularitaet": {
+        "Dataset": 636
+      },
+      "titel_beispiele": [
+        "Danmark i Minecraft (512960,6123200) UTM32-ETRS89 (øst, nord)",
+        "Danmark i Minecraft (543680,6205120) UTM32-ETRS89 (øst, nord)",
+        "Danmark i Minecraft (646080,6143680) UTM32-ETRS89 (øst, nord)"
+      ],
+      "grund": "636 Einträge auf 1 Titelmuster (636 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "U.S. Geological Survey, Geomagnetism Program",
+      "herkunft": "regel",
+      "n": 584,
+      "titel_muster_verschieden": 2,
+      "eintraege_je_muster": 292.0,
+      "granularitaet": {
+        "Dataset": 584
+      },
+      "titel_beispiele": [
+        "SurveyDOI: EMTF/USMTARRAY/USGS2020",
+        "Magnetotelluric Transfer Functions",
+        "Magnetotelluric Transfer Functions"
+      ],
+      "grund": "584 Einträge auf 2 Titelmuster (292 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    },
+    {
+      "name": "StoneRounds.org",
+      "herkunft": "regel",
+      "n": 576,
+      "titel_muster_verschieden": 1,
+      "eintraege_je_muster": 576.0,
+      "granularitaet": {
+        "Dataset": 576
+      },
+      "titel_beispiele": [
+        "StoneRounds Case: SR51",
+        "StoneRounds Case: SR1071",
+        "StoneRounds Case: SR2251"
+      ],
+      "grund": "576 Einträge auf 1 Titelmuster (576 je Muster) — Massenregistrierung einzelner Beobachtungen"
+    }
+  ],
+  "unentscheidbar": [
+    {
+      "herausgeber": "Distributed System of Scientific Collections",
+      "n": 5030937,
+      "titel_muster_mindestens": 53925,
+      "je_muster_hoechstens": 93.3,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Psorergatoides molossi Lukoschus, Rosmalen & Fain, 1973",
+        "Psorergates callipidis Lukoschus, Fain & Beaujean, 1967",
+        "Psorergatoides guyanensis Lukoschus, Louppen & Fauran, 1979"
+      ]
+    },
+    {
+      "herausgeber": "University of Southern California Digital Library (USC.DL)",
+      "n": 1274893,
+      "titel_muster_mindestens": 50000,
+      "je_muster_hoechstens": 25.5,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "WPA household census for 1306 S WESTLAKE, Los Angeles",
+        "WPA household census for 205 W 43 ST, Los Angeles County",
+        "WPA household census for 207 W VERNON AVE, Los Angeles County"
+      ]
+    },
+    {
+      "herausgeber": "Zenodo",
+      "n": 1036508,
+      "titel_muster_mindestens": 62935,
+      "je_muster_hoechstens": 16.5,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Interim Dataset for the DIssemination of REgistered COVID-19 Clinical Trials (DIRECCT) Study",
+        "Interim Dataset for the DIssemination of REgistered COVID-19 Clinical Trials (DIRECCT) Study",
+        "SARS-CoV-2 Infektionen in Deutschland"
+      ]
+    },
+    {
+      "herausgeber": "figshare",
+      "n": 764091,
+      "titel_muster_mindestens": 51206,
+      "je_muster_hoechstens": 14.9,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Do good neighbors compensate for bad climate?",
+        "Matbench Discovery - Model Predictions for Diatomics",
+        "Code and Data for \"<b>Network analysis reveals strategies for strengthening forest resistance, recovery and resilience to disturbances</b>\""
+      ]
+    },
+    {
+      "herausgeber": "Harvard Dataverse",
+      "n": 739736,
+      "titel_muster_mindestens": 94142,
+      "je_muster_hoechstens": 7.9,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "LocalView Public Meetings Database",
+        "Economically-Relevant Components Affecting Housing Location in Mass Housing Planning",
+        "Replication data for: scope review - usage-based theory and the gestalt language processor: an integrative perspective on language processing"
+      ]
+    },
+    {
+      "herausgeber": "PANGAEA",
+      "n": 422097,
+      "titel_muster_mindestens": 53642,
+      "je_muster_hoechstens": 7.9,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "(Table 1) Age determinations on sediment core V23-81",
+        "(Table 1) Age determinations on sediment core EN32-PC6",
+        "(Table 2) Corrected ages of sediment core V23-81"
+      ]
+    },
+    {
+      "herausgeber": "Fundação Oswaldo Cruz",
+      "n": 202768,
+      "titel_muster_mindestens": 50030,
+      "je_muster_hoechstens": 4.1,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Cuidado-integral-na-Covid-Aromaterapia-ObservaPICS.pdf",
+        "Cuidado-integral-na-Covid-Terapia-Floral-ObservaPICS.pdf",
+        "Especial-PICS-Covid-TCI-ObservaPICS.pdf"
+      ]
+    },
+    {
+      "herausgeber": "Mendeley",
+      "n": 172993,
+      "titel_muster_mindestens": 55841,
+      "je_muster_hoechstens": 3.1,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "CLEAR and CLARITY studies of secukinumab versus ustekinumab by body region",
+        "Evaporative cooling pad materials",
+        "Metamorphic CO2 emissions from the southern Yadong-Gulu rift, Tibetan Plateau: Insights into deep carbon cycle in the India-Asia continental collision zone"
+      ]
+    },
+    {
+      "herausgeber": "DANS Data Station Archaeology",
+      "n": 171143,
+      "titel_muster_mindestens": 69658,
+      "je_muster_hoechstens": 2.5,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Dwars door de immuniteit van Sint-Marie. MP2: een archeologische begeleiding op de Mariaplaats (Utrecht)",
+        "Vervanging riool Allersmaweg in Godlinze",
+        "Plaatsvaste bewoning uit de Midden-Bronstijd: Opheusden ABC-terrein Plaatsvaste bewoning uit de Midden-Bronstijd: Opheusden ABC-terrein"
+      ]
+    },
+    {
+      "herausgeber": "LBNL Materials Project; Lawrence Berkeley National Laboratory (LBNL), Berkeley, CA (United States)",
+      "n": 144675,
+      "titel_muster_mindestens": 78266,
+      "je_muster_hoechstens": 1.8,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Materials Data on Mn2CrRu by Materials Project",
+        "Materials Data on Mg2TiWO6 (SG:146) by Materials Project",
+        "Materials Data on YV(WO4)2 (SG:1) by Materials Project"
+      ]
+    },
+    {
+      "herausgeber": "SciELO journals",
+      "n": 136266,
+      "titel_muster_mindestens": 58738,
+      "je_muster_hoechstens": 2.3,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Divergent pollination system and morph-dependent effects of corolla length on inaccuracy of reciprocity and reproductive success of a distylous species of Rubia",
+        "Divergent pollination system and morph-dependent effects of corolla length on inaccuracy of reciprocity and reproductive success of a distylous species of Rubia",
+        "Stonemeal of amazon soils with sediments from reservoirs: a case study of remineralization of the tucuruí degraded land for agroforest reclamation"
+      ]
+    },
+    {
+      "herausgeber": "University of Pittsburgh",
+      "n": 106724,
+      "titel_muster_mindestens": 90613,
+      "je_muster_hoechstens": 1.2,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Creep Dataset of Olivine Based Cement and Neat Cement Tested at Various Temperatures.",
+        "High Temperature Triaxial Test of Various Doses of Graphene Based Cement",
+        "High Temperature Triaxial Test of Zeolite Based Cement, Graphene Based Cement and Olivine Based Cement"
+      ]
+    },
+    {
+      "herausgeber": "Dryad Digital Repository",
+      "n": 98446,
+      "titel_muster_mindestens": 72652,
+      "je_muster_hoechstens": 1.4,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "beetle size and beetle fecundity 2007 &amp; 2008",
+        "bacterial16SMiseqCinarafastq2",
+        "Semi-automated aerial image counting approach - archived source code and dataset"
+      ]
+    },
+    {
+      "herausgeber": "Unpublished",
+      "n": 71740,
+      "titel_muster_mindestens": 60470,
+      "je_muster_hoechstens": 1.2,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Rapport Annuel -2025 - Registre des Accidents Vasculaires Cérébraux de la wilaya de Constantine -Algérie-",
+        "LE DEVELOPPEMENT DES RESSOURCES HUMAINES : UN LEVIER STRATEGIQUE DE PERFORMANCE ORGANISATIONNELLE ET DE DEVELOPPEMENT DURABLE BADR CHACHA",
+        "Privacy-First Geospatial Trust Ledger: Anti-Surveillance Property Management with a Care-Based Housing Floor — ERES-LLPM-2026-001"
+      ]
+    },
+    {
+      "herausgeber": "Dryad",
+      "n": 68912,
+      "titel_muster_mindestens": 67965,
+      "je_muster_hoechstens": 1.0,
+      "ueber_schwelle_moeglich": false,
+      "grund": "Musterzählung gekappt — Verhältnis ist nur eine Obergrenze; mechanisch nicht als Massenherausgeber begründbar",
+      "titel_beispiele": [
+        "Influence of grain size on strength of rocks: new insights from DEM grain-based modeling",
+        "Soil carbon, nitrogen, and phosphorus cycling microbial populations and their resistance to global change depend on soil C:N:P stoichiometry",
+        "Data from: Transcutaneous ultrasound energy harvesting using capacitive triboelectric technology"
+      ]
+    }
+  ]
+}

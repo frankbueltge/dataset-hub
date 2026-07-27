@@ -24,7 +24,7 @@ MAJOR_ERWARTET = 0  # bricht bei brechenden Schemaänderungen ab
 
 | Tabelle | Inhalt |
 |---|---|
-| `eintraege` | ein Zeile je Eintrag; Spalte `json` enthält den vollständigen Eintrag nach `schema/eintrag.schema.json` |
+| `eintraege` | ein Zeile je Eintrag; Spalte `json` enthält den vollständigen Eintrag nach `schema/eintrag.schema.json`. Spalte `kernbestand` (0/1) markiert die kuratierte Auswahl, `kernbestand_herkunft` sagt woher: `regel`, `urteil`, `grenzfall`, `kein-treffer` |
 | `eintraege_fts` | FTS5-Volltext über Titel und Beschreibung (`MATCH`) |
 | `relationen` | quellen-behauptete Beziehungen (`IsVersionOf` u. a.) |
 | `fundstellen` | Herkunft je Ernte |
@@ -40,8 +40,25 @@ MAJOR_ERWARTET = 0  # bricht bei brechenden Schemaänderungen ab
   `status = 'ungeprueft'` heißt: automatisch aufgenommen, nicht inhaltlich geprüft.
 - **Vollständigkeit ist beziffert, nicht behauptet.** `quellfenster` im Manifest sagt,
   welcher Zeitraum je Quelle geerntet wurde und ob der Lauf vollständig war.
-  Der Hub erntet ab Aufsetzzeitpunkt vorwärts; der Altbestand fehlt, bis der
-  Bulk-Bootstrap läuft.
+  Der Hub erntet ab Aufsetzzeitpunkt vorwärts.
+- **Der Bestand ist ausgewählt, nicht vollzählig** (seit 2026-07-27, Neufassung des
+  Registerzwecks). Er will kein Abbild eines Katalogs sein: Massenregistrierungen
+  einzelner Beobachtungen sind nicht aufgenommen, ihre Ablehnung steht mit Grund in
+  `ablehnungen`. Wer Vollzähligkeit für eine Quelle braucht, fragt die Quelle.
+
+## Bestand und Kernbestand
+
+`hub-*.sqlite.gz` trägt den **ganzen Bestand**. Die mitreisenden `eintraege.json` und
+`details.json` tragen nur den **Kernbestand** — sie sind die Bauteile der Website, kein
+Abbild der Datenbank. Wer über SQLite fragt, bekommt alles; wer die JSON-Dateien liest,
+bekommt die Auswahl. `zaehler` im Manifest nennt beide Größen.
+
+```sql
+-- nur die kuratierte Auswahl
+SELECT * FROM eintraege WHERE kernbestand = 1;
+-- Grenzfälle, die noch auf ein Urteil warten (offener Vorrat, kein Nein)
+SELECT * FROM eintraege WHERE kernbestand_herkunft = 'grenzfall';
+```
 
 ## Beispiel
 
