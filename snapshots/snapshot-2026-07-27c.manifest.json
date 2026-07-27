@@ -1,0 +1,158 @@
+{
+  "tag": "snapshot-2026-07-27c",
+  "schema_version": "0.2.0",
+  "gebaut_am": "2026-07-27T18:33:51Z",
+  "zaehler": {
+    "eintraege": "22473",
+    "werke": "12882",
+    "fundstellen": "48968",
+    "abgelehnt_gesamt": "22573",
+    "aufgeloest_versucht": "500",
+    "aufgeloest_bestaetigt": "396",
+    "kernbestand": "16516",
+    "kernbestand_regel": "16516",
+    "kernbestand_urteil": "0",
+    "kernbestand_grenzfaelle_offen": "729"
+  },
+  "quellfenster": [
+    {
+      "lauf": "arcgis-20260726T164554Z",
+      "quelle": "arcgis",
+      "seit": null,
+      "bis": "2026-07-26T16:45:56Z",
+      "records": 300,
+      "vollstaendig": false,
+      "rohernte_im_bau": true
+    },
+    {
+      "lauf": "arcgis-20260726T173351Z",
+      "quelle": "arcgis",
+      "seit": null,
+      "bis": "2026-07-26T17:34:37Z",
+      "records": 6000,
+      "vollstaendig": false,
+      "rohernte_im_bau": true
+    },
+    {
+      "lauf": "datacite-20260726T150046Z",
+      "quelle": "datacite",
+      "seit": "2026-07-25T15:00:46Z",
+      "bis": "2026-07-26T15:01:34Z",
+      "records": 13010,
+      "vollstaendig": true,
+      "rohernte_im_bau": true
+    },
+    {
+      "lauf": "datacite-20260727T064344Z",
+      "quelle": "datacite",
+      "seit": "2026-07-26T06:43:44Z",
+      "bis": "2026-07-27T06:45:02Z",
+      "records": 12915,
+      "vollstaendig": true,
+      "rohernte_im_bau": true
+    },
+    {
+      "lauf": "huggingface-20260726T164558Z",
+      "quelle": "huggingface",
+      "seit": null,
+      "bis": "2026-07-26T16:46:00Z",
+      "records": 300,
+      "vollstaendig": false,
+      "rohernte_im_bau": true
+    },
+    {
+      "lauf": "kaggle-20260726T164544Z",
+      "quelle": "kaggle",
+      "seit": null,
+      "bis": "2026-07-26T16:45:47Z",
+      "records": 60,
+      "vollstaendig": false,
+      "rohernte_im_bau": false
+    },
+    {
+      "lauf": "kaggle-20260726T173348Z",
+      "quelle": "kaggle",
+      "seit": null,
+      "bis": "2026-07-26T17:42:09Z",
+      "records": 9996,
+      "vollstaendig": false,
+      "rohernte_im_bau": false
+    },
+    {
+      "lauf": "steinbruch-20260727T105225Z",
+      "quelle": "datacite",
+      "seit": null,
+      "bis": "2026-07-27T11:34:27Z",
+      "records": 16443,
+      "vollstaendig": false,
+      "rohernte_im_bau": true
+    }
+  ],
+  "assets": [
+    {
+      "name": "hub-2026-07-27.sqlite.gz",
+      "sha256": "24018f5cc9e4c0ff95d05abcddb7a11649c36fed12f2954899ff6a92cc1cf3b2",
+      "bytes": 28365720
+    },
+    {
+      "name": "details.json.gz",
+      "sha256": "5d4423e3719086267eb8b856b5ccd54166827511ac5ffea685499d6b71998fed",
+      "bytes": 8456430
+    },
+    {
+      "name": "eintraege.json.gz",
+      "sha256": "bdc79204b656613a48ca15992842ef0deba386a49a7000e60db46a9aad95e07b",
+      "bytes": 993290
+    },
+    {
+      "name": "liste.json.gz",
+      "sha256": "8ca239613c7c9fc450226ddb53445b454d9e8db06b8b3d6a79f164927c8facc8",
+      "bytes": 538638
+    },
+    {
+      "name": "meta.json.gz",
+      "sha256": "b9406df927ec4cea85763a362b7ba9a3a35a98eea52ef72da1a0a6760775d6a4",
+      "bytes": 787
+    },
+    {
+      "name": "werke.json.gz",
+      "sha256": "78b363a1a439b01770a4e458e27b0be37663310a273a0a50902140c60731088a",
+      "bytes": 854687
+    },
+    {
+      "name": "arcgis-20260726T164554Z.jsonl.gz",
+      "sha256": "e2b103e5beabe455ef3418a788fc10021fe205e8d5fcd9aad11d853f645fb249",
+      "bytes": 45346
+    },
+    {
+      "name": "arcgis-20260726T173351Z.jsonl.gz",
+      "sha256": "1f33c33561e738368926d6393312ea4e8d444dd52ba884ae514b9a0eeb2ca37e",
+      "bytes": 985153
+    },
+    {
+      "name": "datacite-20260726T150046Z.jsonl.gz",
+      "sha256": "55564b4a299292d37ceb95e61731bbba0d1ed69b9238c65b493c6e77e35024db",
+      "bytes": 4538315
+    },
+    {
+      "name": "datacite-20260727T064344Z.jsonl.gz",
+      "sha256": "536e55a2a47943795f3e23769ca63a098caa0acd496d65373ab204e5f60a414f",
+      "bytes": 7422638
+    },
+    {
+      "name": "huggingface-20260726T164558Z.jsonl.gz",
+      "sha256": "22ad450bb5ea432e3287049dab7972df29b36ea5d4383832be2ef1bad3150966",
+      "bytes": 274991
+    },
+    {
+      "name": "steinbruch-20260727T105225Z.jsonl.gz",
+      "sha256": "50595825da3ede34fdb3433499b50e7e5d28fb284340e42073537cf7681361d6",
+      "bytes": 8074494
+    }
+  ],
+  "rohernten_nicht_im_bau": [
+    "kaggle-20260726T164544Z",
+    "kaggle-20260726T173348Z"
+  ],
+  "hinweis": "2 Erntelauf/-läufe sind in diesem Bestand NICHT enthalten — ihre Rohernten lagen beim Bau nicht vor. Die Zähler beziehen sich nur auf das tatsächlich Gebaute."
+}
