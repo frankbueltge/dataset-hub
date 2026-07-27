@@ -1,0 +1,19 @@
+{
+  "lauf": "steinbruch-20260727T105225Z",
+  "quelle": "datacite",
+  "adapter_version": "0.1.0",
+  "verfahren": "Abbau aus dem Steinbruch: DataCite Public Data File 2025, gefiltert durch Relevanzkriterium Stufe 1 + Kernbestand-Sieb",
+  "seit": null,
+  "bis": "2026-07-27T11:34:27Z",
+  "records": 16443,
+  "vollstaendig": false,
+  "gelesen": 56620404,
+  "abgewiesen_massenregistrierung": 45225488,
+  "abgewiesen_lizenz_nicht_benannt": 6761799,
+  "genommen_regel": 16443,
+  "genommen_grenzfall": 0,
+  "grenzfaelle_gesehen": 252311,
+  "kaputte_zeilen": 0,
+  "datei": "steinbruch-20260727T105225Z.jsonl.gz",
+  "sha256": "50595825da3ede34fdb3433499b50e7e5d28fb284340e42073537cf7681361d6"
+}

@@ -8,30 +8,42 @@ def _text(x) -> str:
     return x.strip() if isinstance(x, str) else ""
 
 
+def _objekte(xs):
+    """Nur die Objekte einer Quellenliste — alles andere überspringen.
+
+    DataCite-Listen wie `nameIdentifiers`, `rightsList` oder `dates` sind laut Schema
+    Listen von Objekten, enthalten im Public Data File aber vereinzelt blanke
+    Zeichenketten. Gemessen am 27.07.: der Bulk-Abbau stürzte auf Teil 33 ab, weil ein
+    `nameIdentifiers`-Eintrag ein String war. Solche Werte werden übersprungen, nicht
+    gedeutet — aus 'ORCID-irgendwas' einen Identifikator zu raten hieße erfinden.
+    """
+    return [x for x in (xs or []) if isinstance(x, dict)]
+
+
 def normalisiere_datacite(fund: dict) -> dict:
     roh = fund.get("roh") or {}
     doi = normalisiere_doi(roh.get("doi") or fund.get("quell_id"))
 
     titel = ""
-    for t in roh.get("titles") or []:
+    for t in _objekte(roh.get("titles")):
         titel = _text(t.get("title"))
         if titel:
             break
 
     beschreibung = ""
-    for b in roh.get("descriptions") or []:
+    for b in _objekte(roh.get("descriptions")):
         beschreibung = _text(b.get("description"))
         if beschreibung:
             break
 
     urheber = []
-    for c in roh.get("creators") or []:
+    for c in _objekte(roh.get("creators")):
         name = _text(c.get("name")) or " ".join(
             x for x in (_text(c.get("givenName")), _text(c.get("familyName"))) if x)
         if not name:
             continue
         orcid = ""
-        for ni in c.get("nameIdentifiers") or []:
+        for ni in _objekte(c.get("nameIdentifiers")):
             if (ni.get("nameIdentifierScheme") or "").lower() == "orcid":
                 orcid = _text(ni.get("nameIdentifier"))
         eintrag = {"name": name}
@@ -43,16 +55,16 @@ def normalisiere_datacite(fund: dict) -> dict:
     herausgeber = _text(pub.get("name")) if isinstance(pub, dict) else _text(pub)
 
     lizenz_id, lizenz_roh = "", []
-    for r in roh.get("rightsList") or []:
+    for r in _objekte(roh.get("rightsList")):
         lizenz_roh.append({k: v for k, v in r.items() if v})
         if not lizenz_id:
             lizenz_id = _text(r.get("rightsIdentifier"))
 
     daten = [{"datum": _text(d.get("date")), "typ": _text(d.get("dateType"))}
-             for d in roh.get("dates") or [] if _text(d.get("date"))]
+             for d in _objekte(roh.get("dates")) if _text(d.get("date"))]
 
     identifikatoren = [{"schema": "doi", "wert": doi}] if doi else []
-    for a in roh.get("alternateIdentifiers") or []:
+    for a in _objekte(roh.get("alternateIdentifiers")):
         wert = _text(a.get("alternateIdentifier"))
         if wert:
             identifikatoren.append(
@@ -60,7 +72,7 @@ def normalisiere_datacite(fund: dict) -> dict:
                  "wert": wert})
 
     relationen = []
-    for rel in roh.get("relatedIdentifiers") or []:
+    for rel in _objekte(roh.get("relatedIdentifiers")):
         ziel = _text(rel.get("relatedIdentifier"))
         if ziel:
             relationen.append({"typ": _text(rel.get("relationType")),
