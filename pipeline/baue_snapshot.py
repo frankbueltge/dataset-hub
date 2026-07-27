@@ -5,6 +5,7 @@ Das Manifest (Zähler, SHA-256 aller Assets, Quellfenster, schema_version) wird 
 Git committet (snapshots/); die großen Dateien hängen am getaggten GitHub-Release.
 Der Snapshot-Vertrag IST die Abfrage-API der Ökologie.
 """
+import argparse
 import gzip
 import json
 import shutil
@@ -15,14 +16,19 @@ from hub_lib import BESTAND, MANIFESTE, SNAPSHOTS, heute, jetzt, sha256_datei
 BUILD = SNAPSHOTS / "build"
 
 
-def main():
+def main(tag: str = ""):
     BUILD.mkdir(parents=True, exist_ok=True)
     db_pfad = BESTAND / "hub.sqlite"
     db = sqlite3.connect(db_pfad)
     meta = dict(db.execute("SELECT schluessel, wert FROM meta"))
     db.close()
 
-    tag = f"snapshot-{heute()}"
+    # Ein veröffentlichter Snapshot-Tag darf nie etwas anderes bedeuten als beim
+    # Veröffentlichen. Läuft an einem Tag ein zweiter Bau (am 27.07. nach der
+    # Neufassung des Registerzwecks), bekommt er einen eigenen Tag statt den
+    # bestehenden zu überschreiben. Die Site wählt das Release über absteigende
+    # Tag-Sortierung, ein Suffix genügt also.
+    tag = tag or f"snapshot-{heute()}"
     sqlite_gz = BUILD / f"hub-{heute()}.sqlite.gz"
     with open(db_pfad, "rb") as f_in, gzip.open(sqlite_gz, "wb") as f_out:
         shutil.copyfileobj(f_in, f_out)
@@ -99,4 +105,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    p = argparse.ArgumentParser()
+    p.add_argument("--tag", default="",
+                   help="Snapshot-Tag; Standard snapshot-<datum>. Eigenen Tag setzen, "
+                        "wenn an einem Tag ein zweiter Bau veröffentlicht wird.")
+    main(p.parse_args().tag)
