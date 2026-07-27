@@ -10,12 +10,25 @@ Nutzungen: Hub für Forschende und abfragbare Snapshot-Grundlage für die Pipeli
 Snapshot-Vertrag). Startauftrag mit den verbindlichen Bauregeln:
 `frankbueltge.de → docs/research/2026-07-26-dataset-hub-startauftrag.md`.
 
-**Der Zweck ist am 27.07. neu gefasst worden — sie geht dem Startauftrag vor:**
-`frankbueltge.de → docs/design/2026-07-27-register-neufassung.md`. Das Register ist
-KEIN „größtmöglicher Nachweis" mehr, sondern eine **kuratierte Meta-Sammlung über
-viele öffentliche Quellen**. Wo der Startauftrag Vollständigkeit verlangt, gilt er
-nicht mehr; seine Bauregeln (nichts erfinden, Ausfälle vermerken, keine Modell-APIs)
-gelten unverändert weiter.
+**Maßgeblich ist die Entscheidung vom 27.07. abends — sie geht Startauftrag UND
+Neufassung vor:** `frankbueltge.de → docs/design/2026-07-27-register-rueckbau-und-scouts.md`.
+
+Das Register wurde **auf Null zurückgebaut** und wächst künftig **dynamisch durch
+Scouts, die von der Forschung der Praxen her suchen** — Datensätze ins Register, Paper
+in einen zweiten Katalog. Die Neufassung vom selben Tag (vormittags,
+`2026-07-27-register-neufassung.md`) bleibt als Beleg stehen, ist aber in ihrem Kernpunkt
+überholt: Sie definierte Relevanz aus Stichwörtern, und das trägt nicht — ein Stichwort
+im Titel bezeichnet oft eine ROLLE, keinen GEGENSTAND. Gemessen am 27.07.: von 16.507
+DOIs im Register und 89 je von den Praxen zitierten DOIs war die Schnittmenge **null**.
+
+Wo der Startauftrag Vollständigkeit verlangt, gilt er nicht mehr; seine Bauregeln
+(nichts erfinden, Ausfälle vermerken, keine Modell-APIs) gelten unverändert weiter.
+
+**Die Website liest diesen Hub nicht mehr beim Bauen** (Stand 27.07.):
+`hole-dataset-daten.mjs` und der `repository_dispatch`-Anstoß sind entfallen, der
+kuratierte Bestand liegt committet in `frankbueltge.de → src/data/register/`. Bestand,
+Ernten und Snapshots hier bleiben bestehen — als **Steinbruch und Messbeleg**, nicht als
+Ausstellungsfläche.
 
 ## Phase
 
