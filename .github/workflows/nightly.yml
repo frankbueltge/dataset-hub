@@ -3,9 +3,21 @@ name: Nächtliche Ernte
 # Deterministisch, ohne Modellbeteiligung (Bauregel: kein Modell-API-Aufruf in der
 # Pipeline). Urteilsschritte laufen getrennt als Claude-Code-Routine unter dem Abo.
 
+# PAUSIERT am 2026-07-27 (Frank). Der nächtliche Cron ("20 3 * * *") ist ausgesetzt, weil
+# der Rückbau des Registers (frankbueltge.de → docs/design/2026-07-27-register-rueckbau-
+# und-scouts.md) den Bestand von der Website genommen hat: Die Ernte füllte einen
+# Steinbruch, den niemand mehr anzeigt, und die künftigen Scouts fragen Quellen GEZIELT ab
+# statt in Bulk. Was da ist, reicht als Steinbruch und Messbeleg.
+#
+# Wiedereinschalten = die beiden Zeilen unter `schedule:` entkommentieren. Der Lauf bleibt
+# derweil per `workflow_dispatch` von Hand startbar — pausiert, nicht abgebaut.
+#
+# ACHTUNG beim Wiedereinschalten (Falle §9.3 der Design-Notiz): Der nächtliche Lauf holt
+# seine Rohernten aus dem JÜNGSTEN Release. Ein zwischenzeitlich von Hand veröffentlichtes
+# Release ohne die Ernten des Tages lässt diese dauerhaft aus allen künftigen Bauten fallen.
 on:
-  schedule:
-    - cron: "20 3 * * *"
+  # schedule:
+  #   - cron: "20 3 * * *"
   workflow_dispatch:
     inputs:
       seit:
