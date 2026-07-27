@@ -10,11 +10,36 @@ Nutzungen: Hub für Forschende und abfragbare Snapshot-Grundlage für die Pipeli
 Snapshot-Vertrag). Startauftrag mit den verbindlichen Bauregeln:
 `frankbueltge.de → docs/research/2026-07-26-dataset-hub-startauftrag.md`.
 
+**Der Zweck ist am 27.07. neu gefasst worden — sie geht dem Startauftrag vor:**
+`frankbueltge.de → docs/design/2026-07-27-register-neufassung.md`. Das Register ist
+KEIN „größtmöglicher Nachweis" mehr, sondern eine **kuratierte Meta-Sammlung über
+viele öffentliche Quellen**. Wo der Startauftrag Vollständigkeit verlangt, gilt er
+nicht mehr; seine Bauregeln (nichts erfinden, Ausfälle vermerken, keine Modell-APIs)
+gelten unverändert weiter.
+
 ## Phase
 
-**Phase 1 — Messrunde.** Es gibt KEINE Ernte-Adapter, und es darf keiner entstehen,
-solange `messungen/register.md` für die Quelle kein GO enthält. Gates stehen in
-`messungen/TEMPLATE.md`; Schwellenänderungen nur mit Begründung im Register.
+**Phase 2 — Bestand.** Vier Ernte-Adapter laufen (datacite, arcgis, huggingface,
+kaggle — kaggle rechtlich zurückgehalten). Ein neuer Adapter entsteht weiterhin
+NICHT, solange `messungen/register.md` für die Quelle kein GO enthält. Gates stehen
+in `messungen/TEMPLATE.md`; Schwellenänderungen nur mit Begründung im Register.
+
+## Das Relevanzkriterium (Neufassung §4, zwei Stufen)
+
+| Stufe | wo | was |
+|---|---|---|
+| 1 — Materialgüte | `pipeline/relevanz.py` | entscheidet die **Aufnahme**: keine Massenregistrierungen, benannte Lizenz. Ergebnis ist der Snapshot der Praxen |
+| 2 — Kernbestand | `pipeline/kernbestand.py` | ein **Merkmal** am Eintrag: nur der Kernbestand bekommt Unterseiten und Sichtbarkeit auf der Website |
+
+- **`register/massenherausgeber.json` ist Teil der Schranke.** Fehlt die Datei, bricht
+  der Bestandsbau ab — er füllt sich nie stillschweigend wieder mit Serien.
+- Der Kernbestand-Sieb ist **dreiwertig**: `regel` (Begriff im Titel entscheidet),
+  `grenzfall` (wartet auf die Urteilsroutine), kein Treffer. **Unbeurteilte Grenzfälle
+  sind NICHT im Kernbestand** — die Website behauptet keine Relevanz, die niemand
+  geprüft hat.
+- **Der DataCite-Bulk ist Steinbruch, kein Bestand** (Neufassung §5). Er liegt in
+  `steinbruch/`, wird gezielt abgebaut und nie als Ganzes eingelesen; `baue_bestand.py`
+  überspringt Dateien mit `-dump-` im Namen zusätzlich als Schutz.
 
 ## Verbindliche Regeln (Kurzform — Langform im Startauftrag)
 
@@ -42,4 +67,13 @@ solange `messungen/register.md` für die Quelle kein GO enthält. Gates stehen i
 ```bash
 cd messungen/skripte
 python3 messe_<quelle>.py        # schreibt ergebnisse/<datum>-<quelle>.json + rohdaten/*.gz
+
+cd pipeline
+python3 ernte_<quelle>.py        # Rohernte → fundstellen/*.jsonl.gz + manifeste/
+python3 baue_bestand.py          # Fundstellen → bestand/hub.sqlite (beide Relevanzstufen)
+python3 baue_snapshot.py         # Bestand → snapshots/ (Vertrag: SNAPSHOT-API.md)
+python3 -m unittest discover -s tests
+
+cd oberflaeche
+python3 generiere_index.py       # Bestand → public/daten/ (NUR Kernbestand)
 ```

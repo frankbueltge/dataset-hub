@@ -37,8 +37,57 @@ def main():
     BESCHREIBUNG_FREIGEGEBEN = {"datacite"}
     quelle_je_id = {i: q for i, q in db.execute("SELECT id, quelle FROM eintraege")}
 
+    # Seit der Neufassung des Registerzwecks (frankbueltge.de →
+    # docs/design/2026-07-27-register-neufassung.md, §4) zeigt die Oberfläche nur den
+    # KERNBESTAND: Suche, Listen, Unterseiten, Sitemap und JSON-LD. Der übrige Bestand
+    # verschwindet nicht — er bleibt über den Snapshot abfragbar, den die Praxen laden.
+    # Die Zähler unten weisen beide Größen aus, damit die Oberfläche sagen kann, wovon
+    # sie einen Ausschnitt zeigt.
+    NUR_KERNBESTAND = "WHERE kernbestand = 1"
+
+    # ---- Fassungen und Beziehungen: der Eigenwert, den die Quellseite nicht zeigt ----
+    # Ein DataCite-Datensatzblatt zeigt genau einen Datensatz. Das Register weiß mehr:
+    # welche anderen Fassungen zu demselben Werk gehören (Dedup R1–R4) und welche
+    # geernteten Beziehungen auf Einträge zeigen, die es selbst führt. Gemessen am
+    # 27.07.: 14.073 von 16.494 Kernbestand-Einträgen liegen in einem Werk mit mehreren
+    # Fassungen, und 13.100 der 40.380 Beziehungen (32,4 %) haben ein Ziel im eigenen
+    # Bestand. Beides lag bisher in der Datenbank und auf keiner Seite.
+    # Geschwister werden über den GANZEN Bestand gesammelt, nicht nur über den
+    # Kernbestand: eine Fassung, die das Relevanzkriterium nicht trifft, existiert
+    # trotzdem, und sie zu verschweigen hieße, das Werk unvollständig darzustellen.
+    # Das Merkmal `s` (Seite) sagt, ob es dafür eine Unterseite gibt — nur dann darf
+    # die Vorlage verlinken, sonst zeigt sie den Eintrag ohne Verweis.
+    geschwister, werk_je_id = {}, {}
+    for r in db.execute("SELECT id, werk_id, titel, publikationsjahr, quelle, kernbestand "
+                        "FROM eintraege"):
+        werk_je_id[r["id"]] = r["werk_id"]
+        geschwister.setdefault(r["werk_id"], []).append(
+            {"i": r["id"], "t": r["titel"], "j": r["publikationsjahr"], "q": r["quelle"],
+             "s": bool(r["kernbestand"])})
+
+    # DOI → eigener Eintrag, damit eine Beziehung als interner Verweis erkennbar wird.
+    eintrag_je_doi = {}
+    for r in db.execute(f"SELECT id, json FROM eintraege {NUR_KERNBESTAND}"):
+        for ident in json.loads(r["json"]).get("identifikatoren") or []:
+            if ident.get("schema") == "doi" and ident.get("wert"):
+                eintrag_je_doi[ident["wert"].lower()] = r["id"]
+
+    # Ein Eintrag führt bis zu 499 Beziehungen (Mittel 2,5; 264 Einträge über 20).
+    # Alle auszugeben blähte details.json auf, ohne dass eine Seite 499 Verweise
+    # sinnvoll zeigt. Gekappt wird deshalb — aber sichtbar: die Seite nennt die
+    # Gesamtzahl, nicht nur die gezeigten.
+    BEZIEHUNGS_KAPPUNG = 20
+    beziehungen = {}
+    for r in db.execute("SELECT von_id, typ, ziel_schema, ziel FROM relationen"):
+        ziel = (r["ziel"] or "").strip()
+        intern = eintrag_je_doi.get(ziel.lower().replace("https://doi.org/", ""))
+        b = {"typ": r["typ"], "ziel": ziel, "schema": r["ziel_schema"]}
+        if intern:
+            b["i"] = intern
+        beziehungen.setdefault(r["von_id"], []).append(b)
+
     details = {}
-    for r in db.execute("SELECT id, json FROM eintraege ORDER BY id"):
+    for r in db.execute(f"SELECT id, json FROM eintraege {NUR_KERNBESTAND} ORDER BY id"):
         e = json.loads(r["json"])
         d = {}
         if ((e.get("beschreibung") or "").strip()
@@ -57,14 +106,27 @@ def main():
         # Browser-Index: URLs sind lang, und der Index wächst mit jedem Eintrag mit.
         d["zugang_url"] = (e.get("zugang") or {}).get("url") or ""
         d["quell_id"] = (e.get("fundstellen") or [{}])[0].get("quell_id") or ""
+
+        # Andere Fassungen desselben Werks — der Eintrag selbst ist nicht dabei.
+        andere = [g for g in geschwister.get(werk_je_id.get(r["id"]), [])
+                  if g["i"] != r["id"]]
+        if andere:
+            d["fassungen"] = sorted(andere, key=lambda g: (-(g["j"] or 0), g["t"]))
+
+        alle_b = beziehungen.get(r["id"], [])
+        if alle_b:
+            # Interne Verweise zuerst: sie sind der Teil, den nur dieses Register hat.
+            alle_b.sort(key=lambda b: (0 if "i" in b else 1, b["typ"]))
+            d["beziehungen"] = alle_b[:BEZIEHUNGS_KAPPUNG]
+            d["beziehungen_gesamt"] = len(alle_b)
         details[r["id"]] = d
 
     zeilen = []
-    for r in db.execute("""
+    for r in db.execute(f"""
         SELECT id, werk_id, quelle, quell_id, granularitaet, titel, herausgeber,
                publikationsjahr, lizenz_id, zugang_url, zugang_geprueft,
-               zugang_http_status, status
-        FROM eintraege ORDER BY id
+               zugang_http_status, status, kernbestand_herkunft
+        FROM eintraege {NUR_KERNBESTAND} ORDER BY id
     """):
         # Schlanker Suchindex: nur was Suche, Filter und Ergebnisliste brauchen.
         # url/quell_id/werk_id stehen in details.json (siehe oben) — sie würden den
@@ -74,6 +136,10 @@ def main():
             "g": r["granularitaet"], "t": r["titel"], "h": r["herausgeber"] or "",
             "j": r["publikationsjahr"], "l": r["lizenz_id"] or "",
             "v": r["zugang_geprueft"], "s": r["zugang_http_status"], "z": r["status"],
+            # Herkunft des Kernbestand-Merkmals: "regel" (ein Begriff im Titel
+            # entschied) oder "urteil" (die Urteilsroutine hat entschieden). Die
+            # Einzelseite soll sagen können, WARUM ein Eintrag hier ist.
+            "k": r["kernbestand_herkunft"],
         })
 
     meta = dict(db.execute("SELECT schluessel, wert FROM meta"))
@@ -124,7 +190,13 @@ def main():
         "gebaut_am": meta.get("gebaut_am"),
         "zaehler": {k: int(meta.get(k, 0)) for k in
                     ("eintraege", "werke", "fundstellen", "abgelehnt_gesamt",
-                     "aufgeloest_versucht", "aufgeloest_bestaetigt")},
+                     "aufgeloest_versucht", "aufgeloest_bestaetigt",
+                     # Kernbestand = was diese Oberfläche zeigt; "eintraege" = der
+                     # ganze Bestand, den der Snapshot trägt. Beide Zahlen stehen
+                     # nebeneinander, damit die Seite den Ausschnitt benennen kann
+                     # statt ihn als das Ganze auszugeben.
+                     "kernbestand", "kernbestand_regel", "kernbestand_urteil",
+                     "kernbestand_grenzfaelle_offen")},
         "mehrfassungs_werke": len(fassungen),
         "quellfenster": manifeste,
         "quellen": quellen,
@@ -136,7 +208,8 @@ def main():
     (ZIEL / "details.json").write_text(json.dumps(details, ensure_ascii=False,
                                                   separators=(",", ":")))
 
-    print(f"{len(zeilen)} Einträge → {ZIEL}")
+    print(f"{len(zeilen)} Kernbestand-Einträge von {meta.get('eintraege')} im Bestand "
+          f"→ {ZIEL}")
     for name in ("eintraege.json", "eintraege.json.gz", "details.json"):
         print(f"  {name:<20} {(ZIEL / name).stat().st_size / 1e6:.2f} MB")
     mit_beschreibung = sum(1 for d in details.values() if d.get("beschreibung"))

@@ -1,0 +1,16 @@
+{
+  "zweck": "Begründete Einzelfälle für die Massenherausgeber-Liste (Neufassung §4, Stufe 1). Hier steht, was das Maß in messungen/skripte/leite_massenherausgeber_ab.py nicht entscheiden kann: gekappte Musterzählungen und kleine, aber eindeutige Serien. Jede Zeile braucht einen Beleg, der sagt, was tatsächlich geprüft wurde — nicht, was plausibel wirkt.",
+  "datum": "2026-07-27",
+  "regel": "Rücknahme ist ein Revert: Zeile entfernen, Liste neu ableiten, Bestand neu bauen.",
+  "herausgeber": [
+    {
+      "name": "Distributed System of Scientific Collections",
+      "beleg": "5.030.937 Einträge; die Titel sind zoologische und botanische Binomen mit Autorschaft ('Psorergatoides molossi Lukoschus, Rosmalen & Fain, 1973'), also Bestimmungen einzelner physischer Belege, nicht Namen von Datensätzen. In der lokalen Ernte vom 26.07. verteilen sich 3.079 Einträge auf 300 Titelmuster, das häufigste 126-mal wiederholt — dieselbe Art auf verschiedenen Belegexemplaren. DiSSCo ist erklärtermaßen die Digitalisierungs-Infrastruktur europäischer Sammlungen; ein DOI je Sammlungsbeleg ist ihr Zweck. Maschinell nicht entscheidbar, weil die Musterzählung bei 50.000 gekappt hat und das gemessene Verhältnis (93,3 je Muster) deshalb nur eine Obergrenze ist.",
+      "granularitaet_bemerkung": "Ein Eintrag, der die SAMMLUNG bezeichnet (granularitaet 'collection' oder 'series'), bleibt nach der Ausnahme in §4 aufgenommen."
+    },
+    {
+      "name": "Consiglio Nazionale delle Ricerche",
+      "beleg": "4.871 Einträge auf 520 Titelmuster (9,4 je Muster) — unter jeder mechanischen Schwelle, aber die Titel sind reine Inventarnummern eines epigraphischen Korpus: 'Ja #' 824-mal, 'CIH #' 695-mal, 'al-Jawf #.#' 177-mal, dazu Formen wie 'A 40-3' und 'A-10-238'. Das ist ein Katalog einzelner Objekte, ein Identifikator je Inschrift. Die Schwelle greift hier nicht, weil der Herausgeber klein ist, nicht weil die Einträge Datensätze wären."
+    }
+  ]
+}
