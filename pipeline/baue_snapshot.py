@@ -33,7 +33,7 @@ def main():
     # statt stillschweigend ein Snapshot ohne Oberflächendaten zu veröffentlichen.
     oberflaeche = SNAPSHOTS.parent / "oberflaeche" / "public" / "daten"
     fehlend = []
-    for name in ("eintraege.json", "meta.json", "details.json"):
+    for name in ("eintraege.json", "meta.json", "details.json", "werke.json", "liste.json"):
         quelle = oberflaeche / name
         if quelle.exists():
             ziel = BUILD / name

@@ -5,6 +5,7 @@ Die Oberfläche folgt den Daten: sie zeigt, was aufgenommen wurde — samt Lück
 Prüfstand. Sie bestimmt nichts. Einzige Quelle ist bestand/hub.sqlite (derselbe
 Bestand, den die Pipelines als Snapshot laden).
 """
+import collections
 import gzip
 import json
 import pathlib
@@ -142,6 +143,85 @@ def main():
             "k": r["kernbestand_herkunft"],
         })
 
+    # ---- Werk-Ebene: eine Seite je Werk statt je Fassung ----
+    # Gemessen am 27.07.: 16.494 Kernbestand-Einträge verteilen sich auf 8.579 Werke,
+    # davon 5.127 mit genau zwei Fassungen. Das sind 10.254 paarweise fast identische
+    # Seiten — gleicher Titel, gleicher Herausgeber, gleiches Jahr, oft dieselbe
+    # Beschreibung. Die Werk-Seite fasst sie zusammen und zeigt stattdessen die
+    # Fassungsgeschichte, die keine Quellseite so zeigt.
+    #
+    # Werke mit nur EINER Fassung bekommen bewusst keine Werk-Seite: sie wäre eine
+    # Dublette der Eintragsseite und schüfe genau das Problem, das hier gelöst wird.
+    werk_mitglieder = {}
+    for r in db.execute(f"""
+        SELECT id, werk_id, titel, herausgeber, publikationsjahr, lizenz_id, quelle,
+               zugang_geprueft, zugang_http_status
+        FROM eintraege {NUR_KERNBESTAND} ORDER BY id
+    """):
+        werk_mitglieder.setdefault(r["werk_id"], []).append(dict(r))
+
+    werke = {}
+    for werk_id, mitglieder in werk_mitglieder.items():
+        if len(mitglieder) < 2:
+            continue
+        eigene = {m["id"] for m in mitglieder}
+        # Vertreter: der Eintrag, auf den die Geschwister zeigen. Welche Fassung die
+        # „aktuelle" ist, sagt das Register NICHT von sich aus — es liest ab, worauf
+        # die Quelle selbst verweist. Nur wenn niemand zeigt, entscheidet das Jahr,
+        # und dann heißt es „jüngster im Register", nicht „aktuelle Version".
+        zeigt_auf = collections.Counter()
+        for m in mitglieder:
+            for b in beziehungen.get(m["id"], []):
+                if b.get("i") in eigene and b["i"] != m["id"] and b["typ"] in (
+                        "IsPreviousVersionOf", "IsVersionOf", "IsIdenticalTo"):
+                    zeigt_auf[b["i"]] += 1
+        if zeigt_auf:
+            vertreter_id = zeigt_auf.most_common(1)[0][0]
+            vertreter_grund = "quelle"
+        else:
+            vertreter_id = sorted(
+                mitglieder, key=lambda m: (-(m["publikationsjahr"] or 0), m["id"]))[0]["id"]
+            vertreter_grund = "juengster"
+        vertreter = next(m for m in mitglieder if m["id"] == vertreter_id)
+
+        # Widersprüche zwischen den Fassungen werden benannt, nicht geglättet: wenn
+        # zwei Fassungen desselben Werks verschiedene Lizenzen tragen, ist das ein
+        # Befund über die Quelle, kein Darstellungsproblem.
+        abweichend = sorted({f for feld in ("lizenz_id", "herausgeber")
+                             for f in [feld]
+                             if len({(m[feld] or "") for m in mitglieder}) > 1})
+        werke[werk_id] = {
+            "t": vertreter["titel"],
+            "h": vertreter["herausgeber"] or "",
+            "v": vertreter_id,
+            "vg": vertreter_grund,
+            "n": len(mitglieder),
+            "abw": abweichend,
+            "f": sorted(({"i": m["id"], "t": m["titel"], "j": m["publikationsjahr"],
+                          "l": m["lizenz_id"] or "", "q": m["quelle"],
+                          "pv": m["zugang_geprueft"], "s": m["zugang_http_status"]}
+                         for m in mitglieder),
+                        key=lambda m: (-(m["j"] or 0), m["i"])),
+        }
+
+    # ---- Liste der Oberfläche: eine Zeile je INDEXIERBARER Seite ----
+    # Nicht je Eintrag. Sonst stünden 24 Zeilen mit demselben Titel in der Liste, die
+    # alle auf dieselbe Werk-Seite zeigen. Eine Zeile ist entweder ein Werk (mehrere
+    # Fassungen) oder ein Eintrag ohne Geschwister. Angaben stammen vom Vertreter;
+    # wo die Fassungen einander widersprechen, sagt `abw` das, statt einen Wert zu
+    # wählen und die anderen zu verschweigen.
+    zeilen_je_id = {z["i"]: z for z in zeilen}
+    liste = []
+    for werk_id, w in werke.items():
+        vertreter = zeilen_je_id.get(w["v"]) or zeilen_je_id[w["f"][0]["i"]]
+        liste.append({**vertreter, "i": werk_id, "w": 1, "n": w["n"],
+                      "t": w["t"], "abw": w["abw"] or None})
+    in_werk = {v["i"] for w in werke.values() for v in w["f"]}
+    for z in zeilen:
+        if z["i"] not in in_werk:
+            liste.append({**z, "w": 0, "n": 1, "abw": None})
+    liste.sort(key=lambda z: z["i"])
+
     meta = dict(db.execute("SELECT schluessel, wert FROM meta"))
     fassungen = {}
     for r in db.execute("SELECT werk_id, COUNT(*) n FROM eintraege GROUP BY werk_id HAVING n>1"):
@@ -208,8 +288,25 @@ def main():
     (ZIEL / "details.json").write_text(json.dumps(details, ensure_ascii=False,
                                                   separators=(",", ":")))
 
+    # Werk-Ebene getrennt: die Site baut daraus /datasets/work/<werk_id>. Getrennt
+    # von eintraege.json, weil die Suche im Browser sie nicht braucht.
+    (ZIEL / "werke.json").write_text(json.dumps(werke, ensure_ascii=False,
+                                                separators=(",", ":")))
+
+    # liste.json ist das, was der BROWSER lädt (Suche, Filter, Ergebnisliste):
+    # eine Zeile je indexierbarer Seite. eintraege.json bleibt vollständig, weil die
+    # Fassungsseiten daraus gebaut werden — es erreicht den Browser aber nicht mehr.
+    (ZIEL / "liste.json").write_text(json.dumps(liste, ensure_ascii=False,
+                                                separators=(",", ":")))
+    with gzip.open(ZIEL / "liste.json.gz", "wt", encoding="utf-8") as f:
+        json.dump(liste, f, ensure_ascii=False, separators=(",", ":"))
+
+    einzeln = sum(1 for m in werk_mitglieder.values() if len(m) == 1)
     print(f"{len(zeilen)} Kernbestand-Einträge von {meta.get('eintraege')} im Bestand "
           f"→ {ZIEL}")
+    print(f"  Werk-Seiten: {len(werke)} (Werke mit mehreren Fassungen); "
+          f"{einzeln} Werke mit einer Fassung behalten ihre Eintragsseite "
+          f"→ {len(werke) + einzeln} indexierbare Seiten statt {len(zeilen)}")
     for name in ("eintraege.json", "eintraege.json.gz", "details.json"):
         print(f"  {name:<20} {(ZIEL / name).stat().st_size / 1e6:.2f} MB")
     mit_beschreibung = sum(1 for d in details.values() if d.get("beschreibung"))
