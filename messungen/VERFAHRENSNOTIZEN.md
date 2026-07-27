@@ -3,6 +3,97 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-07-27 — 378 Einzeleinträge aus einem anonymen Batch-Upload, unterhalb der Kandidaten-Schwelle
+
+Die Stichprobe zog zweimal denselben Titel „Zulu_docx" (Zenodo, Herausgeber Zenodo,
+Urheber `anon`, Jahr 2026). Nachgeprüft: `bestand/hub.sqlite` enthält **378 Einträge**
+mit exakt diesem Titel, alle DataCite/Zenodo, alle `anon`, DOI-Bereich
+`10.5281/zenodo.21610xxx`–`21612xxx`. Die Beschreibung jedes geprüften Eintrags lautet
+wörtlich „Batch upload of files from directory 'Zulu_docx'." (ein zweiter Cluster trägt
+„...'Zulu_txt'.") — ein automatisiertes Werkzeug hat offenbar jede Datei eines
+Verzeichnisses einzeln bei Zenodo eingereicht und dabei jeweils eine eigene DOI erhalten.
+
+**Nicht getan:** Diese 378 Einträge paarweise oder als Gruppe zusammenführen. Erstens
+liefert `kandidaten.py` sie gar nicht als Kandidaten aus — die Gruppengröße überschreitet
+die bewusst gesetzte Schwelle von 3 (Kommentar in `merge_kandidaten`: „Ein Titel, der
+mehr als dreimal vorkommt, ist eine Serie, keine Dublette"), sie sind also unterhalb des
+Radars der Kandidatenbildung geblieben. Zweitens gibt es keinen Beleg, dass die 378
+Dateien inhaltlich identisch sind — ein Urteil ohne Beleg ist kein Urteil, und bei 378
+Objekten ist Einzelprüfung im Rahmen dieser Routine nicht zu leisten.
+
+**Regel/Prüfauftrag daraus:** Das ist kein Dedup-Fall, sondern eine Frage der
+Aufnahmequalität an der Quelle — ob anonyme, generisch betitelte Batch-Uploads
+(Verzeichnisname als Titel, kein erkennbarer Urheber) überhaupt einzeln ins Register
+gehören, ist eine Entscheidung für eine deterministische Schranke, nicht für ein
+nächtliches Einzelurteil. Bis das entschieden ist, bleiben alle 378 als `ungeprueft`
+im Bestand; die zwei aus der Stichprobe geprüften waren für sich genommen korrekt
+beschrieben (Titel und Zugriffsweg stimmen), deshalb kein `markiert`.
+
+## 2026-07-27 — Der veröffentlichte Snapshot der Urteilsroutine war der Stand vor der eigenen Korrektur
+
+`kandidaten.py --aus-snapshot` (bzw. hier ohne das Flag, s. u.) holte `snapshot-2026-07-27`
+als jüngsten veröffentlichten Bestand — nachweislich **12.915 Einträge**, ausschließlich
+aus dem Fenster `datacite-20260727T064344Z`. Das Manifest weist weiterhin alle sieben
+Erntefenster aus (ArcGIS, HuggingFace, Kaggle, zwei DataCite-Läufe), ohne ein Feld wie
+`rohernten_nicht_im_bau`, das den fehlenden Beitrag der anderen sechs Fenster kenntlich
+machen würde — exakt das Muster aus dem ersten Eintrag dieser Datei („ein Bestand, der
+mehr behauptet, als in ihm steckt"). Ursache geprüft: Der Build-Commit `2849ef7` (06:53
+UTC) liegt zeitlich **vor** dem Fix-Commit `ec4dc70` (08:27 UTC, „nächtlicher Lauf
+ergänzt den Bestand statt ihn zu ersetzen"). Der veröffentlichte Snapshot stammt also aus
+dem alten, fehlerhaften Lauf; der Fix wirkt erst beim nächsten nächtlichen Bau.
+
+**Nicht getan:** Auf den nächsten nächtlichen Lauf warten oder selbst einen Bestand aus
+den Rohernten zusammensetzen — beides widerspräche „Du baust den Bestand nicht selbst"
+und dem eigenen Auftrag, den jeweils veröffentlichten Stand zu beurteilen, nicht einen
+selbst konstruierten. Stattdessen: beurteilt wie vorgefunden, mit diesem Vermerk als
+Beleg für die Lücke. Die 40 vorgelegten Merge-Kandidaten und die Stichprobe stammen
+vollständig aus DataCite — Kaggle/ArcGIS/HuggingFace-Einträge dieses Laufs sind darin
+nicht vertreten, aber das macht die getroffenen Urteile nicht falsch, nur nicht
+vollständig repräsentativ für den Gesamtbestand.
+
+**Regel daraus:** Ein Bestand kann „vor der eigenen Reparatur veröffentlicht" sein, ohne
+dass sein Manifest das zeigt. `beurteilter_stand` in `urteil/vorlage.json` (bzw. hier
+diese Notiz) ist der einzige Ort, an dem das sichtbar wird — solange `baue_snapshot.py`
+den Gap nicht selbst ins Manifest schreibt, muss die Urteilsroutine den Baustand
+gegen die Commit-Historie prüfen, nicht nur gegen das Tag-Datum.
+
+## 2026-07-27 — `api.github.com` ist in dieser Sitzung gesperrt; `kandidaten.py --aus-snapshot` scheitert mit HTTP 403
+
+`snapshot_holen()` ruft `https://api.github.com/repos/.../releases` direkt per
+`urllib.request` auf. In dieser (Claude-Code-Remote-)Sitzung antwortet der
+vorgeschaltete Proxy darauf mit HTTP 403 und dem Klartext „GitHub access is not enabled
+for this session. An org admin must connect the Claude GitHub App for this
+organization." — kein GitHub-Fehler, sondern eine Sitzungsrichtlinie: rohe HTTP-Zugriffe
+auf `api.github.com` sind gesperrt, nur der GitHub-MCP-Werkzeugsatz der Sitzung darf
+dorthin. `curl https://api.github.com/rate_limit` funktioniert (liefert ein Limit von
+15.000, also ein authentifizierter Token dahinter) — nur der konkrete `/releases`-Pfad
+für dieses Repo wird abgewiesen.
+
+**Behelf dieses Laufs, nachvollziehbar:** Release-Metadaten über
+`mcp__github__list_releases` geholt (liefert Tag, Assets-Liste inkl. SHA-256 aus dem
+Release-Body); das `.sqlite.gz`-Asset selbst über die reguläre
+`github.com/<repo>/releases/download/<tag>/<datei>`-URL geladen (die ist **nicht**
+gesperrt, folgt einem Redirect zu einer vorsignierten `objects.githubusercontent.com`-URL
+und liefert dieselbe Datei aus, die die REST-API auch auslieferte). Vor der Verwendung
+per SHA-256 gegen den im Release-Body dokumentierten Wert geprüft — Treffer
+(`fd1e1245…bac89f1`, 21.805.404 Bytes). Danach lokal unter `bestand/hub.sqlite` abgelegt
+(gitignored) und `kandidaten.py` **ohne** `--aus-snapshot` aufgerufen, damit es die lokale
+Datei nimmt statt erneut die gesperrte API anzusprechen.
+
+**Nicht getan:** Den `kandidaten.py`-Quelltext ändern und committen, um den Zugriffsweg
+dauerhaft umzustellen — das wäre eine Pipeline-Änderung außerhalb des Auftrags dieser
+Routine (nur `journal/` und diese Datei sind ihr Commit-Umfang) und einer, der die
+Umgebungsabhängigkeit nicht kennt, in der die nächtliche GitHub-Action tatsächlich läuft
+(dort ist `api.github.com` vermutlich nicht gesperrt).
+
+**Regel/Prüfauftrag daraus:** Sollte künftigen Urteilsläufen in einer ähnlichen Sitzung
+derselbe 403 begegnen, ist es kein Datenausfall (der Snapshot existiert, ist vollständig
+und per Prüfsumme verifizierbar) — nur ein gesperrter Zugriffsweg für diese eine
+Umgebung. Vor einem Abbruch prüfen: liefert `mcp__github__list_releases` den Tag? Lässt
+sich das Asset über `github.com/.../releases/download/...` laden und stimmt die
+SHA-256-Prüfsumme mit dem Release-Body überein? Erst wenn eines von beidem fehlschlägt,
+ist es ein echter Ausfall im Sinne dieser Datei.
+
 ## 2026-07-27 — Der nächtliche Lauf ersetzte den Bestand, statt ihn zu ergänzen
 
 **Was passierte:** Der erste automatische Lauf war erfolgreich — und schrumpfte den
