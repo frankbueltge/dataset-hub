@@ -91,6 +91,14 @@ Speichern — und unseres liegt öffentlich (Frank, 2026-07-26; siehe
 Sammeleintrag im Ablehnungsregister: unsere Buchführung über unser eigenes Handeln,
 ohne Fremdinhalt.
 
+**Nachtrag 2026-07-27:** Die Löschung betraf die Ernten, nicht die Messrohdaten —
+vier Dateien (rund 117 KB, größte mit 200 Datensätzen) lagen weiter in
+`messungen/rohdaten/`. Sie sind jetzt entfernt. Damit ist die Kaggle-Messung
+(`2026-07-26-kaggle.md`) **nicht mehr durch Rohdaten gedeckt**; ihre Zahlen bleiben
+im Bericht, sind aber nicht nachrechenbar. Das ist der Preis der strengeren Lesart
+und hier gewollt. In der Git-Historie bleiben die Dateien abrufbar; sie dafür
+umzuschreiben wäre unverhältnismäßig.
+
 Abwägung, offen dargelegt: Wir haben die **dokumentierte öffentliche API** genutzt
 (`/api/v1/datasets/list`), nicht die Website gescrapt — programmatischer Zugriff ist
 dort ersichtlich vorgesehen. Die zweite Klausel steht dem aber unabhängig davon
