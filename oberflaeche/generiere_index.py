@@ -58,13 +58,31 @@ def main():
     # trotzdem, und sie zu verschweigen hieße, das Werk unvollständig darzustellen.
     # Das Merkmal `s` (Seite) sagt, ob es dafür eine Unterseite gibt — nur dann darf
     # die Vorlage verlinken, sonst zeigt sie den Eintrag ohne Verweis.
-    geschwister, werk_je_id = {}, {}
+    geschwister, werk_je_id, ist_kern = {}, {}, {}
     for r in db.execute("SELECT id, werk_id, titel, publikationsjahr, quelle, kernbestand "
                         "FROM eintraege"):
         werk_je_id[r["id"]] = r["werk_id"]
+        ist_kern[r["id"]] = bool(r["kernbestand"])
         geschwister.setdefault(r["werk_id"], []).append(
             {"i": r["id"], "t": r["titel"], "j": r["publikationsjahr"], "q": r["quelle"],
              "s": bool(r["kernbestand"])})
+
+    # Wer hat eine eigene Seite? Seit der Umstellung auf Werk-Seiten bekommt eine
+    # Fassung eines Mehrfassungs-Werks KEINE eigene Seite mehr — das Werk trägt sie.
+    # Anlass war nicht nur die Dublettenfrage: Fassungsseiten UND Werk-Seiten zusammen
+    # ergaben 22.857 Dateien, und Cloudflare Pages nimmt 20.000 je Deployment. Die
+    # Fassungsseiten waren ohnehin nicht kanonisch und nicht in der Sitemap.
+    kern_je_werk = collections.Counter(w for i, w in werk_je_id.items() if ist_kern[i])
+
+    def seite_von(eintrag_id):
+        """Pfad der Seite, die diesen Eintrag zeigt — oder None. Nie anderswo bilden:
+        ein Verweis auf eine nicht gebaute Fassungsseite wäre ein 404."""
+        if not ist_kern.get(eintrag_id):
+            return None
+        werk = werk_je_id.get(eintrag_id)
+        if kern_je_werk.get(werk, 0) > 1:
+            return f"/datasets/work/{werk}"
+        return f"/datasets/{eintrag_id}"
 
     # DOI → eigener Eintrag, damit eine Beziehung als interner Verweis erkennbar wird.
     eintrag_je_doi = {}
@@ -85,6 +103,11 @@ def main():
         b = {"typ": r["typ"], "ziel": ziel, "schema": r["ziel_schema"]}
         if intern:
             b["i"] = intern
+            # Der Pfad, nicht die Id: das Ziel kann eine Fassung ohne eigene Seite
+            # sein, dann führt der Verweis auf deren Werk.
+            ziel_seite = seite_von(intern)
+            if ziel_seite:
+                b["p"] = ziel_seite
         beziehungen.setdefault(r["von_id"], []).append(b)
 
     details = {}
@@ -109,8 +132,14 @@ def main():
         d["quell_id"] = (e.get("fundstellen") or [{}])[0].get("quell_id") or ""
 
         # Andere Fassungen desselben Werks — der Eintrag selbst ist nicht dabei.
-        andere = [g for g in geschwister.get(werk_je_id.get(r["id"]), [])
-                  if g["i"] != r["id"]]
+        # Schlüssel `p` nur setzen, wenn es die Seite gibt — ein `null` im Export
+        # wäre eine Adresse, die keine ist, und die Vorlage müsste raten.
+        andere = []
+        for g in geschwister.get(werk_je_id.get(r["id"]), []):
+            if g["i"] == r["id"]:
+                continue
+            pfad = seite_von(g["i"])
+            andere.append(dict(g, p=pfad) if pfad else dict(g))
         if andere:
             d["fassungen"] = sorted(andere, key=lambda g: (-(g["j"] or 0), g["t"]))
 
@@ -155,7 +184,7 @@ def main():
     werk_mitglieder = {}
     for r in db.execute(f"""
         SELECT id, werk_id, titel, herausgeber, publikationsjahr, lizenz_id, quelle,
-               zugang_geprueft, zugang_http_status
+               zugang_geprueft, zugang_http_status, zugang_url
         FROM eintraege {NUR_KERNBESTAND} ORDER BY id
     """):
         werk_mitglieder.setdefault(r["werk_id"], []).append(dict(r))
@@ -197,9 +226,15 @@ def main():
             "vg": vertreter_grund,
             "n": len(mitglieder),
             "abw": abweichend,
+            # Zugriffsweg und Quell-Id je Fassung wandern mit auf die Werk-Seite:
+            # Sie standen bisher nur auf den Fassungsseiten, und die gibt es für
+            # Mehrfassungs-Werke nicht mehr. Ohne sie verlöre die Umstellung genau
+            # das, was das Register ausmacht — den wörtlichen Zugriffsweg je Eintrag.
             "f": sorted(({"i": m["id"], "t": m["titel"], "j": m["publikationsjahr"],
                           "l": m["lizenz_id"] or "", "q": m["quelle"],
-                          "pv": m["zugang_geprueft"], "s": m["zugang_http_status"]}
+                          "pv": m["zugang_geprueft"], "s": m["zugang_http_status"],
+                          "u": m["zugang_url"] or "",
+                          "p": (details.get(m["id"]) or {}).get("quell_id", "")}
                          for m in mitglieder),
                         key=lambda m: (-(m["j"] or 0), m["i"])),
         }
