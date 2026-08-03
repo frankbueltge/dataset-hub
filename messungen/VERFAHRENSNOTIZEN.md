@@ -3,6 +3,48 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-03 — Fast alle Merge-Kandidaten waren bereits korrekt auf Werk-Ebene verbunden; die Concept-DOI verzerrt sowohl Kandidaten als auch Stichprobe
+
+39 von 40 vorgelegten Merge-Kandidaten trugen im Beleg `gleiches_werk_bereits: true` —
+R2 hatte sie also längst korrekt anhand einer quellen-behaupteten Relation
+(`IsVersionOf`/`HasVersion`/`IsPreviousVersionOf`) zur selben Werk-Gruppe
+zusammengeführt. Die tatsächliche Frage war deshalb nicht „gehören diese zusammen?"
+(beantwortet), sondern „sind es zusätzlich dieselbe Fassung?" — und die Antwort war,
+wo geprüft (Zenodo-API, Dateiprüfsummen), fast durchweg nein: verschiedene Dateien
+unter derselben `conceptrecid`.
+
+Ursache des Musters: Zenodo (und analog Mendeley/figshare/andere) vergibt neben den
+Versions-DOIs eine **Concept-/Alias-DOI**, die keine eigene Fassung ist, sondern per
+Weiterleitung immer auf die jeweils *neueste* Version zeigt (`zenodo.org/api/records/
+<conceptrecid>` liefert die ID der aktuellen Version zurück, nicht einen eigenen
+Datensatz). Harvestet DataCite diese Concept-DOI als eigene Fundstelle, bekommt sie
+eine eigene `dh-`ID mit `HasVersion`/`IsVersionOf`-Relationen zu allen echten
+Versionen — und ihr Zugriffsweg **verschiebt sich**, sobald eine neue Version
+erscheint. Das erklärt zwei unabhängig beobachtete Symptome in diesem Lauf:
+
+1. Die Merge-Kandidaten aus Titel-Gruppen von 2–3, bei denen ein Mitglied die
+   Concept-DOI ist — kein Dedup-Fehler, sondern der erwartete Rest, der bleibt, wenn
+   R2 korrekt nur bis Werk-Ebene zusammenführt.
+2. In der Stichprobe lösten mehrere `zugang.url` (alle mit Zenodo-Quell-ID) auf eine
+   um 1 höhere Record-Nummer auf, als registriert (z. B. registriert `.../4088832`,
+   aufgelöst `.../4088833`) — Titel stimmte in jedem geprüften Fall exakt überein
+   (per `og:title`-Vergleich bestätigt), es ist also keine falsche Zuordnung, sondern
+   dieselbe Concept-DOI-Weiterleitung: Der Datensatz hat seit der Ernte eine neue
+   Version bekommen.
+
+**Nicht getan:** Für keinen dieser Fälle einen automatischen Fassungs-Merge
+vorgeschlagen — eine Concept-DOI, deren Ziel sich künftig weiter verschiebt, mit einer
+fixen Versions-DOI dauerhaft als „dasselbe Ding" zu verknüpfen wäre die Sorte Fehler,
+vor der `im Zweifel kein_merge` schützen soll.
+
+**Regel/Prüfauftrag daraus:** Wenn eine harvestete DOI laut Zenodo-API selbst ein
+`conceptrecid` **ist** (nicht nur trägt), ist sie eine Alias-, keine Versions-DOI.
+Ob sich das an der harvesteten `roh`-Metadatenform (DataCite unterscheidet Concept- und
+Versions-DOI nicht immer klar im `relatedIdentifiers`-Feld) deterministisch erkennen
+lässt, wäre ein eigener Prüfauftrag für `normalisiere.py` — würde es künftigen Läufen
+ersparen, dieselbe Werk-Gruppe erneut vorgelegt zu bekommen, sobald wieder eine neue
+Version erscheint.
+
 ## 2026-07-27 — 378 Einzeleinträge aus einem anonymen Batch-Upload, unterhalb der Kandidaten-Schwelle
 
 Die Stichprobe zog zweimal denselben Titel „Zulu_docx" (Zenodo, Herausgeber Zenodo,
