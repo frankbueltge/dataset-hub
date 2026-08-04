@@ -3,6 +3,70 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-04 — Alle 40 Merge-Kandidaten sind Concept-/Versions-DOI-Paare; bei fünf zeigt die Concept-DOI schon auf eine dritte, unregistrierte Version
+
+Bestätigt und vertieft den Befund vom 2026-08-03. Wieder trugen alle 40 vorgelegten
+Merge-Kandidaten `gleiches_werk_bereits: true`. Diesmal wurde jedes Paar einzeln per
+Zenodo-, figshare- und Mendeley-API geprüft (Dateiprüfsummen, `conceptrecid`,
+Versions-Feld), nicht nur an Beispielen.
+
+Ergebnis: 40 von 40 `kein_merge`. Darunter fünf Fälle, in denen die Concept-DOI zum
+Prüfzeitpunkt **nicht** auf eines der beiden Kandidaten zeigte, sondern auf eine dritte,
+im Register noch gar nicht erfasste, neuere Version — der konkrete Beweis für das am
+03.08. nur begründete Risiko, dass eine Concept-DOI keine feste Referenz ist, sondern
+wandert:
+
+- Zenodo-Konzept 17737172 → aktuell Record 18386392
+- Zenodo-Konzept 21432188 (Sivroni-Werk) → aktuell Record 21728269
+- Zenodo-Konzept 17416652 → aktuell Record 19185175
+- Zenodo-Konzept 12703231 → aktuell Record 19433890
+- Zenodo-Konzept 16980461 → aktuell Record 17426012
+
+Das Muster ist quellenübergreifend, nicht Zenodo-spezifisch: figshare (unversionierte
+Artikel-ID) und Mendeley Data (DOI ohne Versions-Suffix) haben dieselbe „zeigt immer auf
+die neueste Version"-Kennung. Bei vier geprüften Mendeley-Paaren existiert aktuell nur
+eine veröffentlichte Version — unversionierte und `.1`-DOI sind inhaltlich (SHA-256)
+identisch, trotzdem `kein_merge` aus strukturellen Gründen (dieselbe Instabilität wie bei
+Zenodo, nur noch nicht eingetreten). Bei einem figshare-Dreiergespann (Basis-DOI, v4, v5)
+zeigte die Basis-DOI aktuell per MD5-Treffer auf v5, nicht auf das im Kandidatenpaar
+stehende v4 — ein Beleg mehr für dieselbe Instabilität, hier schon eingetreten.
+
+**Nicht getan:** Keines der vier inhaltlich identischen Mendeley-Paare als Fassung
+zusammengeführt, obwohl der Inhalt heute Byte für Byte übereinstimmt — die Konsequenz
+wäre ein Fassungs-Eintrag, dessen Begründung mit der ersten neuen Version des Datensatzes
+falsch würde, ohne dass irgendetwas im Register das anzeigt.
+
+**Regel/Prüfauftrag daraus:** Der Prüfauftrag vom 03.08. bleibt (deterministische
+Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform, ohne Live-API-
+Aufruf, damit solche Paare gar nicht erst als Kandidaten vorgelegt werden). Neu dazu:
+Dieselbe Erkennung sollte figshare (unversionierte Artikel-ID) und Mendeley (DOI ohne
+Versions-Suffix) mit abdecken, nicht nur Zenodo.
+
+## 2026-08-04 — Automatisierter Zugriff auf Dataverse und figshare/Karger-figshare wird per AWS-WAF-Challenge abgewiesen (202, leerer Body)
+
+In der Stichprobe (15 Einträge) lösten 7 von 15 Zugriffswegen mit HTTP 202 und leerem
+Body auf, alle mit demselben Muster: Header `x-amzn-waf-action: challenge`, Herkunft
+`awselb/2.0`. Betroffen: Harvard Dataverse (1 Eintrag) und figshare/karger.figshare.com/
+tandf.figshare.com (6 Einträge). Mit Standard-UA (`dataset-hub-pipeline/...`) und mit
+Browser-UA gleichermaßen geprüft — kein Unterschied, beide werden abgewiesen.
+
+Strukturell derselbe Fall wie GBIF am 26.07. (Schema-Änderung v0.2.0,
+`zugang.geprueft: versucht`): Der Datensatz existiert vermutlich, nur die automatisierte
+Prüfung wird verwehrt. Keiner der 7 betroffenen Einträge wurde deshalb `markiert` — es
+gibt keinen Beleg für einen falschen Eintrag, nur für einen verwehrten Prüfversuch. Die
+übrigen 8 Einträge der Stichprobe (Zenodo, HuggingFace, ArcGIS, Mendeley) lösten normal
+auf; Titel stimmten in jedem Fall überein (per `<title>`/`og:title`-Vergleich).
+
+**Nicht getan:** Keinen der 7 betroffenen Einträge als geprüft vermerkt oder sonst wie
+überbrückt — der Zugriffsweg wurde tatsächlich versucht, nicht bestätigt.
+
+**Regel/Prüfauftrag daraus:** Sollte `aufloese.py` künftig auch figshare/Dataverse
+durchlaufen, wird es denselben WAF-Block sehen wie hier — kein Grund zur Sorge, aber
+`zugang.geprueft: versucht` mit `http_status: 202` sollte für diese Hosts erwartet, nicht
+als Regression gedeutet werden. Beiläufig entdeckt: `api.figshare.com/v2/articles/<id>`
+lieferte anstandslos JSON ohne WAF-Challenge — ob das ein Zugriffsweg wäre, der den WAF-
+Block umgeht, ist ein eigener Prüfauftrag.
+
 ## 2026-08-03 — Fast alle Merge-Kandidaten waren bereits korrekt auf Werk-Ebene verbunden; die Concept-DOI verzerrt sowohl Kandidaten als auch Stichprobe
 
 39 von 40 vorgelegten Merge-Kandidaten trugen im Beleg `gleiches_werk_bereits: true` —
