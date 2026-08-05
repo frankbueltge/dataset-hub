@@ -3,6 +3,65 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-05 — Fünfter Lauf in Folge: wieder 40/40 kein_merge, Concept-/Versions-DOI-Muster jetzt auch auf MaterialsCloud bestätigt; ein Zenodo-Record als Tombstone entdeckt
+
+Beurteilter Stand weiterhin `snapshot-2026-07-27c` (der nächtliche Cron ist seit
+2026-07-27 pausiert — Rückbau des Registers, s. `b9cb92a`/`1e20079` — daher kein neuerer
+Snapshot verfügbar; `bereits_beurteilte_paare` in `urteil/vorlage.json` stand bei 280,
+5.726 Kandidaten blieben erneut gekappt). Alle 40 vorgelegten Kandidaten einzeln per
+Zenodo-, Mendeley-, figshare- und (neu) MaterialsCloud-API geprüft, nicht nur an
+Beispielen — Ergebnis wie am 03./04.08.: **40 von 40 kein_merge.**
+
+**Neu: MaterialsCloud bestätigt dasselbe Muster.** Ein Paar (`materialscloud:66-ec` /
+`materialscloud:az-2c`) löste über zwei verschiedene DOIs auf denselben Record
+(`0x1nd-2pq96`) auf. Die MaterialsCloud-API zeigt: `66-ec` ist `self_doi` (die
+Versions-DOI dieses konkreten Eintrags), `az-2c` ist `parent_doi` (die Konzept-DOI der
+übergeordneten Reihe, mit eigenem `latest`-Verweis auf `dngzm-q8x14`) — MaterialsCloud
+läuft wie Zenodo auf InvenioRDM und hat exakt dieselbe Concept-/Versions-DOI-Struktur.
+Das Muster ist damit auf vier Quellen bestätigt: Zenodo, Mendeley, figshare,
+MaterialsCloud.
+
+**Neuer Fund, kein Drift diesmal: ein Zenodo-Record wurde vom Hinterleger echt
+gelöscht.** Beim Prüfen des Paars `dh-2a5791bb45c50159`/`dh-62d66ade18ae8a57`
+(Zenodo 21610493/21610494) lieferte 21610494 nicht Metadaten, sondern HTTP 410 Gone mit
+Tombstone: `removal_reason: test-record`, gelöscht am 2026-08-03 vom Hinterleger selbst.
+Anders als die bisher dokumentierten Concept-DOI-Drifts (Weiterleitung auf eine neuere
+Version) ist der Datensatz hier komplett fort — unter keiner URL mehr erreichbar. Der
+zugehörige Registereintrag wurde deshalb zusätzlich `markiert` (eigener Journal-Eintrag,
+eigener Commit), nicht nur `kein_merge` im Paar.
+
+**Auch die figshare-v1/v2-Fälle sind nicht mehr eindeutig konzeptartig:** Bei
+`17798777` waren v1 und v2 inhaltlich identisch (MD5-Treffer), bei `17798783` dagegen
+inhaltlich verschieden (unterschiedliche MD5) — beides `kein_merge`, aber aus
+verschiedenen Gründen (einmal strukturell/Concept-artig, einmal schlicht andere Datei).
+Zusätzlich fiel auf: figshare-Versions-DOIs (`.v1`/`.v2`) sind, anders als
+Zenodo-Concept-DOIs, jede für sich dauerhaft und eigenständig registriert — auch bei
+identischem Dateiinhalt bleibt der `kein_merge`-Entscheid, weil ungeprüft ist, ob sich
+die Metadaten zwischen den Versionen geändert haben.
+
+**Stichprobe (15 Einträge):** 7 von 15 lösten normal auf, Titel stimmten in jedem Fall
+(Zenodo ×5, Mendeley ×1, ScienceDB ×1 — Titel-Tag-Vergleich). 2 GBIF-Einträge scheiterten
+mit dem seit 2026-07-26 bekannten 403-Bot-Block. 6 figshare-Einträge scheiterten mit dem
+seit 2026-08-04 bekannten AWS-WAF-202-Muster — **neu dabei:** diesmal traf es nicht nur
+die White-Label-Portale (karger.figshare.com, tandf.figshare.com), sondern auch **das
+einfache `figshare.com` selbst** (3 der 6 betroffenen Einträge). Keiner der 8
+Ausfälle wurde markiert — beides sind dokumentierte Host-Blockmuster, kein Beleg für
+falsche Einträge.
+
+**Nicht getan:** Wieder keinen automatischen Fassungs-Merge für inhaltlich identische
+Concept-/Versions-Paare vorgeschlagen (Mendeley, figshare v1/v2 bei `17798777`) — aus
+denselben strukturellen Gründen wie am 03./04.08.
+
+**Regel/Prüfauftrag daraus, jetzt zum dritten Mal wiederholt:** Der Prüfauftrag vom
+2026-08-03 (deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten
+`roh`-Metadatenform, ohne Live-API-Aufruf) ist über drei Urteilsläufe (03.08., 04.08.
+×2, 05.08.) hinweg **immer noch nicht umgesetzt** — mittlerweile über 150 Kandidatenpaare
+mit demselben strukturellen Befund. Das ist inzwischen kein Rand-, sondern der
+Hauptfall der Kandidatenliste; die Urteilsroutine wiederholt nachts dieselbe Diagnose,
+statt dass `normalisiere.py` oder `kandidaten.py` sie einmal deterministisch anwendet.
+Da der Ernte-Cron pausiert ist, ist die Dringlichkeit gering — aber sollte er
+reaktiviert werden, sollte diese Regel vor dem nächsten Urteilslauf stehen, nicht danach.
+
 ## 2026-08-04 — Alle 40 Merge-Kandidaten sind Concept-/Versions-DOI-Paare; bei fünf zeigt die Concept-DOI schon auf eine dritte, unregistrierte Version
 
 Bestätigt und vertieft den Befund vom 2026-08-03. Wieder trugen alle 40 vorgelegten
