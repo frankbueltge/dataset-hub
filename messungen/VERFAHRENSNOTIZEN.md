@@ -3,6 +3,63 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-06 — Sechster Lauf in Folge: wieder 40/40 kein_merge; Concept-Record mit HTTP 410 auf der API, registrierter Zugriffsweg löst trotzdem auf; api.github.com wieder gesperrt
+
+Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
+Register-Rückbau — kein neuerer Snapshot verfügbar; `list_releases` bestätigt, jüngstes
+Release ist unverändert `snapshot-2026-07-27c` vom 27.07.). `bereits_beurteilte_paare`
+stand bei 320, 5.686 Kandidaten blieben erneut gekappt.
+
+`kandidaten.py --aus-snapshot` scheiterte wie am 27.07. mit HTTP 403 auf
+`api.github.com` (Sitzungsrichtlinie, kein GitHub-Fehler). Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__list_releases` geholt, `hub-2026-07-27.sqlite.gz`
+über den ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen den
+Manifest-Eintrag geprüft (Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes, 22.473
+Einträge), lokal unter `bestand/hub.sqlite` abgelegt, `kandidaten.py` **ohne**
+`--aus-snapshot` aufgerufen.
+
+Alle 40 vorgelegten Kandidaten einzeln per Zenodo-, Mendeley- und figshare-API geprüft
+(69 einzelne Zenodo-Record-Abfragen, nicht nur an Beispielen). Ergebnis wie an den
+vier Vortagen: **40 von 40 kein_merge**, ausnahmslos Concept-/Versions-DOI-Paare.
+
+**Neue API-Variante des Concept-DOI-Musters:** Beim Paar `dh-a2a271cfb97111f2`/
+`dh-cd27e5e4a26b72ee` (Zenodo 10778229/10778230, „Albanian corpus …") antwortet der
+direkte API-Endpunkt `zenodo.org/api/records/10778229` für die Concept-DOI mit
+**HTTP 410 Gone** (`"The record has been deleted"`) statt, wie bei allen anderen
+Paaren, mit einem 302-Redirect auf die aktuelle Version. Der tatsächlich registrierte
+Zugriffsweg des Eintrags (`zenodo.org/doi/10.5281/zenodo.10778229`, ebenso der
+DOI-Resolver `doi.org/10.5281/zenodo.10778229`) löst trotzdem mit HTTP 200 auf den
+lebenden Record 10778230 auf — anders als beim Tombstone-Fund vom 03.08.
+(`dh-62d66ade18ae8a57`, dort führte auch der registrierte Zugriffsweg selbst ins
+Leere) ist hier nichts wirklich tot, nur ein alter API-Endpunkt für die
+Concept-Record-Id wurde entfernt. Deshalb **kein `markiert`** — der Eintrag ist
+gesund, nur ein Beleg mehr dafür, dass die Concept-/Versions-Instabilität nicht ein
+einzelnes API-Verhalten ist, sondern mehrere.
+
+Zusätzlich in der Stichprobe (nicht im Kandidatenpaar): Eintrag `dh-9a8bd7e9c1e9271f`
+(Zenodo-Konzept 6337863) löst aktuell auf Record 6337923 auf — Titel exakt identisch
+(„A Deep Neural Network Based SMAP Soil Moisture Product"), also derselbe Drift wie
+die am 04.08. gelisteten fünf Fälle, hier zum ersten Mal an einem Stichprobeneintrag
+statt an einem Merge-Kandidaten beobachtet.
+
+**Stichprobe (15 Einträge):** 8 von 15 lösten normal auf, Titel stimmten in jedem
+geprüften Fall (Zenodo ×4 inkl. des Drift-Falls oben, Mendeley ×2, PANGAEA ×1,
+Dryad ×1 — `<title>`-Tag-Vergleich). 6 figshare/springernature.figshare/Dataverse-
+Einträge scheiterten mit dem seit 2026-08-04 bekannten AWS-WAF-202-Muster. Keiner der
+7 Ausfälle wurde markiert — dokumentiertes Host-Blockmuster, kein Beleg für falsche
+Einträge.
+
+**Nicht getan:** Wieder keinen automatischen Fassungs-Merge für die strukturell
+identischen Concept-/Versions-Paare vorgeschlagen (aus denselben Gründen wie an den
+vier Vortagen).
+
+**Regel/Prüfauftrag daraus, jetzt zum vierten Mal wiederholt:** Der Prüfauftrag vom
+2026-08-03 (deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten
+`roh`-Metadatenform) bleibt über vier Urteilsläufe (03., 04., 05., 06.08.) hinweg
+unumgesetzt — inzwischen über 190 Kandidatenpaare mit demselben strukturellen Befund.
+Da der Ernte-Cron pausiert ist, bleibt die Dringlichkeit gering, aber der
+Prüfauftrag verliert dadurch nicht an Substanz.
+
 ## 2026-08-05 — Fünfter Lauf in Folge: wieder 40/40 kein_merge, Concept-/Versions-DOI-Muster jetzt auch auf MaterialsCloud bestätigt; ein Zenodo-Record als Tombstone entdeckt
 
 Beurteilter Stand weiterhin `snapshot-2026-07-27c` (der nächtliche Cron ist seit
