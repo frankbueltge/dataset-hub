@@ -3,6 +3,85 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-07 — Siebter Lauf in Folge 40/40 kein_merge; erstmals zwei neue Muster statt nur Concept-/Versions-Drift: eine Zensus-Datenreihe und ein unverifizierbares IEEE-DataPort-Duplikat
+
+Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
+Register-Rückbau — `list_releases` bestätigt, jüngstes Release unverändert). `api.github.com`
+war wie an den Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert: Release-Metadaten
+per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den ungesperrten
+`releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft (Treffer:
+`24018f5c…cf3b2`, 28.365.720 Bytes, 22.473 Einträge), `kandidaten.py` **ohne**
+`--aus-snapshot` aufgerufen (`beurteilter_stand` steht deshalb als `lokaler Bau` in
+`urteil/vorlage.json` — der tatsächlich geprüfte Stand ist `snapshot-2026-07-27c`, wie oben
+belegt). `bereits_beurteilte_paare` stand bei 360 vor diesem Lauf, 5.646 Kandidaten blieben
+erneut gekappt.
+
+**Neu: Zum ersten Mal seit dem 03.08. sind nicht alle 40 Kandidaten Concept-/Versions-DOI-
+Paare.** 9 der 40 Paare trugen `gleiches_werk_bereits: false` — R2 hatte sie also noch gar
+nicht verbunden, echte neue Kandidaten. Alle 9 stammen aus derselben Quelle: der
+ETHNODOC-Datenbank des Leibniz-Instituts für Ost- und Südosteuropaforschung
+(`lambda.ios-regensburg.de`), amtliche Volkszählungen (Ungarn 1990, Jugoslawien 1921).
+DataCite liefert für jedes Paar denselben normalisierten Titel, denselben Urheber
+(„Forschungsverbund Ost- und Südosteuropa (Forost)…") und denselben Herausgeber — nach
+Beleg-Regel also klassische Merge-Kandidaten. Beide Zugriffswege jedes Paars tatsächlich
+aufgerufen: die echten Seitentitel bei der Quelle unterscheiden sich durchgehend um eine
+Aufschlüsselungsdimension, die die DataCite-Kurztitel nicht tragen — „nach Muttersprache"
+vs. „nach Konfessionszugehörigkeit" vs. „nach Komitaten/Nationalität" derselben Erhebung.
+Genau der in URTEILSROUTINE.md benannte Fehlerfall („Serien sehen aus wie Dubletten"),
+hier zum ersten Mal bei einer Zensus-Datenbank statt bei Herbarbelegen oder Messreihen.
+Alle 9 `kein_merge`, jedes Paar mit den beiden abweichenden Seitentiteln als Beleg.
+
+**Neu: ein Paar mit ungewöhnlich starker Textgleichheit, aber ohne verifizierbaren Beleg
+(IEEE DataPort).** `dh-503df15d0b719270`/`dh-ff520a0e00d71803` (DOIs 10.21227/6pfm-4x38 und
+10.21227/490c-rm17) tragen wortgleichen Titel, wortgleiche mehrsätzige Beschreibung,
+denselben Urheber, denselben Herausgeber und dieselbe registrierte Zugriffs-URL —
+unabhängig registriert, 26 Tage auseinander, ohne jede `relatedIdentifiers`-Verknüpfung
+zwischen den beiden DOIs. Das sieht nach einer echten Doppelregistrierung aus, stärker als
+jedes bisher beobachtete Concept-/Versions-Paar. Aber: `doi.org`-Auflösung beider DOIs und
+der direkte `ieee-dataport.org`-Link landen alle drei auf der Startseite statt auf der
+Datensatzseite — mit Standard- und Browser-UA gleichermaßen. IEEE DataPort blockiert damit
+automatisierten Zugriff auf eine neue Art (Umleitung auf die Startseite, nicht 403/WAF-202
+wie bei GBIF/figshare/Dataverse). Ohne funktionierenden Live-Abgleich gibt es keinen Beleg
+im Sinne der Regel („beide URLs aufgerufen, führen auf…") — trotz der ungewöhnlich starken
+Textindizien `kein_merge`. Festgehalten für den Fall, dass IEEE-DataPort-Einträge künftig
+häufiger auftauchen: Der Fall verdient eine gezielte Prüfung, sobald ein funktionierender
+Zugriffsweg (z. B. eine dokumentierte IEEE-DataPort-API) bekannt ist.
+
+**Übrige 30 Kandidaten:** wie an den sechs Vortagen ausnahmslos Zenodo-/Mendeley-/figshare-
+Concept-/Versions-DOI-Paare, jedes Paar einzeln per API geprüft (Zenodo-Dateiprüfsummen,
+Mendeley-/figshare-DataCite-Relationen). Darunter zwei Fälle mit tatsächlich
+unterschiedlichem Dateiinhalt trotz gemeinsamer conceptrecid (`dh-0716b786ac19e165` gegen
+beide Partner: 93.123 vs. 93.875 Byte, verschiedene Prüfsummen — eindeutig verschiedene
+Fassungen), ein figshare-Paar mit vollständig verschiedenen Dateien zwischen v1 und v2
+(3,76 GB vs. 4,97 GB) und ein figshare-Paar mit `IsIdenticalTo`-Relation und inhaltlich
+identischen Dateien, bei dem trotzdem `kein_merge` blieb, weil die Quelle selbst v1 als
+`IsPreviousVersionOf` (nicht `IsIdenticalTo`) von der aktuellen Fassung unterscheidet —
+dieselbe Vorsicht wie bei den figshare-Fällen vom 05.08. Ein Zenodo-Paar
+(`dh-345dce18fb33bdf9`/`dh-a7adbe37f79cf2eb`) konnte inhaltlich gar nicht verglichen werden
+(`access_right: restricted`, keine Dateiliste) — auch hier `kein_merge` mangels Beleg.
+
+**Stichprobe (15 Einträge):** 10 von 15 lösten normal auf, Titel stimmten in jedem Fall
+(Zenodo ×6, Mendeley ×1, ArcGIS ×1, Språkbanken ×1 [neu in der Stichprobe, löste
+unauffällig auf] — Titel-/`<title>`-Tag-Vergleich). Darunter erneut ein Concept-DOI-Drift
+(`dh-1cda852b69298bd8`, Zenodo-Konzept 21566881 → aktueller Record 21566882, Titel exakt
+identisch) — derselbe seit 04.08. dokumentierte Drift, kein neuer Befund. 5 von 15
+(figshare ×3, karger.figshare ×1, Harvard Dataverse ×1) scheiterten mit dem seit 04.08.
+bekannten AWS-WAF-202-Muster. Keiner der 5 Ausfälle wurde markiert — dokumentiertes
+Host-Blockmuster, kein Beleg für falsche Einträge.
+
+**Nicht getan:** Für das ETHNODOC-Muster keine deterministische Regel vorgeschlagen (anders
+als beim Concept-/Versions-Prüfauftrag) — die Unterscheidung liegt hier nicht in einem
+strukturellen DOI-Merkmal, sondern im Seiteninhalt der Quelle selbst (Aufschlüsselungs-
+dimension im echten, nicht im DataCite-Titel), lässt sich also nicht ohne Live-Abgleich
+automatisieren. Für das IEEE-DataPort-Paar keinen Merge trotz starker Textindizien
+vorgeschlagen — Text-/Metadatengleichheit ersetzt keinen Zugriffsbeleg.
+
+**Regel/Prüfauftrag, jetzt zum fünften Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über fünf Urteilsläufe (03.–07.08.) hinweg unumgesetzt — inzwischen über 220
+Kandidatenpaare mit demselben strukturellen Befund. Weiterhin geringe Dringlichkeit, da der
+Ernte-Cron pausiert ist.
+
 ## 2026-08-06 — Sechster Lauf in Folge: wieder 40/40 kein_merge; Concept-Record mit HTTP 410 auf der API, registrierter Zugriffsweg löst trotzdem auf; api.github.com wieder gesperrt
 
 Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
