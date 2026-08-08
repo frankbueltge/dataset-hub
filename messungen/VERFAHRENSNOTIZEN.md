@@ -3,6 +3,112 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-08 — Achter Lauf in Folge 40/40 kein_merge; erstmals echte Dreiergruppen mit inhaltlich verschiedenen Fassungen, ein zweiter Tombstone-Fund und die erste beobachtete Mendeley-Basis-DOI-Drift mit drei Versionen
+
+Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
+Register-Rückbau — `list_releases` bestätigt, jüngstes Release unverändert; Manifest lokal
+gegengeprüft: 22.473 Einträge). `api.github.com` war wie an allen Vortagen mit HTTP 403
+gesperrt; Behelf wie dokumentiert: Release-Metadaten per `mcp__github__list_releases`,
+`hub-2026-07-27.sqlite.gz` über den ungesperrten `releases/download`-Pfad geladen,
+SHA-256 gegen den Manifest-Eintrag geprüft (Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes,
+22.473 Einträge), `kandidaten.py` **ohne** `--aus-snapshot` aufgerufen (`beurteilter_stand`
+steht deshalb als `lokaler Bau` in `urteil/vorlage.json` — der tatsächlich geprüfte Stand
+ist `snapshot-2026-07-27c`, wie oben belegt). `bereits_beurteilte_paare` stand bei 400 vor
+diesem Lauf, 5.606 Kandidaten blieben erneut gekappt (5.646 gefunden).
+
+Alle 40 vorgelegten Kandidaten einzeln per Zenodo-, figshare- und Mendeley-API geprüft
+(55 einzelne Zenodo-Record-Abfragen, nicht nur an Beispielen). Ergebnis: **40 von 40
+kein_merge.** 34 davon waren das seit 03.08. etablierte Concept-/Versions-DOI-Muster
+(23 klassische Zenodo-Paare, 4 Mendeley Basis-/`.1`-Paare mit nur einer registrierten
+Version, 2 figshare-Paare desselben Artikels).
+
+**Neu: drei echte Dreiergruppen, bei denen die dritte Kandidatenkombination nicht mehr
+bloß Concept-DOI-Alias ist, sondern inhaltlich geprüft werden musste.** Bisher bestanden
+Titel-Cluster fast immer aus genau zwei Fassungen plus optional deren Concept-DOI. Hier
+zum ersten Mal drei Fälle mit echten Mehrfach-Beziehungen:
+
+1. „Analyzing the Impact of AI on Traffic Management…" (Zenodo 15792665/15792666/15792705):
+   15792666 enthält einen Textbericht (.docx+.pdf), während 15792665 (Concept-Alias) und
+   15792705 (aktuelle Version) dieselbe Rohdaten-Tabelle („Hasil kuesioner.xlsx.xlsx")
+   enthalten — R2 hatte alle drei korrekt als ein Werk verbunden, aber es sind erkennbar
+   verschiedene Fassungen (Bericht vs. Daten), nicht nur DOI-Varianten desselben Inhalts.
+2. „Anchored Stratification Arrays" (Zenodo 21607878/21607879/21609892): 21607878 ist
+   Concept-Alias auf die aktuelle Version 21609892 (9 Dateien). 21607879 (8 Dateien) ist
+   eine echte frühere Fassung — und bei den gemeinsamen Dateinamen (`verify_asa.py`,
+   `README.md`, `signings_search.py`) unterscheiden sich die MD5-Prüfsummen zusätzlich zur
+   fehlenden Datei `asa_256_127.txt`. **Neu gegenüber allen bisherigen Concept-DOI-Fällen:**
+   nicht nur eine Datei kam hinzu, der Code selbst wurde zwischen den Fassungen geändert.
+3. „AnDi 2 Benchmark dataset" (Zenodo 14132394/14281478/14281479): 14281478 ist
+   Concept-Alias auf die lebendige aktuelle Version 14281479. 14132394 ist eine **komplett
+   andere, unabhängige Concept-DOI**, deren aktuelle Zielversion (14132395, nicht im
+   Register) mit HTTP 410 Gone und Tombstone antwortet — vom Hinterleger selbst
+   zurückgezogen (`removal_reason: retracted`, 2024-12-05), mit geringfügig anderer
+   Autorenschreibweise als die lebendige Reihe (Indiz für eine unabhängige, später
+   verworfene Zweiteinreichung). Zwei Reihen desselben Werktitels, eine lebt, eine ist tot
+   — kein_merge für alle drei Paare, und der tote Zugriffsweg von `dh-508224fcdeecb0d3`
+   zusätzlich `markiert` (zweiter Tombstone-Fund nach `dh-62d66ade18ae8a57` am 05.08.,
+   diesmal eine Ebene indirekter: über eine Concept-DOI, nicht über die registrierte
+   Fassung selbst).
+
+**Neu: die Mendeley-Basis-DOI-Drift erstmals mit tatsächlich divergierenden Versionen
+beobachtet, nicht nur strukturell vermutet.** Bei allen bisherigen Mendeley-Kandidaten
+(03.–07.08.) existierte laut Mendeley Public API nur eine einzige Version — Basis-DOI und
+`.1`-DOI zeigten zwangsläufig auf denselben Stand, die Instabilität war rein strukturell
+begründet. Heute zum ersten Mal ein Fall mit drei Versionen: `hms3sjzt7f` (AneRBC-Datensatz,
+Kandidatenpaar `dh-1b2627d79989a50c`/`dh-72b505ff905c73fb`). DOI-Auflösung geprüft:
+`doi.org/10.17632/hms3sjzt7f.1` → Version 1 (wie registriert), `doi.org/10.17632/hms3sjzt7f`
+(unversioniert) → **Version 3**, nicht Version 1. Erstmals ein Beleg mit tatsächlich
+unterschiedlichem Ziel statt nur einer strukturellen Möglichkeit.
+
+**Neu: figshare-eigene Basis-Artikel-ID-Drift bestätigt (nicht nur Mendeley/
+MaterialsCloud).** Beim Paar `dh-37b6b3352764d597`/`dh-4b5754d44711449a` (Artikel 29231351)
+liefert die unversionierte figshare-Artikel-ID aktuell `version: 4` zurück, nicht v3 wie im
+Kandidatenpaar — dasselbe „zeigt auf die neueste Version"-Muster wie bei Zenodo-Concept-
+DOIs und Mendeley-Basis-DOIs, hier zum ersten Mal an einfachem `figshare.com` selbst
+bestätigt statt nur an einer White-Label-Instanz. v3 und v4 waren inhaltlich (68/68
+MD5-Treffer) identisch, trotzdem kein_merge nach der seit 05.08. geltenden Regel
+(figshare-Versions-DOIs bleiben eigenständig registriert).
+
+**Übrige 30 Kandidaten:** klassisches Zenodo-Concept-/Versions-Muster (23 Paare, per
+`conceptrecid`-Feld einzeln bestätigt), 4 Mendeley-Ein-Versions-Paare, 1 figshare-Paar mit
+inhaltlich identischen Versionen (v3/v4 desselben Artikels 29231351), 1 figshare-Paar mit
+inhaltlich verschiedenen Versionen (University of Adelaide, 21163195 v1: 8 Dateien / v2:
+9 Dateien, dieselben 8 MD5-identisch plus `nn_train.zip` neu — echte Fassungsänderung).
+Nebenbefund ohne Entscheidungsrelevanz: Der Adelaide-Artikel wurde von der Hinterlegerin
+seither weiter verändert (v3/v4 heißen inzwischen „random data", v4 ist leer) — die
+registrierten Versions-URLs (`/21163195/1`, `/2`) liefern aber über die figshare-API
+weiterhin den ursprünglichen Titel und vollständigen Dateibestand.
+
+**Stichprobe (15 Einträge):** 8 von 15 lösten normal auf, Titel stimmten in jedem Fall
+(Zenodo ×5, Apollo/Cambridge ×1, ArcGIS ×1 [Layer-Name „OSM_SA_Amenities" statt
+Registertitel — erwartetes ArcGIS-REST-Muster, kein Fehlbefund]). Darunter drei
+Concept-DOI-Drifts (`dh-7f8875e3fd9c9a64`: Zenodo-Konzept 6382414 → aktuell Record
+6384747, laut `relations.version` Index 1/„is_last"; `dh-59e21835842ae1c2`: 10989595 →
+10989596; `dh-accaa6229dfcc80b`: 21618574 → 21618575) — Titel exakt identisch in jedem
+Fall, derselbe seit 03.08. dokumentierte Drift, kein neuer Befund. 7 von 15 (figshare ×3,
+tandf.figshare ×1, scielo.figshare ×2, springernature.figshare ×1) scheiterten mit dem
+seit 04.08. bekannten AWS-WAF-202-Muster. Keiner der 7 Ausfälle wurde markiert —
+dokumentiertes Host-Blockmuster, kein Beleg für falsche Einträge.
+
+**Nicht getan:** Für keine der drei neuen Dreiergruppen einen Fassungs- oder Werk-Merge
+vorgeschlagen, obwohl R2 sie bereits korrekt als je ein Werk verbunden hatte — die
+inhaltlichen Unterschiede (anderer Dateityp, geänderter Code, ein zurückgezogenes Duplikat)
+sprechen jeweils gegen „dasselbe Ding". Für den zweiten Tombstone-Fund keinen Merge mit der
+lebendigen Parallelreihe vorgeschlagen, obwohl beide denselben Werktitel tragen — die
+geringfügig abweichende Autorenschreibweise ist ein Indiz, kein Beleg für Identität, und
+„im Zweifel kein_merge" gilt hier doppelt (verschiedene Objekte plus einer davon tot).
+
+**Regel/Prüfauftrag, jetzt zum sechsten Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über sechs Urteilsläufe (03.–08.08.) hinweg unumgesetzt — inzwischen über 260
+Kandidatenpaare mit demselben strukturellen Befund. Neu dazu, aus dem heutigen Lauf: Eine
+rein strukturelle Erkennung („teilt sich eine conceptrecid/Basis-DOI") würde die drei
+heutigen Dreiergruppen weiterhin als Kandidaten vorlegen, obwohl sie inhaltlich verschieden
+sind — die Regel dürfte also nicht automatisch zusammenführen, sondern nur die
+Concept-Alias-Kante aus der Kandidatenliste herausfiltern und die inhaltliche Prüfung
+zwischen echten Versionen weiterhin dem Urteilslauf überlassen. Weiterhin geringe
+Dringlichkeit, da der Ernte-Cron pausiert ist.
+
 ## 2026-08-07 — Siebter Lauf in Folge 40/40 kein_merge; erstmals zwei neue Muster statt nur Concept-/Versions-Drift: eine Zensus-Datenreihe und ein unverifizierbares IEEE-DataPort-Duplikat
 
 Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
