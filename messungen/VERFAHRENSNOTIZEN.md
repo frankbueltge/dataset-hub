@@ -3,6 +3,98 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-09 — Neunter Lauf: erstmals Merges statt 40/40 kein_merge — GBIF-Datensätze zitieren die PANGAEA-DOI als eigene Identität; von R2/R4 nicht erkannte Aggregatorkopie
+
+Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
+Register-Rückbau — `list_releases` bestätigt, jüngstes Release unverändert). Zu Beginn des
+Laufs eine stale lokale `main`-Branchreferenz vorgefunden (Checkout-Artefakt: `main` zeigte
+auf einen Stand vom 02.08., 90/50 Commits von `origin/main` divergiert, ohne dass irgendein
+uncommiteter Inhalt betroffen war); mit `git checkout -B main origin/main` auf den aktuellen
+Stand zurückgesetzt, bevor `kandidaten.py` lief. `api.github.com` war wie an allen Vortagen
+mit HTTP 403 gesperrt; Behelf wie dokumentiert: Release-Metadaten per `mcp__github__list_releases`,
+`hub-2026-07-27.sqlite.gz` über den ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen
+den Manifest-Eintrag geprüft (Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes, 22.473 Einträge).
+**Neue Falle dabei:** `BESTAND` in `hub_lib.py` löst zu `<Repo-Wurzel>/bestand/`, nicht zu
+`pipeline/bestand/` auf — die Datei zunächst am falschen Ort abgelegt, `kandidaten.py` brach
+mit demselben HTTP-403 ab, weil es die lokale Datei nicht fand und erneut `snapshot_holen()`
+aufrief. Nach Korrektur des Pfads lief es normal durch. `bereits_beurteilte_paare` stand bei
+440 vor diesem Lauf, 5.566 Kandidaten blieben erneut gekappt (5.606 gefunden).
+
+**Erstmals Merges: 9 von 40 Kandidaten `merge`, nicht `kein_merge`.** Nach acht Läufen in
+Folge mit 40/40 `kein_merge` (03.–08.08.) ist das der erste Bruch mit dem bisherigen Muster.
+Betroffen: neun Fundstellen-Paare aus PANGAEA und GBIF, alle mit Titel „(Appendix 1/A–E)
+Census data of planktic/benthic foraminiferal faunas …" für denselben DSDP-/ODP-Bohrkern
+bzw. dieselbe Sedimentkernstelle. Geprüft (nicht vermutet): Die GBIF-API
+(`api.gbif.org/v1/dataset/<uuid>`) trägt für jeden der neun Datensätze ein eigenes Feld `doi`
+— und dieses Feld nennt nicht GBIFs eigene registrierte DOI (`10.15468/…`), sondern wörtlich
+die PANGAEA-DOI (`10.1594/pangaea.<id>`). Der Zugriffsendpunkt (`DWC_ARCHIVE`) lädt bei jedem
+Abruf live von `digir.pangaea.de/dwca/get?doi=…` — GBIF hält keine eigene Kopie, sondern liest
+direkt aus PANGAEAs Infrastruktur. Titel, Fundort-/Site-Bezeichnung und Urheberliste sind
+innerhalb jedes Paars wortgleich. Zur Gegenprobe PANGAEAs eigene DataCite-Metadaten
+(`api.datacite.org/dois/10.1594/pangaea.742590`) abgefragt: `relatedIdentifiers` enthält
+keinerlei Verweis auf die GBIF-DOI oder das GBIF-Dataset — die Aggregatorkopie ist nur
+GBIF-seitig deklariert (über GBIFs eigene API, nicht über DataCite-Relationen), weshalb R2
+(quellen-behauptete Relation) und R4 (deklarierte Aggregatorkopie) sie nicht automatisch
+erkennen konnten. Anders als bei den seit 03.08. dokumentierten Concept-/Versions-DOI-Fällen
+ist das kein wanderndes Ziel: Jede GBIF-DOI ist fest an genau eine PANGAEA-DOI gebunden, kein
+Drift-Risiko wie bei Zenodo-Concept-DOIs oder Mendeley-Basis-DOIs. Alle neun `merge`,
+`ebene: fassung`, mit dem jeweiligen GBIF-API-Fund als Beleg im Journal.
+
+**Übrige 31 Kandidaten: 40-minus-9, wie an den Vortagen ausnahmslos Zenodo-/Mendeley-/
+figshare-Concept-/Versions-DOI-Muster, jedes Paar einzeln per API geprüft** (35 einzelne
+Zenodo-Record-Abfragen für 16 Zenodo-Gruppen, 5 Mendeley-Gruppen per Mendeley Public API).
+Darunter drei Dreiergruppen mit erneut inhaltlich verschiedenen Fassungen (APIBench: 2 Dateien
+vs. 4 andere Dateien unter derselben conceptrecid 5797296; RUBIES-Hviding25/Spectroscopic
+Census: eine gemeinsame Datei mit unterschiedlicher Prüfsumme zwischen zwei echten Versionen;
+Intelligent-Transport-Datensatz: eine zusätzliche Datei `dataLink.txt` in der jüngeren
+Fassung) — dieselbe Beobachtung wie am 08.08., hier zum dritten Mal in Folge mehrfach pro Lauf
+statt als Einzelfund. Ein Zenodo-Paar (`dh-0b34bb82220e8e96`/`dh-4048cdff8e3f92d9`,
+conceptrecid 11003068) mit `access_right: restricted` und leerer Dateiliste — kein_merge
+mangels Beleg, wie beim vergleichbaren Fall vom 07.08. Bei Mendeley `svbd7t4hkn` (drei
+Kandidatenpaare) `doi.org`-Auflösung der unversionierten Basis-DOI geprüft: löst per Redirect
+aktuell auf `/datasets/svbd7t4hkn/2` auf — dieselbe Mendeley-Basis-DOI-Drift wie beim
+`hms3sjzt7f`-Fund vom 08.08., hier zum zweiten Mal beobachtet.
+
+**Neues Muster: ein figshare/IEEE-DataPort-Cross-Repository-Paar mit tatsächlich
+verifizierbarem inhaltlichem Unterschied.** `dh-04c39cf327aac09a`/`dh-51c5a98373099665`
+(figshare 13484601, unversioniert/v1) gegen `dh-7915c99f3d35913b` (IEEE DataPort
+10.21227/0ew3-pm58) — anders als beim unverifizierbaren IEEE-DataPort-Fall vom 07.08.
+(Umleitung auf die Startseite) lud die IEEE-DataPort-Dokumentseite diesmal normal, mit
+Browser-UA, Titel und Autorenliste sichtbar. figshare-API (`api.figshare.com/v2/articles/
+13484601`) und IEEE-DataPort-Seite verglichen: figshare listet 320 Rohdatendateien für 80
+Probanden (S01–S80, links/rechts), das IEEE-DataPort-Abstract nennt explizit nur 67
+Probanden (27 osteoporotisch/osteopenisch + 40 gesund) — eine andere, kleinere Stichprobe.
+Gleicher Titel, überlappende Autorenschaft (figshare: nur Adams; IEEE DataPort: Adams +
+Makarov), aber belegt unterschiedlicher Dateninhalt. kein_merge für beide Paare.
+
+**Stichprobe (15 Einträge):** 13 von 15 lösten normal auf, Titel stimmten in jedem geprüften
+Fall (Zenodo ×8, ArcGIS ×3 [Layer-Namen statt Registertitel, erwartetes Muster], COCOON/
+Huma-Num ×1 [neu in der Stichprobe, löste unauffällig auf], Språkbanken ×1). Darunter zwei
+Concept-DOI-Drifts (`dh-0a976e909072f99d`: Zenodo 21602138 → 21602139, Titel identisch;
+`dh-81665e69dd06b950`: Zenodo 21170149 → 21625925 — ein deutlich größerer Sprung als die
+bisher beobachteten Drifts, Titel trotzdem exakt identisch, also derselbe Mechanismus, nur
+mit mehr dazwischenliegenden Versionen). 2 von 15 (figshare, scielo.figshare) scheiterten mit
+dem seit 04.08. bekannten AWS-WAF-202-Muster (Header `x-amzn-waf-action: challenge` bestätigt).
+Keiner der 2 Ausfälle wurde markiert.
+
+**Nicht getan:** Für die neun GBIF/PANGAEA-Merges keinen automatischen R4-Regel-Vorschlag für
+`normalisiere.py`/`baue_bestand.py` umgesetzt — das wäre eine Pipeline-Änderung außerhalb des
+Commit-Umfangs dieser Routine. Für die drei Dreiergruppen mit belegten Inhaltsunterschieden
+und für das restricted-Zenodo-Paar keinen Merge vorgeschlagen, aus denselben Gründen wie an
+den Vortagen.
+
+**Regel/Prüfauftrag, neu:** GBIF registriert eigene DOIs für Datensätze, die es von anderen
+Infrastrukturen (hier: PANGAEA) übernimmt, deklariert die Übernahme aber nur in seiner
+eigenen API (`dataset.doi`-Feld), nicht in den DataCite-`relatedIdentifiers`, die
+`normalisiere.py`/R2/R4 bislang auswerten. Sollte GBIF künftig häufiger im Register
+auftauchen (bislang nur dieser eine Cluster von neun Paaren), wäre ein GBIF-spezifischer
+Prüfschritt (Abgleich von `dataset.doi` gegen die harvestete PANGAEA-DOI vor dem Aufnehmen
+als eigenständige Fundstelle, oder eine R4-Erweiterung, die GBIFs API statt nur
+DataCite-Relationen befragt) ein eigener Prüfauftrag — analog zum weiterhin unumgesetzten
+Concept-/Alias-DOI-Prüfauftrag vom 03.08., jetzt zum siebten Mal wiederholt (über 300
+Kandidatenpaare mit demselben strukturellen Zenodo/Mendeley/figshare-Befund seit 03.08.).
+Weiterhin geringe Dringlichkeit, da der Ernte-Cron pausiert ist.
+
 ## 2026-08-08 — Achter Lauf in Folge 40/40 kein_merge; erstmals echte Dreiergruppen mit inhaltlich verschiedenen Fassungen, ein zweiter Tombstone-Fund und die erste beobachtete Mendeley-Basis-DOI-Drift mit drei Versionen
 
 Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
