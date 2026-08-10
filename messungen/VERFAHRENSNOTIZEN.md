@@ -3,6 +3,82 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-10 — Zehnter Lauf: zurück zu 40/40 kein_merge; die drei Dreiergruppen zeigen erstmals eine restricted-Version als Konzept-Ziel; AWS-WAF-202-Muster erstmals auch auf rdr.ucl.ac.uk (figshare-White-Label) beobachtet
+
+Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
+Register-Rückbau — `list_releases` bestätigt, jüngstes Release unverändert). `api.github.com`
+war wie an allen Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert: Release-Metadaten
+per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den ungesperrten
+`releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft (Treffer:
+`24018f5c…cf3b2`, 28.365.720 Bytes, 22.473 Einträge), lokal unter `bestand/hub.sqlite`
+abgelegt (`hub_lib.py`-`BESTAND` löst zu `<Repo-Wurzel>/bestand/`, nicht `pipeline/bestand/` —
+die seit 09.08. bekannte Falle diesmal von Anfang an vermieden), `kandidaten.py` **ohne**
+`--aus-snapshot` aufgerufen. `bereits_beurteilte_paare` stand bei 480 vor diesem Lauf (440 +
+9 Merges + 31 kein_merge vom neunten Lauf), 5.566 Kandidaten blieben erneut gekappt (5.606
+gefunden — exakt 40 weniger als am 09.08., wie erwartet).
+
+**Zurück zu 40/40 kein_merge — kein zweiter GBIF/PANGAEA-Fund.** Alle 40 vorgelegten
+Kandidaten waren DataCite-Fundstellen mit `gleiches_werk_bereits: true`, ausschließlich
+Zenodo- (30 Paare), Mendeley- (8 Paare) und figshare-Concept-/Versions-DOI-Muster (2 Paare),
+jedes Paar einzeln per API geprüft (51 einzelne Zenodo-Record-Abfragen inkl. HTTP-Statuscode
+und Redirect-Ziel jeder Concept-DOI, 8 Mendeley-Public-API-Abfragen, 2 figshare-Versions-
+Abfragen mit Dateiprüfsummenvergleich) — nicht nur an Beispielen.
+
+**Neu innerhalb des etablierten Musters: bei zwei der drei Dreiergruppen ist die aktuelle
+Version selbst `restricted`, ohne einsehbare Dateiliste.** Bisher unterschieden sich echte
+Fassungen innerhalb einer Dreiergruppe entweder inhaltlich (verschiedene Dateien/Prüfsummen)
+oder waren komplett unzugänglich (ganze Gruppe `restricted`, wie am 08.08.). Heute zum ersten
+Mal: die *neuere* Version zweier Dreiergruppen (`10993169` bei „How Effective are LLMs in
+Generating Software Specifications", `10388937` bei „Program Selection from Large Language
+Models") ist `access_right: restricted`, während die *ältere* Version derselben Gruppe offen
+mit vollständiger Dateiliste ist. Das kehrt das gewohnte Bild um (sonst ist meist die neueste
+Version die zugängliche) und bedeutet: In beiden Fällen ist die Concept-DOI (die per HTTP 302
+korrekt auf die jeweils neueste Version zeigt) auf ein für die Routine nicht einsehbares Ziel
+gerichtet — kein Beleg für Identität mit der offenen Vorversion, `kein_merge` mangels Beleg,
+nicht nur aus struktureller Vorsicht. Die dritte Dreiergruppe („Developer Challenges on Large
+Language Models") bestätigte dagegen erneut das seit 08.08. bekannte Muster: gleicher
+Dateiname, unterschiedliche MD5 und Größe zwischen Version 1 (353.866.533 Byte) und Version 2
+(350.787.180 Byte) — Inhalt tatsächlich geändert.
+
+**Übrige 21 Zenodo-Paare, 8 Mendeley-Paare, 2 figshare-Paare:** durchweg das seit 03.08.
+etablierte Muster. Bei allen 21 einfachen Zenodo-Paaren löste die Concept-DOI per HTTP 302
+exakt auf die im Kandidatenpaar stehende Versions-DOI auf (kein Drift diesmal, anders als an
+mehreren Vortagen) — trotzdem `kein_merge`, weil die Concept-DOI strukturell kein fixes Ziel
+ist. Bei 7 der 8 Mendeley-Paare existiert laut Mendeley Public API aktuell nur eine
+veröffentlichte Version, bei einem (`t96hmx65pd`) zwei, mit der Basis-DOI aktuell auf Version 2
+zeigend — beides dasselbe Drift-Risiko wie an allen Vortagen seit 04.08. Beide figshare-Paare
+(Artikel 19097078, „Application of Recurrent Neural Network…") mit inhaltlich unterschiedlicher
+Datei zwischen v1 (141.943.453 Byte) und v2 (79.876.474 Byte).
+
+**Stichprobe (15 Einträge):** 10 von 15 lösten normal auf, Titel stimmten in jedem geprüften
+Fall (Zenodo ×5, Mendeley ×1, MaterialsCloud ×1 [Titel stimmt; die Landing-URL löst auf eine
+andere Record-Kennung als die registrierte DOI-Kennung auf — normaler MaterialsCloud-
+Mechanismus, kein Drift-Befund wie bei den `self_doi`/`parent_doi`-Fällen vom 05.08.], ArcGIS
+×1 [Layer-Name „District Land Points" statt Registertitel „District Government Land Points" —
+erwartetes ArcGIS-REST-Muster], CEH ×1 [neu in der Stichprobe, `catalogue.ceh.ac.uk`, löste
+unauffällig auf]). Darunter ein Concept-DOI-Drift (`dh-2916119b2f9d46bc`: Zenodo-Konzept
+12206145 → aktueller Record 17591552, Titel exakt identisch, derselbe seit 03.08. dokumentierte
+Mechanismus). 5 von 15 (figshare ×2, karger.figshare ×1, Harvard Dataverse ×1 und — **neu** —
+`rdr.ucl.ac.uk` [UCL Research Data Repository] ×1) scheiterten mit dem seit 04.08. bekannten
+AWS-WAF-202-Muster (Header `x-amzn-waf-action: challenge` bestätigt für alle 5). `rdr.ucl.ac.uk`
+ist erkennbar eine weitere figshare-White-Label-Instanz (URL-Struktur `/articles/dataset/.../<id>/<version>`
+identisch zu figshare.com) und reiht sich damit strukturell bei karger.figshare.com/
+tandf.figshare.com/scielo.figshare.com/springernature.figshare.com ein. Keiner der 5 Ausfälle
+wurde markiert — dokumentiertes Host-Blockmuster, kein Beleg für falsche Einträge.
+
+**Nicht getan:** Für die beiden restricted-Dreiergruppen-Fälle keinen Merge vorgeschlagen,
+obwohl die Concept-DOI korrekt auf die neuere Version zeigt — ohne einsehbaren Inhalt bleibt
+„im Zweifel kein_merge" auch dann verbindlich, wenn die strukturelle Zuordnung an sich nicht
+strittig ist. Für den MaterialsCloud-Fund keinen Prüfauftrag notiert, da Titel und Zugriffsweg
+übereinstimmten und keine Instabilität wie beim `self_doi`/`parent_doi`-Fund vom 05.08. erkennbar
+war.
+
+**Regel/Prüfauftrag, jetzt zum achten Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über acht Urteilsläufe (03.–10.08., mit Unterbrechung durch den GBIF/PANGAEA-Befund
+vom 09.08.) hinweg unumgesetzt — inzwischen über 340 Kandidatenpaare mit demselben
+strukturellen Befund. Weiterhin geringe Dringlichkeit, da der Ernte-Cron pausiert ist.
+
 ## 2026-08-09 — Neunter Lauf: erstmals Merges statt 40/40 kein_merge — GBIF-Datensätze zitieren die PANGAEA-DOI als eigene Identität; von R2/R4 nicht erkannte Aggregatorkopie
 
 Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
