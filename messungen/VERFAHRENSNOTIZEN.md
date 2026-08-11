@@ -3,6 +3,93 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-11 — Elfter Lauf: erneut 40/40 kein_merge; erste Fundstelle von 4TU.ResearchData unter den Kandidaten, zwei Concept-DOIs drifteten während des Laufs auf eine im Register unbekannte dritte Version
+
+Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
+`mcp__github__list_releases` bestätigt, jüngstes Release unverändert seit dem 27.07.).
+`api.github.com` war wie an allen Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den
+ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft
+(Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes, 22.473 Einträge), lokal unter `bestand/hub.sqlite`
+abgelegt, `kandidaten.py` **ohne** `--aus-snapshot` aufgerufen. Zu Sitzungsbeginn ein
+`HEAD detached`-Checkout vorgefunden (kein uncommiteter Inhalt betroffen); mit
+`git checkout -B main origin/main` auf den aktuellen Stand zurückgesetzt, wie am 09.08.
+`bereits_beurteilte_paare` stand bei 520 vor diesem Lauf (480 + 40 kein_merge vom zehnten
+Lauf), 5.526 Kandidaten gefunden, 40 vorgelegt, 5.486 erneut gekappt (5.566 gefunden am
+10.08. — exakt 40 weniger, wie erwartet).
+
+**40 von 40 kein_merge**, alle mit `gleiches_werk_bereits: true`. Verteilung: 28 Zenodo-Paare
+(19 unterscheidbare Werke, davon 5 mit echten Dreiergruppen), 9 Mendeley-Paare (6 Werke),
+2 figshare-Paare (1 Werk), 1 Paar **einer bislang nicht im Register beobachteten Quelle**
+(dazu unten). Jedes Paar einzeln geprüft (36 Zenodo-Record-Abfragen inkl. HTTP-Statuscode und
+Redirect-Ziel jeder Concept-DOI, 7 Mendeley-Public-API-Abfragen über den korrekten Endpunkt
+`data.mendeley.com/public-api/datasets/<id>` — `api.mendeley.com` verlangt inzwischen einen
+Auth-Header und lieferte nur `oauth/NOT_AUTHORIZED`, ohne dass sich am strukturellen Befund
+etwas ändert, `api.figshare.com/v2/articles/29233484/versions/{1,2}` mit Dateiprüfsummen).
+
+**Neu: 4TU.ResearchData (`data.4tu.nl`, DOI-Präfix `10.4121`) erstmals unter den
+Merge-Kandidaten.** Paar `dh-67ceb7fff81faf42`/`dh-f559e79294287332`
+(„Artificial Intelligence Based Antibiotic Zone Measurement For Disk Diffusion Test"):
+unversionierte DOI `10.4121/6836caa1-2c19-4e62-b30a-0c15488dd33a` löst auf
+`data.4tu.nl/datasets/6836caa1-…/`, die `.v1`-DOI auf dieselbe Kennung mit Suffix `/1` —
+beide Landing-Pages tragen denselben `<title>`-Tag, aktuell existiert laut Seite nur eine
+Version. 4TU läuft auf der Djehuty-Software, strukturell mit figshare verwandt (Basis-/
+Versions-Kennung, Basis zeigt auf die jeweils neueste Version) — dieselbe Instabilität wie
+bei allen bisherigen Mendeley-Ein-Versions-Funden, hier zum ersten Mal an dieser Quelle
+bestätigt. `kein_merge` aus denselben strukturellen Gründen.
+
+**Neu: bei zwei Zenodo-Dreiergruppen zeigte die Concept-DOI zum Prüfzeitpunkt weder auf das
+eine noch auf das andere Kandidatenpaar-Mitglied, sondern auf eine dritte, im Register gar
+nicht erfasste, noch neuere Version.** Bei „Artificial Intelligence and Humanitarian
+Logistics 5.0" (Concept 18096056, Kandidaten 18096057/18096359) löst die Concept-DOI aktuell
+auf Record 20952124 auf; bei „Artificial intelligence and organizational performance in the
+tourism…" (Concept 18099904, Kandidat 18099905) auf Record 19692246 — beides Records, die im
+laufenden Register bislang nicht vorkommen. Anders als der Concept-DOI-Drift-Regelfall
+(Concept zeigt auf eines der beiden vorgelegten Paar-Mitglieder) ist das ein Drift über das
+Paar selbst hinaus — noch ein Beleg mehr dafür, dass eine Concept-DOI kein fixes Ziel ist,
+sondern sich mit jeder neuen Fassung weiterverschiebt, auch während ein einzelner Lauf noch
+läuft.
+
+**Übrige Dreiergruppen mit echten Fassungsunterschieden, wie an den Vortagen:** PATCH-Artefakte
+(Zenodo 10996523/14257480/10996524, PATCH.zip mit unterschiedlicher Größe und Prüfsumme
+zwischen den beiden echten Versionen), penis-size-Datensatz (Zenodo 14645247/14645388/14645248,
+1 Datei SPSS vs. 7 Dokumentdateien — völlig anderer Dateibestand), „Open Data ID 162" (Zenodo
+17391025/17391026/17391062, gleicher Dateiname, unterschiedliche Größe und Prüfsumme), figshare
+29233484 (v1 enthält die eigentliche Datendatei 副本.xlsx, v2 nur noch eine Declaration.txt —
+die Datendatei wurde zwischen den Versionen entfernt), Mendeley 289jtphg33 (Version 1 und 2
+mit inhaltlich vollständig unterschiedlicher Beschreibung). Die übrigen Mendeley-Paare
+(2z8t5g347z, c8k4xrwyd3, d3mx2zgg76, h93fp9yws6, p748yjtrc5, sypw8tgfms) hatten laut API
+je nur eine veröffentlichte Version — Basis- und `.1`-DOI aktuell inhaltsgleich, `kein_merge`
+aus rein struktureller Vorsicht wie an allen Vortagen seit 04.08.
+
+**Stichprobe (15 Einträge):** 10 von 15 lösten normal auf, Titel stimmten in jedem geprüften
+Fall (Zenodo ×4 [darunter ein Concept-DOI-Drift: `dh-f83dc9fec5a7df9e`, Zenodo-Konzept
+21541072 → aktueller Record 21541073, Titel „GERB: Graduate Economic Reasoning Benchmark"
+exakt identisch — derselbe seit 03.08. dokumentierte Mechanismus], ArcGIS ×2 [Layer-Namen
+„Our Natural City projects"/„OSM_Vrije_tijd" statt Registertitel — erwartetes ArcGIS-REST-
+Muster], Språkbanken ×2, Mendeley ×1 [`f9k7trygpy`, löste auf `/1` auf, Titel identisch] und
+— **neu in der Stichprobe** — SciDB/Science Data Bank ×1 [`scidb.cn`, löste unauffällig auf,
+Titel exakt identisch]). 5 von 15 (springernature.figshare ×3, figshare.com ×2) scheiterten
+mit dem seit 04.08. bekannten AWS-WAF-202-Muster (Header `x-amzn-waf-action: challenge`
+bestätigt für alle 5). Keiner der 5 Ausfälle wurde markiert — dokumentiertes Host-Blockmuster,
+kein Beleg für falsche Einträge.
+
+**Nicht getan:** Für die beiden neu beobachteten Concept-DOI-Drifts über das Kandidatenpaar
+hinaus (18096056→20952124, 18099904→19692246) keinen Merge mit der jeweils dritten,
+unregistrierten Version vorgeschlagen — die dritte Version ist gar nicht im Register, ein
+Merge-Ziel für sie existiert nicht. Für den neuen 4TU.ResearchData-Fund keine eigene
+Quellen-Notiz über diese Verfahrensnotiz hinaus angelegt, da das Muster strukturell bereits
+für Zenodo/Mendeley/figshare dokumentiert ist und sich nur die Quelle wiederholt, nicht das
+Phänomen.
+
+**Regel/Prüfauftrag, jetzt zum neunten Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über neun Urteilsläufe (03.–11.08., mit Unterbrechung durch den GBIF/PANGAEA-Befund
+vom 09.08.) hinweg unumgesetzt — inzwischen über 380 Kandidatenpaare mit demselben
+strukturellen Befund. Neu dazu: Sollte die Erkennung künftig umgesetzt werden, müsste sie
+auch 4TU.ResearchData (`10.4121`-DOIs, Basis-/`.v1`-Suffix) mit abdecken, nicht nur
+Zenodo/Mendeley/figshare. Weiterhin geringe Dringlichkeit, da der Ernte-Cron pausiert ist.
+
 ## 2026-08-10 — Zehnter Lauf: zurück zu 40/40 kein_merge; die drei Dreiergruppen zeigen erstmals eine restricted-Version als Konzept-Ziel; AWS-WAF-202-Muster erstmals auch auf rdr.ucl.ac.uk (figshare-White-Label) beobachtet
 
 Beurteilter Stand weiterhin `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. pausiert,
