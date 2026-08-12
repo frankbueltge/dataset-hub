@@ -3,6 +3,127 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-12 — Zwölfter Lauf: erste DIGITAL.CSIC-Fundstelle, sofort als Aggregatorkopie von Zenodo erkannt und gemerged; stale lokale main-Referenz zeigte auf den Stand vom 09.08. statt auf den neunten — diesmal vor dem Push bemerkt
+
+Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
+`mcp__github__list_releases` bestätigt, jüngstes Release unverändert seit dem 27.07.).
+`api.github.com` war wie an allen Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den
+ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft
+(Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes, 22.473 Einträge), lokal unter `bestand/hub.sqlite`
+abgelegt, `kandidaten.py` **ohne** `--aus-snapshot` aufgerufen.
+
+**Neue Variante der bekannten stale-Branch-Falle, diesmal vor dem Push bemerkt statt danach.**
+Zu Sitzungsbeginn ein `HEAD detached`-Checkout vorgefunden (wie an mehreren Vortagen). Anders
+als sonst zeigte die lokale `main`-Referenz aber nicht auf einen nur leicht veralteten Stand,
+sondern auf `c246d8d` — den Commit vom **neunten** Lauf (09.08.), drei Läufe hinter dem
+tatsächlich jüngsten (`302db7d`, elfter Lauf, 11.08.), von dem aus die Urteile dieser Sitzung
+bereits committet waren. `git rev-parse origin/main` lieferte zunächst denselben veralteten
+Stand `c246d8d` — ein reines Artefakt eines nicht aktuellen lokalen Refs, kein echter Rückstand
+des Remotes: `git fetch origin main` korrigierte `origin/main` sofort auf `302db7d`, und
+`git merge-base --is-ancestor origin/main HEAD` bestätigte, dass die neuen 40 Urteils-Commits
+sauber auf dem tatsächlichen Remote-Stand aufsetzen. `main` mit `git checkout -B main HEAD`
+auf den bearbeiteten Stand gesetzt, danach gepusht. Anders als bei den bisherigen
+stale-Branch-Funden (09.08., 02.08., beide harmlos, da kein uncommiteter Inhalt betroffen war)
+hätte ein Push von einer stale `main` aus hier tatsächlich einen Konflikt oder eine verlorene
+Historie riskiert, wäre der Fetch/Merge-Base-Check übersprungen worden — Grund genug, diesen
+Check ab sofort vor jedem Push durchzuführen, nicht nur bei sichtbar veraltetem `HEAD`.
+`bereits_beurteilte_paare` stand bei 560 vor diesem Lauf (520 + 40 kein_merge vom elften Lauf),
+5.486 Kandidaten gefunden, 40 vorgelegt, 5.446 erneut gekappt (5.526 gefunden am 11.08. —
+exakt 40 weniger, wie erwartet).
+
+**Erstmals seit dem neunten Lauf (09.08.) wieder ein `merge` statt durchgehend `kein_merge`:
+39 von 40 `kein_merge`, 1 von 40 `merge`.** Jedes der 40 vorgelegten Paare einzeln geprüft
+(Zenodo-API für 11 einfache Concept-/Versions-Paare plus 3 Dreiergruppen-Paare, Mendeley
+Public API für 14 Ein-Versions-Paare plus eine Dreiergruppe, figshare-API für eine
+Versions-Dreiergruppe, MaterialsCloud-API für eine Dreiergruppe, DIGITAL.CSIC-Landingpage plus
+Dateidownload für den Merge-Fund).
+
+**Neu: DIGITAL.CSIC (`digital.csic.es`, DOI-Präfix `10.20350`) erstmals unter den
+Merge-Kandidaten — und zugleich der erste bestätigte Merge seit dem GBIF/PANGAEA-Fund vom
+09.08.** Kandidatentriple `dh-1a8131b9b33942e1` (Zenodo-Concept 10.5281/zenodo.5602976) /
+`dh-695fcfb23da1ee7b` (DIGITAL.CSIC 10.20350/digitalCSIC/15084) / `dh-f0e5b643d0fb157c`
+(Zenodo 10.5281/zenodo.5602977), „Artificial Intelligence for Quality Control of manufacturing
+operations: Macro-mechanical milling…". DIGITAL.CSICs eigene Landingpage
+(`digital.csic.es/handle/10261/286591`) trägt im `DC.relation`-Metadatenfeld wörtlich
+`https://doi.org/10.5281/zenodo.5602977`. Beide dort gehosteten Bitstreams heruntergeladen und
+per MD5 mit den Zenodo-5602977-Dateien verglichen: `Macromilling_dataset_1.csv`
+(`c99d15020803625964724bf3346d34af`) und `Datasets_description_macromilling_v2.pdf`
+(`e94509a8a9791e83276000bda9a1fa47`) — auf beiden Plattformen byte-identisch. `merge`,
+`ebene: fassung`, nur für das Paar DIGITAL.CSIC/Zenodo-5602977. Für die beiden anderen Paare
+des Triples (DIGITAL.CSIC gegen die reine Zenodo-Concept-DOI 5602976 sowie 5602976 gegen 5602977
+selbst) `kein_merge` — die deklarierte Beziehung nennt wörtlich nur die Versions-DOI 5602977,
+nicht die Concept-DOI, und 5602976/5602977 sind das gewohnte Concept-/Versions-Alias-Paar.
+Strukturell derselbe von R2/R4 nicht erkannte Aggregatorkopie-Fall wie GBIF/PANGAEA (09.08.):
+DIGITAL.CSIC deklariert die Beziehung nur in seinen eigenen DC-Metadaten, nicht in
+DataCite-`relatedIdentifiers`, die R2 auswertet.
+
+**Neu: MaterialsCloud erstmals mit zwei echten Versionen statt nur `self_doi`/`parent_doi`
+mit einer einzigen Version (05.08.).** Dreiergruppe `materialscloud:n2-tg` (parent-DOI,
+InvenioRDM-Record `xtt6b-cs696`) / `materialscloud:vt-4t` (Record `my4yn-3nj21`, `is_latest:
+true`) / `materialscloud:c6-39` (Record `a0fep-vy311`, `is_latest: false`), „Artificial
+intelligence enables mobile soil analysis for sustainable agriculture". Alle 7 Dateien zwischen
+`vt-4t` und `c6-39` per MD5 verglichen — inhaltlich vollständig identisch (u. a.
+`CalibrationImages.zip`, 3.003.820.125 Byte, gleiche Prüfsumme). Trotzdem `kein_merge` für alle
+drei Paare: dieselbe seit 08.08. geltende Regel wie beim figshare-Fund (Artikel 29231351,
+v3/v4 inhaltsgleich, trotzdem eigenständig registriert) — hier zum ersten Mal auf
+MaterialsCloud übertragen; zusätzlich ist die `parent_doi` selbst ein wanderndes Ziel.
+
+**Neu: bei einer Zenodo-Dreiergruppe zeigt die Concept-DOI nicht auf eines der beiden
+Kandidatenpaar-Mitglieder, sondern auf eine dritte, dateireichere Fassung, die selbst Teil der
+Dreiergruppe ist.** „Artificial intelligence-generated patient safety checklists for
+musculoskeletal injections": Concept `10792768` löst per HTTP 302 auf `10846831` auf (2 Dateien,
+inkl. `Shapiro-Wilk test results.docx`), nicht auf `10792769` (1 Datei, `Checklist demands…docx`,
+MD5-identisch mit der zweiten Datei aus `10846831`). `10792769` ist damit eine echte frühere
+Fassung mit weniger Dateien, `10846831` die aktuelle — `kein_merge` für alle drei Paare, davon
+eines mit echtem Beleg für einen inhaltlichen Fassungsunterschied (fehlende Datei), zwei aus dem
+gewohnten Concept-Alias-Grund.
+
+**Erneut: Concept-DOI-Drift über das Kandidatenpaar hinaus.** Bei „Artificial Intelligence for
+Sustainable SMEs: A Bibliometric Analysis of Trends and Future Directions" löst die Concept-DOI
+`16498831` aktuell auf Record `20046349` auf — eine im Register nicht erfasste dritte Version,
+nicht auf das vorgelegte Partnermitglied `16498832`. Kein Merge-Ziel vorgeschlagen, da die
+dritte Version nicht im Register steht (wie bei den beiden vergleichbaren Funden vom 11.08.).
+
+**Übrige Kandidaten: 14 Mendeley-Ein-Versions-Paare (Basis-/`.1`-DOI, laut Mendeley Public API
+je nur eine veröffentlichte Version, `kein_merge` aus struktureller Vorsicht wie an allen
+Vortagen seit 04.08.), 1 Mendeley-Dreiergruppe (`s26kxvspn7`, Artificial Intelligence, Firm
+Growth, and Product Innovation — drei echte Versionen, Beschreibungstext unterscheidet sich
+nachweislich zwischen Version 2 und 3 durch einen zusätzlichen Hinweis auf Pseudo-Daten für
+Compustat, `kein_merge` mit echtem inhaltlichen Beleg), 11 einfache Zenodo-Concept-/
+Versions-Paare (durchweg das seit 03.08. etablierte Muster, per API einzeln bestätigt), 1
+figshare-Versions-Dreiergruppe (Artikel 28665347 v1/v2/v3, alle drei Versionen mit
+unterschiedlicher Dateigröße und Prüfsumme — v2 und v3 zwar nahezu gleich groß, aber
+unterschiedliche MD5, also inhaltlich verschieden).
+
+**Stichprobe (15 Einträge):** 13 von 15 lösten normal auf, Titel stimmten in jedem geprüften
+Fall (Zenodo ×11, sowie 1 Mendeley-Eintrag [`dh-43a665724e680c42`, `zdh4d5ws2z/2`] — die
+Mendeley-Landingpage liefert im rohen HTML nur den generischen `<title>`-Tag „FAQ" (clientseitig
+gerendertes SPA-Verhalten, kein Fehlbefund), Titel stattdessen über die Public API bestätigt:
+Datensatzname „Data from Neural Network Training in the Obstacle Tower Environment to
+Investigate Embodied, Weakly Supervised Learning" stimmt exakt mit dem Registereintrag überein).
+2 von 15 (beide figshare) scheiterten mit dem seit 04.08. bekannten AWS-WAF-202-Muster (Header
+`x-amzn-waf-action: challenge` bestätigt für beide). Keiner der 2 Ausfälle wurde markiert —
+dokumentiertes Host-Blockmuster, kein Beleg für falsche Einträge.
+
+**Nicht getan:** Für den DIGITAL.CSIC/Zenodo-Fund keine automatische Aggregatorkopie-Erkennung
+in `normalisiere.py`/`baue_bestand.py` umgesetzt — dieselbe Begründung wie beim GBIF/PANGAEA-Fund
+vom 09.08. (Pipeline-Änderung außerhalb des Commit-Umfangs dieser Routine). Für die
+Zenodo-Concept-DOI 5602976 (Teil desselben Werks wie der gemergte Fund) keinen eigenen Merge
+vorgeschlagen, obwohl sie transitiv zum selben Werk gehört — die direkte Evidenz
+(DIGITAL.CSICs `DC.relation`) nennt wörtlich nur die Versions-DOI 5602977, nicht die Concept-DOI;
+ein Merge ohne eigenen Beleg für genau dieses Paar wäre eine Vermutung, keine Prüfung.
+
+**Regel/Prüfauftrag, jetzt zum zwölften Mal wiederholt, mit neuer Ausweitung:** Der Prüfauftrag
+vom 2026-08-03 (deterministische Concept-/Alias-DOI-Erkennung) bleibt über zwölf Urteilsläufe
+(03.–12.08., mit Unterbrechung durch die GBIF/PANGAEA- und jetzt DIGITAL.CSIC-Merges) hinweg
+unumgesetzt — inzwischen über 420 Kandidatenpaare mit demselben strukturellen Befund. Neu dazu:
+Der seit 09.08. offene GBIF-spezifische Prüfauftrag (Abgleich einer Quellen-API gegen die
+harvestete Ziel-DOI vor Aufnahme als eigenständige Fundstelle) sollte nicht GBIF-spezifisch
+bleiben, sondern allgemein für Aggregator-Repositorien gelten, deren Beziehung nur in eigenen
+Metadatenfeldern (GBIFs `dataset.doi`, hier DIGITAL.CSICs `DC.relation`) steht, nicht in
+DataCite-`relatedIdentifiers`. Weiterhin geringe Dringlichkeit, da der Ernte-Cron pausiert ist.
+
 ## 2026-08-11 — Elfter Lauf: erneut 40/40 kein_merge; erste Fundstelle von 4TU.ResearchData unter den Kandidaten, zwei Concept-DOIs drifteten während des Laufs auf eine im Register unbekannte dritte Version
 
 Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
