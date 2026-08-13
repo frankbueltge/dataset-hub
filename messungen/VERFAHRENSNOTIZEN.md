@@ -3,6 +3,116 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-13 — Dreizehnter Lauf: zurück zu 40/40 kein_merge nach dem DIGITAL.CSIC-Merge; stale lokale main-Referenz diesmal VOR dem ersten `kandidaten.py`-Aufruf korrigiert; erstmals ein Concept-Record mit HTTP 410 statt 302 auf der Zenodo-API
+
+Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
+`mcp__github__list_releases` bestätigt, jüngstes Release unverändert seit dem 27.07.).
+`api.github.com` war wie an allen Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den
+ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft
+(Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes, 22.473 Einträge), lokal unter `bestand/hub.sqlite`
+abgelegt, `kandidaten.py` **ohne** `--aus-snapshot` aufgerufen.
+
+**Stale-Branch-Falle diesmal vor dem ersten Kandidatenlauf behoben, nicht erst vor dem Push.**
+Zu Sitzungsbeginn erneut `HEAD detached` vorgefunden; die lokale `main`-Referenz zeigte auf
+`c246d8d` (neunter Lauf, 09.08.), drei Läufe hinter dem tatsächlichen Remote-Stand (`2cc63e0`,
+zwölfter Lauf, 12.08.) — dieselbe Diskrepanz wie am 12.08., nur diesmal sofort mit
+`git fetch origin main && git checkout -B main origin/main` behoben, bevor überhaupt etwas
+beurteilt wurde. Der seit dem 12.08. geltende Vorsatz („Fetch/Merge-Base-Check vor jedem Push,
+nicht nur bei sichtbar veraltetem HEAD") lässt sich damit noch verschärfen: Der Check gehört an
+den Sitzungsanfang, nicht nur vor den Push — dann stellt sich die Push-Frage gar nicht erst.
+
+`bereits_beurteilte_paare` stand bei 600 vor diesem Lauf (560 + 40 kein_merge vom zwölften
+Lauf), 5.446 Kandidaten gefunden, 40 vorgelegt, 5.406 erneut gekappt — die 5.446 entsprechen
+exakt den 5.446 Kandidaten, die der zwölfte Lauf am 12.08. bereits gekappt hatte (dort:
+5.486 gefunden minus 40 vorgelegte = 5.446 gekappt), wie erwartet.
+
+**40 von 40 kein_merge — kein zweiter DIGITAL.CSIC-Fund.** Alle 40 vorgelegten Kandidaten
+waren DataCite-Fundstellen mit `gleiches_werk_bereits: true`, ausschließlich Zenodo- (18
+Kandidatenpaare aus 16 Concept-/Versions-Gruppen, davon eine echte Dreiergruppe),
+Mendeley- (20 Paare aus 16 Basis-/Versions-Gruppen, davon vier mit echten Mehrfachversionen,
+zwei davon echte Dreiergruppen) und figshare-Concept-/Versions-Muster (2 Paare, 1 Gruppe),
+jedes Paar einzeln geprüft (33 einzelne Zenodo-Record-Abfragen inkl. HTTP-Statuscode und
+Redirect-Ziel, 16 Mendeley-Public-API-Abfragen über
+`data.mendeley.com/public-api/datasets/<id>`, 3 figshare-API-Abfragen mit
+Dateiprüfsummenvergleich).
+
+**Neu: ein Concept-Record antwortet auf der Zenodo-API erstmals mit HTTP 410 statt dem
+gewohnten HTTP 302.** Bei „Artificial Intelligence in Educational Assessment: A High-School
+Case Study" (Kandidatenpaar `dh-229919e0fdd90edb`/`dh-512e206ab5c73689`, Concept-DOI
+`10.5281/zenodo.17459192`) liefert `api.zenodo.org/records/17459192` `{"status": 410,
+"message": "The record has been deleted."}` statt eines Redirects auf die aktuelle Version —
+anders als bei allen anderen 32 heute geprüften Zenodo-Records, deren Concept-Record-Abfrage
+korrekt mit HTTP 302 auf `api/records/<aktuelle-Version>` verweist. Die DOI-Auflösung selbst
+(`doi.org/10.5281/zenodo.17459192`) funktioniert trotzdem unverändert: Sie führt korrekt über
+Zenodos Landing-Page-Routing auf `zenodo.org/records/17459193`, die aktuelle, lebendige
+Version. Strukturell derselbe Concept-DOI-Mechanismus wie immer (die API-seitige Löschung
+des Concept-Datensatzes ändert nichts an der DOI-Ebene), aber eine neue Fehlerform, die bei
+künftigen Läufen zu falscher Interpretation verleiten könnte, wenn nur der API-Statuscode statt
+der tatsächlichen DOI-Auflösung geprüft wird — kein_merge, wie beim Standardmuster.
+
+**Kontrollprobe bestätigt: API-Redirect eines „Concept-ID gleich eigene Record-ID"-Datensatzes
+auf die aktuelle Version ist Zenodo-Standardverhalten, keine Besonderheit einzelner Records.**
+Bei der Dreiergruppe „Artificial Intelligence in Project Management: Challenges…" (Concept-DOI
+`10.5281/zenodo.17572581`, Kandidaten `dh-0fc2047b9ad5c6a4`/`dh-470ad806c00f86a6`/
+`dh-a158aba33a81efda`) lieferte `api.zenodo.org/records/17572581` zunächst identische Daten
+wie `api/records/17668834` (gleicher `created`-Zeitstempel, gleiches `doi`-Feld) — auf den
+ersten Blick ein möglicher Beleg für echte Datensatz-Identität statt nur Concept-DOI-Drift.
+Gegenprobe an einem regulären Paar desselben Laufs (`15073721`, dessen `conceptrecid` ebenfalls
+die eigene Record-ID ist): `api.zenodo.org/records/15073721` liefert ebenfalls HTTP 302 auf
+`api/records/15073722` — exakt dasselbe Verhalten. Damit bestätigt: Records, deren eigene ID
+zugleich die `conceptrecid` der Gruppe ist, werden von der Zenodo-API grundsätzlich auf die
+aktuelle Version weitergeleitet, unabhängig vom Einzelfall — kein neuer Mechanismus, sondern
+das seit 03.08. dokumentierte Concept-DOI-Verhalten, hier nur genauer nachvollzogen. `17572582`
+(echte frühere Version, Index 0) hat einen eigenen, teilweise abweichenden Dateibestand
+(2 von 3 Dateien anders, nur `framework300.pdf` MD5-identisch mit der aktuellen Version) —
+kein_merge für alle drei Paare der Gruppe, wie beim Standardmuster.
+
+**Übrige Kandidaten:** 12 Mendeley-Ein-Versions-Paare (Basis-/`.1`-DOI, laut Mendeley Public
+API je nur eine veröffentlichte Version, `kein_merge` aus struktureller Vorsicht wie an allen
+Vortagen seit 04.08.), 2 Mendeley-Dreiergruppen mit echten Mehrfachversionen (`wfdp6t7v2f`,
+`9bsv2rpbvh`, je v1/v2, Basis-DOI zeigt aktuell auf die jüngere Version), 2 weitere
+Mendeley-Basis-/Versions-Paare mit echten Mehrfachversionen (`h76rf38jkn`, zwei Versionen;
+`x5689yhv2n`, drei Versionen, 2022–2025 — dasselbe Basis-DOI-Drift-Muster wie beim
+`hms3sjzt7f`-Fund vom 08.08.), 15 einfache Zenodo-Concept-/Versions-Paare (durchweg das seit
+03.08. etablierte Muster, per API einzeln bestätigt), 1 figshare-Versions-Gruppe (Artikel
+29545721, unversionierte ID zeigt aktuell auf v2; v1 und v2 mit identischem Dateibestand und
+identischen MD5-Prüfsummen, nur der Titel unterscheidet sich in der Groß-/Kleinschreibung —
+`kein_merge` nach der seit 05.08. geltenden figshare-Regel, unabhängig von inhaltlicher
+Identität).
+
+**Stichprobe (15 Einträge):** 11 von 15 lösten normal auf, Titel stimmten in jedem geprüften
+Fall (Zenodo ×6, GBIF ×2 [neu in der Stichprobe, `api.gbif.org/v1/dataset/<uuid>` bestätigt
+Titel und DOI exakt], COCOON/Huma-Num ×1, Språkbanken ×1, SciDB/Science Data Bank ×1
+[`scidb.cn`-Landingpage liefert im rohen HTML nur den generischen `<title>`-Tag „ScienceDB",
+dasselbe clientseitig gerenderte SPA-Verhalten wie beim Mendeley-FAQ-Fund vom 12.08., Titel
+stattdessen über `api.datacite.org/dois/10.57760/sciencedb.07321` bestätigt: exakt identisch
+mit dem Registereintrag, auch die registrierte URL stimmt mit dem `url`-Feld der
+DataCite-Metadaten überein]). 4 von 15 (figshare ×2, springernature.figshare ×1 und — **neu**
+— `scholardata.sun.ac.za` [SUNScholarData] ×1) scheiterten mit dem seit 04.08. bekannten
+AWS-WAF-202-Muster (Header `x-amzn-waf-action: challenge` bestätigt für alle 4).
+SUNScholarData ist erkennbar eine weitere figshare-White-Label-Instanz (URL-Struktur
+`/articles/dataset/.../<id>` identisch zu figshare.com) und reiht sich damit strukturell bei
+karger.figshare.com/tandf.figshare.com/scielo.figshare.com/springernature.figshare.com/
+rdr.ucl.ac.uk ein. Keiner der 4 Ausfälle wurde markiert — dokumentiertes Host-Blockmuster,
+kein Beleg für falsche Einträge.
+
+**Nicht getan:** Für den neuen HTTP-410-Fall (17459192) keine Änderung an `kandidaten.py`
+oder den Prüfskripten vorgeschlagen — die DOI-Auflösung selbst bleibt unverändert korrekt,
+nur die API-Fehlerform ist neu; ein künftiger Lauf, der sich ausschließlich auf den
+API-Statuscode statt auf die tatsächliche DOI-Auflösung verlässt, könnte das fälschlich als
+„Ziel nicht mehr auffindbar" statt als Concept-DOI-Normalfall lesen — hier nur vermerkt, keine
+Pipeline-Änderung (außerhalb des Commit-Umfangs dieser Routine). Für die
+SUNScholarData-Beobachtung keine eigene Quellen-Notiz über diese Verfahrensnotiz hinaus
+angelegt, da das AWS-WAF-Muster strukturell bereits für sechs andere figshare-Instanzen
+dokumentiert ist.
+
+**Regel/Prüfauftrag, jetzt zum 13. Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über dreizehn Urteilsläufe (03.–13.08., mit Unterbrechung durch die GBIF/PANGAEA- und
+DIGITAL.CSIC-Merges) hinweg unumgesetzt — inzwischen über 460 Kandidatenpaare mit demselben
+strukturellen Befund. Weiterhin geringe Dringlichkeit, da der Ernte-Cron pausiert ist.
+
 ## 2026-08-12 — Zwölfter Lauf: erste DIGITAL.CSIC-Fundstelle, sofort als Aggregatorkopie von Zenodo erkannt und gemerged; stale lokale main-Referenz zeigte auf den Stand vom 09.08. statt auf den neunten — diesmal vor dem Push bemerkt
 
 Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
