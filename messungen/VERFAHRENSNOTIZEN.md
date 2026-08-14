@@ -3,6 +3,117 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-14 — Vierzehnter Lauf: `api.zenodo.org` erstmals per Proxy blockiert (Behelf: `zenodo.org/api/...`), zweiter bestätigter Merge seit dem GBIF/PANGAEA-Fund — zwei unabhängige Zenodo-Einreichungen mit MD5-identischer Datei ohne deklarierte Relation; zwei neue Quellen (FDR Uni Hamburg, TU Graz)
+
+Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
+`mcp__github__list_releases` bestätigt, jüngstes Release unverändert seit dem 27.07.).
+`api.github.com` war wie an allen Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den
+ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft
+(Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes), lokal unter `bestand/hub.sqlite` abgelegt,
+`kandidaten.py` **ohne** `--aus-snapshot` aufgerufen.
+
+**Stale-Branch-Falle wie an allen Vortagen zu Sitzungsbeginn vorgefunden und vor dem ersten
+`kandidaten.py`-Aufruf behoben.** `HEAD detached`, lokale `main`-Referenz zeigte auf `c246d8d`
+(neunter Lauf, 09.08.) statt auf den tatsächlichen Remote-Stand (`10826d7`, dreizehnter Lauf,
+13.08.); mit `git fetch origin main && git checkout -B main origin/main` korrigiert, bevor
+irgendetwas beurteilt wurde. `bereits_beurteilte_paare` stand bei 640 vor diesem Lauf (600 +
+40 kein_merge vom dreizehnten Lauf), 5.406 Kandidaten gefunden — exakt der vom dreizehnten Lauf
+erwartete Rückstand (5.446 gefunden am 13.08. minus 40 vorgelegte = 5.406 gekappt) —, 40
+vorgelegt, 5.366 erneut gekappt.
+
+**Neu: `api.github.com` blieb wie gewohnt gesperrt, aber diesmal auch `api.zenodo.org` —
+erstmals eine Zenodo-Abfrage vom Sitzungsproxy mit HTTP 502 statt einer Antwort von Zenodo
+selbst abgewiesen.** `curl https://api.zenodo.org/records/<id>` scheiterte wiederholt mit
+„CONNECT tunnel failed, response 502"; der Proxy-Statusendpunkt (`$HTTPS_PROXY/__agentproxy/status`)
+zeigte `recentRelayFailures` mit `"detail": "gateway answered 502 to CONNECT (policy denial or
+upstream failure)"` für den Host `api.zenodo.org:443` — nicht die für echte Sperren dokumentierten
+403/407-Codes. Behelf gefunden und verifiziert: `zenodo.org/api/records/<id>` (derselbe Endpunkt
+unter dem Haupt-Host statt der `api.`-Subdomain) lieferte durchgehend HTTP 200 mit identischer
+JSON-Struktur (`id`, `conceptrecid`, `files`, `metadata` usw.) — für alle 25 in diesem Lauf
+geprüften Zenodo-IDs verwendet, keine einzige über `api.zenodo.org` selbst. `zenodo.org/api/records`
+ist derselbe von Zenodo dokumentierte API-Endpunkt, nur über den Haupt-Host aufgerufen, kein
+Umgehen einer Zugriffsbeschränkung. Nicht getan: keine Änderung an einem Prüfskript, da die
+Urteilsroutine ohnehin nur manuell mit curl/Python arbeitet — der Behelf ist rein diese
+Sitzung betreffend, aber für künftige Läufe hier vermerkt, falls die Sperre anhält.
+
+**Zweiter bestätigter Merge seit dem GBIF/PANGAEA-Fund vom 09.08. (nach dem DIGITAL.CSIC-Fund
+vom 12.08.): zwei unabhängige Zenodo-Einreichungen mit byte-identischer Datei, ohne jede
+deklarierte Beziehung.** Kandidatentriple „Artificial intelligence reveals potential Arctic
+whale aggregation disruption due to climate change": `dh-24474650ab2babc4` (Zenodo 10.5281/
+zenodo.7564654) / `dh-87cfdc6797b98174` (Zenodo-Concept 10.5281/zenodo.7568068) /
+`dh-c5fedf7da21c2d4d` (Zenodo 10.5281/zenodo.7568069). Geprüft (nicht vermutet): 7564654 trägt
+eine eigene, unabhängige Concept-DOI-Gruppe (`conceptrecid: 7564653`) — kein Alias von 7568068/
+7568069 (`conceptrecid: 7568068`). Beide Datensätze haben `related_identifiers: null` in ihren
+Zenodo-Metadaten — keine deklarierte Beziehung, weshalb R2/R4 sie nicht automatisch verbunden
+haben. Beide tragen jedoch dieselbe Datei „Supplementary data.doc" mit **byte-identischem
+MD5-Hash** (`4a5d501f19e52d4d01cfe3aa6b219456`), wortgleichem Titel, demselben (einzigen)
+Urheber „Anonimus" und einem Veröffentlichungsdatum nur einen Tag auseinander (24.01. bzw.
+25.01.2023); der Beschreibungstext beginnt in beiden Fällen identisch, 7568069 ist die
+vollständigere, längere Fassung. Strukturell derselbe von R2/R4 nicht erkannte
+Doppeleinreichungs-Fall wie GBIF/PANGAEA und DIGITAL.CSIC, hier aber ohne Aggregator dazwischen
+— zwei eigene, unabhängige Zenodo-Deposits desselben Werks. `merge`, `ebene: fassung`, nur für
+das Paar `dh-24474650ab2babc4`/`dh-c5fedf7da21c2d4d` (die direkte Evidenz). Für die beiden
+anderen Paare des Triples (gegen die reine Concept-DOI 7568068) `kein_merge` — dieselbe
+Begründung wie beim DIGITAL.CSIC-Fund vom 12.08.: die Concept-DOI ist nur ein struktureller
+Alias von 7568069, kein eigenes Ziel, ein Merge ohne direkten Beleg für genau dieses Paar wäre
+eine Vermutung.
+
+**Neu: zwei bislang nicht im Register beobachtete Quellen unter den Kandidaten, beide mit
+demselben Concept-/Versions-Muster wie Zenodo.** FDR Uni Hamburg (`www.fdr.uni-hamburg.de`,
+DOI-Präfix `10.25592`, InvenioRDM-Software wie Zenodo): Paar `dh-3a639da48ead80cd`/
+`dh-e847e8413bc256c7` (uhhfdm.17310/17311) — `api/records/17310` liefert HTTP 301 auf
+`api/records/17311`; 17311 selbst trägt `conceptdoi: 10.25592/uhhfdm.17310` und
+`relations.version` mit `count: 1` (nur eine veröffentlichte Fassung) — dieselbe Concept-/
+Versions-Instabilität wie bei Zenodo, hier zum ersten Mal an einer FDR-Uni-Hamburg-Fundstelle
+bestätigt, `kein_merge`. TU Graz Repository (`repository.tugraz.at`, DOI-Präfix `10.3217`,
+ebenfalls InvenioRDM): Paar `dh-38911548397f4fe7`/`dh-67daa008d407f8e9` (g4wk6-k4313/
+ckkj2-2me08) — **anders als bei allen bisherigen Concept-/Versions-Funden bereits von R1–R4
+noch nicht als `gleiches_werk_bereits` erkannt.** `g4wk6-k4313` antwortet auf der Repository-API
+mit HTTP 403 „Zugriff verweigert" (Landing-Page bestätigt: Redirect auf `/login/`, geschützter
+Datensatz); `ckkj2-2me08` ist strukturell eigenständig — sein eigenes Parent-Record ist
+`w7ajr-3ea83`, nicht `g4wk6-k4313`, der Versions-Endpunkt listet nur den einen Record selbst.
+Keine deklarierte Beziehung zwischen beiden, kein Zugriff auf den Inhalt des geschützten
+Datensatzes möglich — `kein_merge` mangels Beleg, wie bei den restricted-Zenodo-Funden vom
+07./10.08.
+
+**Übrige Kandidaten:** 4 weitere echte Dreiergruppen mit dem etablierten Concept-/Versions-Muster
+(Mendeley hhv937v7pv, fz7d6x4bwx, hy767fh3rx — je zwei echte Versionen, unversionierte Basis-DOI
+zeigt aktuell auf die jüngere; Zenodo 7722892/6037351/6037352 — Concept-Alias plus eine
+inhaltlich abweichende echte Vorversion mit anderer Datei/MD5), 1 Zenodo-Dreiergruppe ohne
+Dateiidentität trotz gemeinsamer Concept-DOI 17204083 („Artificial Intelligence, Security, and
+Sovereignty" — drei separate Uploads mit je unterschiedlich benannter PDF-Datei, keine der drei
+Kombinationen mit Belegidentität, `kein_merge` im Zweifel für alle drei Paare), 1
+figshare-Zweierpaar aus einer Dreiergruppe (Artikel 13497855, v1 mit 3 Dateien vs. v2 mit
+inzwischen leerer Dateiliste — Inhalt entfernt), 1 Concept-DOI-Drift über das Paar hinaus
+(Zenodo 17754799 zeigt aktuell auf eine dritte, unregistrierte Version 20786147, während das
+vorgelegte Partnermitglied 17754800 eine eigene, im MD5 abweichende Datei trägt), sowie 13
+einfache Zenodo-Concept-/Versions-Paare und 8 einfache Mendeley-Ein-Versions-Paare, alle
+einzeln per API geprüft, durchweg das seit 03.08. etablierte Muster.
+
+**Stichprobe (15 Einträge):** 13 von 15 lösten normal auf, Titel stimmten in jedem geprüften
+Fall (Zenodo ×7, figshare ×3, Mendeley ×1, Dryad ×1, Språkbanken ×1). 2 von 15 (Ag Data Commons
+[**neu in der Stichprobe**, `agdatacommons.nal.usda.gov`] und Harvard Dataverse) scheiterten
+mit dem seit 04.08. bekannten AWS-WAF-202-Muster (Header `x-amzn-waf-action: challenge`
+bestätigt für beide). Keiner der 2 Ausfälle wurde markiert — dokumentiertes Host-Blockmuster,
+kein Beleg für falsche Einträge.
+
+**Nicht getan:** Für den zweiten unabhängigen Merge-Fund (Arctic-whale-Datensatz) keine
+automatische Doppeleinreichungs-Erkennung in `normalisiere.py`/`baue_bestand.py` umgesetzt —
+dieselbe Begründung wie bei GBIF/PANGAEA (09.08.) und DIGITAL.CSIC (12.08.), Pipeline-Änderung
+außerhalb des Commit-Umfangs dieser Routine. Für den TU-Graz-Fund (`gleiches_werk_bereits:
+false`, restricted) keinen Merge vorgeschlagen — ohne einsehbaren Inhalt des geschützten
+Datensatzes bleibt „im Zweifel kein_merge" verbindlich. Für den neu aufgetretenen
+`api.zenodo.org`-502-Fehler keine dauerhafte Änderung vorgenommen (kein Prüfskript betroffen),
+nur hier vermerkt, falls die Sperre in künftigen Läufen erneut auftritt.
+
+**Regel/Prüfauftrag, jetzt zum 14. Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über vierzehn Urteilsläufe (03.–14.08., mit Unterbrechung durch die GBIF/PANGAEA-,
+DIGITAL.CSIC- und jetzt Arctic-whale-Merges) hinweg unumgesetzt — inzwischen über 500
+Kandidatenpaare mit demselben strukturellen Befund. Weiterhin geringe Dringlichkeit, da der
+Ernte-Cron pausiert ist.
+
 ## 2026-08-13 — Dreizehnter Lauf: zurück zu 40/40 kein_merge nach dem DIGITAL.CSIC-Merge; stale lokale main-Referenz diesmal VOR dem ersten `kandidaten.py`-Aufruf korrigiert; erstmals ein Concept-Record mit HTTP 410 statt 302 auf der Zenodo-API
 
 Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
