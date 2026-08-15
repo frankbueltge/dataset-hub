@@ -3,6 +3,102 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-15 — Fünfzehnter Lauf: 40/40 kein_merge, MaterialsCloud- und 4TU-Funde vom 05./11.08. bestätigt dasselbe Muster ein zweites Mal, keine neuen Quellen
+
+Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
+`mcp__github__list_releases` bestätigt, jüngstes Release unverändert seit dem 27.07.).
+`api.github.com` war wie an allen Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den
+ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft
+(Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes), lokal unter `bestand/hub.sqlite` abgelegt,
+`kandidaten.py` **ohne** `--aus-snapshot` aufgerufen. `api.zenodo.org` blieb wie am 14.08.
+per Proxy mit „CONNECT tunnel failed, response 502" blockiert; derselbe Behelf wie am 14.08.
+verwendet (`zenodo.org/api/records/<id>` statt `api.zenodo.org`), durchgehend HTTP 200 für
+alle 39 geprüften Zenodo-IDs.
+
+**Stale-Branch-Falle wie an fast allen Vortagen zu Sitzungsbeginn vorgefunden und vor dem
+ersten `kandidaten.py`-Aufruf behoben.** `HEAD detached`, `HEAD` selbst zeigte bereits korrekt
+auf den aktuellen Remote-Stand (`57eb73b`, vierzehnter Lauf, 14.08.), aber die lokale
+`main`-Referenz war auf `c246d8d` (neunter Lauf, 09.08.) hängen geblieben — mit
+`git fetch origin main && git checkout -B main origin/main` korrigiert, bevor irgendetwas
+beurteilt wurde. `bereits_beurteilte_paare` stand bei 680 vor diesem Lauf (640 + 40 kein_merge
+vom vierzehnten Lauf), 5.366 Kandidaten gefunden — exakt der vom vierzehnten Lauf erwartete
+Rückstand (5.406 gefunden am 14.08. minus 40 vorgelegte = 5.366 gekappt) —, 40 vorgelegt,
+5.326 erneut gekappt.
+
+**40 von 40 kein_merge — kein dritter unabhängiger Merge-Fund.** Alle 40 vorgelegten
+Kandidaten waren DataCite-Fundstellen, ausschließlich Zenodo- (24 Paare aus 18
+Concept-/Versions-Gruppen, davon 3 echte Dreiergruppen), Mendeley- (14 Paare aus 6
+Basis-/Versions-Gruppen, davon 4 mit echten Zweifachversionen [je 3 Paare] und 2 mit laut API
+nur einer veröffentlichten Version [je 1 Paar]), MaterialsCloud- (1 Paar) und
+4TU-Concept-/Versions-Mustern (1 Paar), jedes Paar einzeln geprüft (39 Zenodo-Record-Abfragen
+inkl. Dateiprüfsummenvergleich, 6 Mendeley-Public-API-Abfragen inkl. Versionszähler, 1
+MaterialsCloud-API-Abfrage inkl. `versions`-Endpunkt, 2 4TU-API-Abfragen inkl.
+`versions`-Endpunkt) — nicht nur an Beispielen. `bereits_beurteilte_paare` steigt damit auf 720.
+
+**Drei echte Dreiergruppen mit inhaltlicher Fassungsdifferenz, dieselbe Beobachtung wie an
+fast allen Vortagen:** Bei „Assessing and improving the capabilities of large language
+models…" (conceptrecid 10685092) hat Fassung `10685093` nur 8 statt 9 Dateien und ein
+abweichendes README.md (MD5 `b71dc668…` statt `2d79d119…`, `report.csv` fehlt vollständig) —
+echte Differenz gegenüber den byte-identischen Fassungen `10685092`/`10694834`. Bei „Assessing
+artificial intelligence knowledge among Al Zahraa…" (conceptrecid 14946957) hat Fassung
+`14946958` eine abweichende MD5 (`013d6cf4…`) für dieselbe Datei „Blank Quiz (Responses)
+(5).xlsx", während `14946957` und `15003863` byte-identisch sind (`fa161a12…`) — auch hier
+kein_merge für alle drei Paare, unabhängig von der Dateiidentität zwischen zwei der drei
+Mitglieder. Bei „Associated results of phase 1 of the Urban Plumber model evaluation…"
+(conceptrecid 7388341) trägt `7388342` die Datei `UP_Phase1_results_archive_v1.zip`
+(MD5 `9a2ad580…`), während `7388341`/`8321546` beide `UP_Phase1_results_archive_v1-1.zip`
+(MD5 `1590ae29…`, untereinander identisch) tragen — dieselbe Struktur wie beim ersten Fall.
+
+**MaterialsCloud- und 4TU-Muster jeweils zum zweiten Mal bestätigt, kein neuer Quellentyp.**
+MaterialsCloud-Paar `materialscloud:m1-ka`/`materialscloud:90-vd` („Assessing the persistence
+of chalcogen bonds…"): API-Abfrage von Record `f9w9v-6mk60` bestätigt `self_doi` = `90-vd`,
+`parent_doi` = `m1-ka` (Record `28g0z-3e379`), `versions`-Endpunkt liefert `total: 1,
+is_latest: true` — dasselbe self_doi/parent_doi-Einzelversions-Muster wie beim ersten
+MaterialsCloud-Fund vom 05.08. und dem Zweiversionen-Fund vom 12.08., kein_merge aus
+struktureller Vorsicht (parent_doi bleibt ein wanderndes Ziel). 4TU-Paar `10.4121/14247239`
+(Basis) / `10.4121/14247239.v1`: **dieses Paar trug als einziges der 40 `gleiches_werk_bereits:
+false`** — R2/R4 erkennt die 4TU-Basis-/Versions-Relation strukturell nicht (wie beim ersten
+4TU-Fund vom 11.08.). Die 4TU-API bestätigt: Der Basis-Artikel `14247239` trägt in seinen
+eigenen Metadaten bereits `doi: 10.4121/14247239.v1` — die Basis-DOI IST die Version-1-DOI,
+der `versions`-Endpunkt listet exakt einen Eintrag. Dieselbe Basis-/Versions-Instabilität wie
+beim 4TU-Fund vom 11.08., hier zum zweiten Mal bestätigt — kein_merge trotz aktuell
+identischem Dateiinhalt (MD5 `f0727bad…` auf beiden Zugriffswegen), aus denselben
+strukturellen Gründen wie immer: ein zweiter Versionseintrag könnte jederzeit hinzukommen,
+und die beiden DOIs bleiben formal getrennte DataCite-Datensätze.
+
+**Übrige Kandidaten:** 15 einfache Zenodo-Concept-/Versions-Paare (durchweg das seit 03.08.
+etablierte Muster, jede Zenodo-ID einzeln per API mit Dateiprüfsummenvergleich bestätigt, alle
+byte-identisch innerhalb ihrer Concept-Gruppe), 2 Mendeley-Ein-Versions-Paare (`zwjkbstpw4`,
+`mg9ktdw7hf`, laut API je nur eine veröffentlichte Version, kein_merge aus struktureller
+Vorsicht wie an allen Vortagen seit 04.08.), 4 Mendeley-Zweiversionen-Gruppen mit je 3 Paaren
+(`z79yr5mpf4`, `pdrx7gdsmr`, `ggt4f4dr85`, `y2jfnnnc2z`, jede mit Basis-DOI aktuell auf
+Version 2 zeigend, laut API bestätigt).
+
+**Stichprobe (15 Einträge):** 11 von 15 lösten normal auf, Titel stimmten in jedem geprüften
+Fall (Zenodo ×4, ArcGIS ×2 [Layer-Namen „Incidents_Reported_911"/„Géorisques - ICPE
+(Automatisation)" — erwartetes ArcGIS-REST-Muster, zweiter Fall sogar mit exakt
+übereinstimmendem Namen], 4TU ×1 [`data.4tu.nl/datasets/17fe54a9-…/1`, Titel exakt
+identisch], figshare ×3 [über `api.figshare.com`, nicht die blockierte White-Label-Instanz],
+Mendeley ×1). 4 von 15 (tandf.figshare ×1, Harvard Dataverse ×3) scheiterten mit dem seit
+04.08. bekannten AWS-WAF-202-Muster (Header `x-amzn-waf-action: challenge` bestätigt für alle
+4). Keiner der 4 Ausfälle wurde markiert — dokumentiertes Host-Blockmuster, kein Beleg für
+falsche Einträge.
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten oder in der Stichprobe (anders als am
+14.08. mit FDR Uni Hamburg/TU Graz) — dieser Lauf bestätigt nur bereits bekannte Muster
+(Zenodo, Mendeley, MaterialsCloud, 4TU), keine neue Verfahrensnotiz zu einer neuen Quelle
+nötig. Für die drei echten Dreiergruppen mit Dateidifferenz (conceptrecid 10685092, 14946957,
+7388341) keine automatische Fassungsunterschieds-Erkennung umgesetzt — Pipeline-Änderung
+außerhalb des Commit-Umfangs dieser Routine, wie an allen Vortagen.
+
+**Regel/Prüfauftrag, jetzt zum 15. Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über fünfzehn Urteilsläufe (03.–15.08., mit Unterbrechung durch die GBIF/PANGAEA-,
+DIGITAL.CSIC- und Arctic-whale-Merges) hinweg unumgesetzt — inzwischen über 540
+Kandidatenpaare mit demselben strukturellen Befund. Weiterhin geringe Dringlichkeit, da der
+Ernte-Cron pausiert ist.
+
 ## 2026-08-14 — Vierzehnter Lauf: `api.zenodo.org` erstmals per Proxy blockiert (Behelf: `zenodo.org/api/...`), zweiter bestätigter Merge seit dem GBIF/PANGAEA-Fund — zwei unabhängige Zenodo-Einreichungen mit MD5-identischer Datei ohne deklarierte Relation; zwei neue Quellen (FDR Uni Hamburg, TU Graz)
 
 Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
