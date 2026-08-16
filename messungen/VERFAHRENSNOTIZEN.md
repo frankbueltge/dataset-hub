@@ -3,6 +3,118 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-16 — Sechzehnter Lauf: 40/40 kein_merge, erstmals zwei tombstonete Zenodo-Records unter den Kandidaten, drei echte Dreiergruppen mit Dateidifferenz, ein Concept-Drift auf eine unregistrierte dritte Fassung — keine neuen Quellen
+
+Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
+`mcp__github__list_releases` bestätigt, jüngstes Release unverändert seit dem 27.07.).
+`api.github.com` war wie an allen Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den
+ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft
+(Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes), lokal unter `bestand/hub.sqlite` abgelegt,
+`kandidaten.py` **ohne** `--aus-snapshot` aufgerufen. `api.zenodo.org` blieb wie seit dem
+14.08. per Proxy mit „CONNECT tunnel failed, response 502" blockiert; derselbe Behelf wie an
+allen Vortagen seit 14.08. verwendet (`zenodo.org/api/records/<id>` statt `api.zenodo.org`),
+durchgehend erreichbar für alle 61 geprüften Zenodo-IDs (davon 2 mit HTTP 410, dazu unten).
+
+**Stale-Branch-Falle wie an fast allen Vortagen zu Sitzungsbeginn vorgefunden und vor dem
+ersten `kandidaten.py`-Aufruf behoben.** `HEAD detached`, `HEAD` selbst zeigte bereits korrekt
+auf den aktuellen Remote-Stand (`8b9a5ff`, fünfzehnter Lauf, 15.08.), aber die lokale
+`main`-Referenz war auf `c246d8d` (neunter Lauf, 09.08.) hängen geblieben — mit
+`git fetch origin main && git checkout -B main origin/main` korrigiert, bevor irgendetwas
+beurteilt wurde. `bereits_beurteilte_paare` stand bei 720 vor diesem Lauf (680 + 40 kein_merge
+vom fünfzehnten Lauf), 5.326 Kandidaten gefunden — exakt der vom fünfzehnten Lauf erwartete
+Rückstand (5.366 gefunden am 15.08. minus 40 vorgelegte = 5.326 gekappt) —, 40 vorgelegt,
+5.286 erneut gekappt.
+
+**40 von 40 kein_merge — kein dritter unabhängiger Merge-Fund.** Alle 40 vorgelegten
+Kandidaten waren DataCite-Fundstellen mit `gleiches_werk_bereits: true`, ausschließlich
+Zenodo- (35 Einträge, 61 eindeutige Zenodo-IDs) und Mendeley-Basis-/Versions-Muster (5 Paare,
+5 Datensätze), jedes Paar einzeln geprüft (61 einzelne Zenodo-Record-Abfragen inkl.
+HTTP-Statuscode/Redirect-Ziel, davon 3 Dreiergruppen mit vollständigem Dateiprüfsummenvergleich;
+5 Mendeley-Public-API-Abfragen inkl. Versionszähler) — nicht nur an Beispielen.
+
+**Neu: erstmals zwei tombstonete (gelöschte) Zenodo-Records unter den Kandidaten.** Paar
+`dh-9a0deca49bc1cec6`/`dh-c42c35eca030f2db` (Concept-DOI `10.5281/zenodo.21615212`, Versions-DOI
+`10.5281/zenodo.21615213`, „Attribution of interannual ecosystem carbon exchange to uptake
+duration and peak uptake is scale dependent"): beide Records antworten auf der Zenodo-API mit
+HTTP 410. `21615213` trägt ein vollständiges Tombstone-Objekt (`removal_reason: personal-data`,
+`removal_date: 2026-07-29T02:38Z`, `deletion_policy: grace-period-v1`); `21615212` (Concept)
+löst per DOI-Redirect (`doi.org/10.5281/zenodo.21615212`) ebenfalls auf die (gelöschte)
+Landingpage von `21615213`. Kein Dateiinhalt einsehbar, keine Prüfung der Identität möglich —
+`kein_merge` mangels Beleg, dieselbe Regel wie bei den restricted-Zenodo-/TU-Graz-Funden vom
+07./10./14.08., hier zum ersten Mal mit einer echten Löschung statt eines Zugriffsschutzes.
+Anders als bei restricted-Fällen ist hier auch die Concept-DOI selbst dauerhaft tot (kein
+Redirect auf eine lebendige neuere Version) — ein neuer Ausfallmodus, der bei künftigen Läufen
+zu falscher Interpretation verleiten könnte, wenn ein Skript HTTP 410 wie einen einfachen
+Netzwerkfehler statt wie eine bestätigte Löschung behandelt.
+
+**Drei echte Dreiergruppen mit inhaltlicher Fassungsdifferenz, dieselbe Beobachtung wie an
+fast allen Vortagen:** Bei „ATLAS VRA v1 - Training Data and Code" (Concept `14906191`,
+Kandidaten `15195392`/`14906191`/`14906192`) unterscheidet sich unter 5 identischen Dateien
+allein „Duck1.1.tar.gz" zwischen der aktuellen Fassung `15195392` (MD5 `99f3b913…`,
+67.382.097 Byte) und der älteren `14906192` (MD5 `2f726fb8…`, 42.764.993 Byte) — echte
+Differenz trotz überwiegender Dateiidentität. Bei „Atomizer: An LLM-based Collaborative
+Multi-Agent Framework…" (Concept `16142013`, Kandidaten `16142014`/`16142013`/`17592234`)
+trägt die einzige Datei „Poject_Atomizer.zip" unterschiedliche MD5 zwischen der älteren
+Fassung `16142014` (`c0340e12…`, 1.418.752.282 Byte) und der aktuellen `17592234`
+(`55b517b0…`, 1.418.789.351 Byte) — nahezu gleiche Größe, aber inhaltlich verschieden. Bei
+„Automated Fairness Testing of Large Language Models" (Concept `13768484`, Kandidaten
+`14016551`/`13768485`/`13768484`) trägt die einzige Datei
+„AutomatedLLMsFairnessTesting-evaluation-data.zip" unterschiedliche MD5 zwischen `13768485`
+(`c60a12a0…`, 8.171.162 Byte, erstellt 16.09.) und der aktuellen Fassung `14016551`
+(`ff2196e3…`, 8.171.138 Byte, erstellt 31.10.) — auch hier `kein_merge` für alle drei Paare
+jeder Gruppe, unabhängig von der überwiegenden Dateiidentität.
+
+**Erneut: Concept-DOI-Drift über das Kandidatenpaar hinaus.** Bei „Atlas para una antropología
+archipiélica" löst die Concept-DOI `10.5281/zenodo.21483568` aktuell auf Record `21875688`
+(Titel „Atlas para una Antropología Archipiélica") auf — eine im Register nicht erfasste
+dritte Fassung, nicht auf das vorgelegte Partnermitglied `21554775`. Kein Merge-Ziel
+vorgeschlagen, da die dritte Version nicht im Register steht, dieselbe Regel wie bei den
+vergleichbaren Funden vom 11./12.08.
+
+**Übrige Kandidaten:** 24 einfache Zenodo-Concept-/Versions-Paare (durchweg das seit 03.08.
+etablierte Muster, jede Concept-DOI einzeln per API mit bestätigtem Redirect-Ziel geprüft,
+darunter drei „Atlas …"-Paare mit je eigener, unterscheidbarer Concept-DOI-Gruppe — Markt-,
+Sicherheits- und Symbolabdeckungs-Atlanten desselben Herausgebers, keine Verwechslungsgefahr
+trotz ähnlicher Titel, da jedes Paar strukturell unabhängig geprüft wurde), 4 Mendeley-
+Ein-Versions-Paare (`t64wkvy5f7`, `kzc5bt9578`, `p4mcby8rm8`, `9n8r33bzkj`, laut API je nur
+eine veröffentlichte Version, `kein_merge` aus struktureller Vorsicht wie an allen Vortagen
+seit 04.08.), 1 Mendeley-Zweiversionen-Paar (`j6krmr75xd`, v1 20.11./v2 21.11., einen Tag
+auseinander, Basis-DOI zeigt aktuell auf v2; Datensatz ohne Dateiliste in der API — reine
+systematische Übersichtsarbeit ohne Datendateien, `size: 0` in beiden Versionsabfragen, daher
+kein Prüfsummenvergleich möglich, `kein_merge` aus struktureller Vorsicht wie bei allen
+bisherigen Mendeley-Mehrfachversionsfunden).
+
+**Stichprobe (15 Einträge):** 11 von 15 lösten normal auf, Titel stimmten in jedem geprüften
+Fall (Zenodo ×8, ArcGIS ×1 [Layer-Name „Pašvaldībai piederošās zemes vienības, kas ierakstītas
+zemesgrāmatā" exakt identisch], IEEE DataPort ×1 [Titel exakt identisch], Mendeley ×1
+[`fcpkmc56r6`, Landingpage lieferte im rohen HTML nur den generischen `<title>`-Tag „FAQ" —
+dasselbe clientseitig gerenderte SPA-Verhalten wie an früheren Funden, Titel stattdessen über
+die Public API bestätigt: exakt identisch mit dem Registereintrag] sowie 1 radar.kit.edu-Eintrag
+[`IAzBEMXnbTndvIZG`, Titel „Pol-InSAR-Island - A Benchmark Dataset for Multi-frequency
+Pol-InSAR Data Land Cover Classification (Version 2)" exakt identisch, **neu in der
+Stichprobe**]). 4 von 15 (sage.figshare ×1, figshare.com ×1, springernature.figshare ×2)
+scheiterten mit dem seit 04.08. bekannten AWS-WAF-202-Muster (Header
+`x-amzn-waf-action: challenge` bestätigt für alle 4). Keiner der 4 Ausfälle wurde markiert —
+dokumentiertes Host-Blockmuster, kein Beleg für falsche Einträge.
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten (radar.kit.edu ist neu in der
+Stichprobe, aber keine neue Quelle im Sinne einer Verfahrensnotiz, da KIT/RADAR bereits als
+bekannte Quelle im Register läuft). Für die drei echten Dreiergruppen mit Dateidifferenz
+(Concept-Gruppen 14906191, 16142013, 13768484) und für den neuen Tombstone-Fall
+(21615212/21615213) keine automatische Fassungsunterschieds- bzw. Löschungs-Erkennung
+umgesetzt — Pipeline-Änderung außerhalb des Commit-Umfangs dieser Routine, wie an allen
+Vortagen.
+
+**Regel/Prüfauftrag, jetzt zum 16. Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über sechzehn Urteilsläufe (03.–16.08., mit Unterbrechung durch die GBIF/PANGAEA-,
+DIGITAL.CSIC- und Arctic-whale-Merges) hinweg unumgesetzt — inzwischen über 580
+Kandidatenpaare mit demselben strukturellen Befund. Neu dazu: Der HTTP-410-Tombstone-Fall
+(21615212/21615213) legt nahe, dass ein künftiges Prüfskript HTTP 410 explizit von einem
+einfachen Netzwerk- oder Zugriffsfehler unterscheiden sollte, statt beides als „nicht
+erreichbar" zu behandeln. Weiterhin geringe Dringlichkeit, da der Ernte-Cron pausiert ist.
+
 ## 2026-08-15 — Fünfzehnter Lauf: 40/40 kein_merge, MaterialsCloud- und 4TU-Funde vom 05./11.08. bestätigt dasselbe Muster ein zweites Mal, keine neuen Quellen
 
 Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
