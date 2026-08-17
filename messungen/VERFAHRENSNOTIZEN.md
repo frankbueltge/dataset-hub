@@ -3,6 +3,132 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-08-17 — Siebzehnter Lauf: 40/40 kein_merge, erstmals eine figshare-Artikel-API mit HTTP 404 statt Landingpage-Block, zwei figshare-Artikel mit gleichem Titel aber unterschiedlicher Autorenliste ohne Beleg für Identität, sechs von 15 Stichprobenzugriffen geblockt — keine neuen Quellen
+
+Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
+`mcp__github__list_releases` bestätigt, jüngstes Release unverändert seit dem 27.07.).
+`api.github.com` war wie an allen Vortagen mit HTTP 403 gesperrt; Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__list_releases`, `hub-2026-07-27.sqlite.gz` über den
+ungesperrten `releases/download`-Pfad geladen, SHA-256 gegen den Manifest-Eintrag geprüft
+(Treffer: `24018f5c…cf3b2`, 28.365.720 Bytes), lokal unter `bestand/hub.sqlite` abgelegt,
+`kandidaten.py` **ohne** `--aus-snapshot` aufgerufen. `api.zenodo.org` blieb wie seit dem
+14.08. blockiert (`curl` lief in einen Timeout statt eines Fehlercodes); derselbe Behelf wie
+an allen Vortagen seit 14.08. verwendet (`zenodo.org/api/records/<id>` statt `api.zenodo.org`),
+durchgehend erreichbar für alle geprüften Zenodo-IDs dieses Laufs.
+
+**Kein Stale-Branch-Fund zu Sitzungsbeginn — erstmals seit mehreren Läufen.** `git status` zeigte
+`main` sauber auf `origin/main` (`178169d`, sechzehnter Lauf) stehend, `git fetch origin main`
+bestätigte denselben Stand; kein Korrektur-Checkout nötig. `bereits_beurteilte_paare` stand bei
+760 vor diesem Lauf (720 + 40 kein_merge vom sechzehnten Lauf), 5.286 Kandidaten gefunden — exakt
+der vom sechzehnten Lauf erwartete Rückstand (5.326 gefunden am 16.08. minus 40 vorgelegte =
+5.286 gekappt) —, 40 vorgelegt, 5.246 erneut gekappt.
+
+**40 von 40 kein_merge — kein weiterer unabhängiger Merge-Fund.** Alle 40 vorgelegten Kandidaten
+waren DataCite-Fundstellen, ausschließlich Zenodo- (13 Paare aus 11 Concept-/Versions-Gruppen,
+davon eine echte Dreiergruppe mit Dateidifferenz und eine mit `access_right: restricted`), Mendeley-
+(9 Paare aus 6 Basis-/Versions-Gruppen) und figshare-Basis-/Versions-Mustern (18 Paare aus 8
+Gruppen, davon eine mit zwei unterschiedlichen Artikel-IDs gleichen Titels), jedes Paar einzeln
+geprüft (17 Zenodo-Record-Abfragen inkl. HTTP-Statuscode und Dateiprüfsummenvergleich, 6 Mendeley-
+Public-API-Abfragen inkl. Versionszähler, 9 figshare-API-Abfragen inkl. `versions`-Endpunkt und,
+wo verfügbar, Dateiprüfsummenvergleich) — nicht nur an Beispielen.
+
+**Neu: eine figshare-Artikel-API antwortet erstmals mit HTTP 404 statt dem gewohnten
+Landingpage-Block.** Bei „Artificial Intelligence (AI) and Healthcare Capabilities: A Systematic
+Literature Review" (Kandidatenpaare `dh-9c388dfa17e10ed0`/`dh-c38dc8bfcdb6b021` und
+`dh-9c388dfa17e10ed0`/`dh-f76902d8d02dd6ca`, Artikel 27794112) liefert `api.figshare.com/v2/
+articles/27794112` für Basis-, v1- und v2-Endpunkt durchweg `{"message": "Entity not found:
+ArticleVersion"}` — anders als bei allen anderen figshare-Funden dieses Laufs, deren API
+anstandslos antwortete. Die DOI-Auflösung selbst funktioniert unverändert (`doi.org/10.6084/
+m9.figshare.27794112` und `.../.v1` lösen per 302 auf die jeweilige figshare-Landingpage auf),
+aber die Landingpage selbst liefert das seit 04.08. bekannte AWS-WAF-202-Verhalten (kein Inhalt
+einsehbar) — hier zum ersten Mal beide Ausfallmodi (API 404 UND Landingpage-Block) am selben
+Datensatz gleichzeitig. Kein Dateivergleich möglich; `kein_merge` nach der figshare-Regel für
+Versionspaare, gestützt allein auf die DOI-Suffix-Struktur, nicht auf Dateiinhalt.
+
+**Neu: zwei figshare-Artikel mit identischem Titel, aber unterschiedlicher Autorenliste und ohne
+jede deklarierte Beziehung — anders als bei den bisherigen Aggregatorkopie-Merges kein Beleg für
+Identität gefunden.** Bei „Beyond Designer's Knowledge: Expanding Materials Design Hypothesis
+Space via a Large Language Model Approach" (Kandidatenpaare `dh-3a1f124de21807c1`/
+`dh-a05f7187ceb3b336` und `dh-96639b1807e4a8b6`/`dh-a05f7187ceb3b336`) trägt Artikel `26322460`
+(Version 1 vom 18.07.2024, Version 2 vom 12.09.2024) als einzige Autorin „quanliang liu", über 40
+kleinteilige Dateien (Notebooks, Textdateien), `custom_fields`/`resource_doi` leer. Artikel
+`26391241` (einzige Version vom 28.07.2024, zehn Tage nach `26322460.v1`) trägt acht Autor:innen
+(„Liu, Quanliang" darunter), genau eine Datei (ein einzelnes Zip), und verweist in
+`related_materials` auf ein eigenes GitHub-Repository — keine Datei stimmt in der MD5 mit einer
+Datei aus `26322460` überein, keine Seite verweist per `resource_doi` auf die andere. Trotz
+identischen Titels und teilweiser Autorenschaft: kein Beleg für Identität oder Fassungsverhältnis,
+anders als bei GBIF/PANGAEA, DIGITAL.CSIC und dem Arctic-whale-Fund, wo eine byte-identische Datei
+oder eine wörtlich deklarierte Relation den Merge trug. `kein_merge` für beide Paare mangels
+Beleg — R1–R4 hatte diese beiden Artikel-IDs bereits korrekt nicht verknüpft
+(`gleiches_werk_bereits: false`).
+
+**Bestätigt: `access_right: restricted` verhindert weiterhin jede Belegprüfung, hier erstmals
+kombiniert mit einer 3,5 Jahre späteren Concept-Drift.** Bei der „Fossil Image Dataset"-
+Dreiergruppe (conceptrecid 6333969, Kandidaten `dh-1b2ab2024a46f38d`/`dh-2572cd99678e9492`/
+`dh-af22735dde5d2758`) ist die ursprüngliche Fassung `6333970` (erstellt 09.03.2022) als
+`access_right: restricted` markiert — kein Dateiinhalt über die API einsehbar. Die Concept-ID
+`6333969` löst inzwischen auf einen erst am 28.11.2025 angelegten Datensatz `16960185` auf, der
+eine einzelne Datei „inception_resnet_net_v2 model.7z" (582 MB) trägt — ein Modell-Checkpoint,
+keine Bildersammlung wie im ursprünglich beschriebenen Datensatz (>415.000 Bilder). `kein_merge`
+mangels Beleg für alle drei Paare, dieselbe Regel wie bei den restricted-Zenodo-/TU-Graz-Funden
+vom 07./10./14.08.
+
+**Bestätigt: HTTP 410 auf einer Zenodo-Concept-API ohne Tombstone-Objekt bleibt der seit dem
+13.08. dokumentierte Normalfall, keine Wiederholung des Löschungsfalls vom 16.08.** Bei
+„Automating Candidate Gene Prioritization…" (Kandidatenpaar `dh-5dbba7ce91e3115b`/
+`dh-a87b5da689e46c7d`, Concept-DOI `10.5281/zenodo.15802240`) liefert `api/records/15802240`
+knapp `{"status": 410, "message": "The record has been deleted."}` ohne Tombstone-Metadaten,
+während `doi.org/10.5281/zenodo.15802240` unverändert korrekt auf die lebendige Fassung
+`zenodo.org/records/15802241` auflöst — anders als beim echten Löschungsfall vom 16.08.
+(21615212/21615213, dort mit vollständigem Tombstone-Objekt und toter Concept-DOI). `kein_merge`,
+Standard-Concept-Alias.
+
+**Übrige Kandidaten:** 2 weitere figshare-Basis-/Versions-Gruppen mit unregistrierter
+Fortentwicklung über die vorgelegten Kandidaten hinaus (Artikel 27400710: Basis-DOI zeigt
+inzwischen auf v3 mit geändertem Titel „LLM-based Architecture to Create Graph Representations…"
+statt des ursprünglichen „Automated Logical Graph Representation…"; Artikel 29266493: Basis-DOI
+zeigt auf v6, drei Fassungen über die im Register erfassten v2/v3 hinaus — dieselbe Concept-Drift-
+Beobachtung wie bei den Zenodo-Funden der Vortage, hier erstmals auf figshare übertragen), 1
+figshare-Paar mit echter Dateierweiterung zwischen den Versionen (Artikel 23910249: `sourcefile.
+zip` byte-identisch zwischen v1/v2, v2 ergänzt zusätzlich `tide_gauge.zip` — `kein_merge` trotz
+überwiegender Dateiidentität, wie beim Standardmuster), 4 einfache figshare-Basis-/Versions-Paare
+(Artikel 27103225, 31058644, 32813117, jeweils per `versions`-Endpunkt bestätigt), 5 einfache
+Zenodo-Concept-/Versions-Paare (durchweg das seit 03.08. etablierte Muster, per API einzeln mit
+Dateiprüfsummenvergleich bestätigt), 4 Mendeley-Ein-Versions-Paare (`np79tmhkh5`, `fk9nv9k3t8`,
+`6hykykmn65`, `nvrpk43zsm`, laut API je nur eine veröffentlichte Version, `kein_merge` aus
+struktureller Vorsicht wie an allen Vortagen seit 04.08.), 1 Mendeley-Zweiversionen-Gruppe mit 3
+Paaren (`j6krmr75xd`, v1 20.11./v2 21.11.2025) und 1 weitere Mendeley-Zweiversionen-Gruppe mit 3
+Paaren (`ntpc2m29gx`, v1 mit Embargo bis 24.09.2024/v2 ab 07.10.2024).
+
+**Stichprobe (15 Einträge): 9 von 15 lösten normal auf, Titel stimmten in jedem geprüften Fall**
+(Zenodo ×7 [14901928, 6816083, 7521047, 10642388, 15319206, 17979730, 15566584 — je per API-
+Titelvergleich bestätigt], Språkbanken ×1 [`kubhist2-wexjobladet-1830`, `<title>`-Tag exakt
+identisch], Mendeley ×1 [`kczd9vtvfy`, `name`-Feld der Public API exakt identisch]). **6 von 15
+(springernature.figshare ×3, figshare.com ×1, rs.figshare ×1, Harvard Dataverse ×1) scheiterten
+mit dem seit 04.08. bekannten AWS-WAF-202-Muster** (Header `x-amzn-waf-action: challenge`
+bestätigt) — eine höhere Ausfallquote als an den meisten Vortagen (bisher meist 2–4 von 15). Für
+die 5 figshare-Funde (auch den unter figshare.com direkt, nicht nur White-Label-Instanzen)
+Titelbestätigung ersatzweise über `api.figshare.com` erbracht: alle 5 Titel exakt identisch mit
+dem Registereintrag. Für den Harvard-Dataverse-Fund keine Ausweichroute verfügbar (auch die
+Dataverse-eigene API blockiert). Keiner der 6 Ausfälle wurde markiert — dokumentiertes
+Host-Blockmuster, kein Beleg für falsche Einträge.
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten oder in der Stichprobe. Für den
+figshare-404-Fund (27794112), den Doppelautorenschafts-Fund (26322460/26391241) und die beiden
+Concept-Drift-Funde auf figshare (27400710, 29266493) keine automatische Erkennung in
+`normalisiere.py`/`baue_bestand.py` umgesetzt — Pipeline-Änderung außerhalb des Commit-Umfangs
+dieser Routine, wie an allen Vortagen.
+
+**Regel/Prüfauftrag, jetzt zum 17. Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform) bleibt
+über siebzehn Urteilsläufe (03.–17.08., mit Unterbrechung durch die GBIF/PANGAEA-, DIGITAL.CSIC-
+und Arctic-whale-Merges) hinweg unumgesetzt — inzwischen über 620 Kandidatenpaare mit demselben
+strukturellen Befund. Neu dazu: Der figshare-404-Fund (27794112) legt nahe, dass ein künftiges
+Prüfskript auch bei figshare-Artikeln zwischen „API antwortet nicht mehr" und „Landingpage
+geblockt" unterscheiden sollte, statt beides als unerreichbar zu behandeln — dieselbe Art von
+Unterscheidung, die der Tombstone-Fund vom 16.08. für Zenodo nahelegte. Weiterhin geringe
+Dringlichkeit, da der Ernte-Cron pausiert ist.
+
 ## 2026-08-16 — Sechzehnter Lauf: 40/40 kein_merge, erstmals zwei tombstonete Zenodo-Records unter den Kandidaten, drei echte Dreiergruppen mit Dateidifferenz, ein Concept-Drift auf eine unregistrierte dritte Fassung — keine neuen Quellen
 
 Beurteilter Stand `snapshot-2026-07-27c` (nächtlicher Cron seit 27.07. weiterhin pausiert —
