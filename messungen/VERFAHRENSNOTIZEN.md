@@ -3,6 +3,81 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-01 — Einunddreißigster Lauf: 40/40 kein_merge, kein neuer Merge, neuer Host databank.illinois.edu (Illinois Data Bank) in den Kandidaten, `mcp__github__list_releases`/`actions_list` bestätigt: nächtlicher Ernte-Cron seit dem einzigen Lauf am 27.07. weiterhin pausiert (bewusst, per `nightly.yml`-Kommentar — kein Ausfall), lokale git-`main`-Referenz erneut auf den 24. Lauf (`8446de9`) zurückgefallen, vor dem ersten `kandidaten.py`-Aufruf korrigiert
+
+Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot `snapshot-2026-07-27c`,
+per SHA-256 verifiziert). `--aus-snapshot` zuerst versucht; scheiterte wie an allen 30 Vortagen
+mit HTTP 403 auf `api.github.com` aus dem Python-Skript heraus (Proxy-Meldung: „GitHub access is
+not enabled for this session" — dieselbe Sperre wie für jeden rohen `urllib`/`curl`-Zugriff auf
+`api.github.com`, während `github.com` selbst und `objects.githubusercontent.com` unversperrt
+sind). Behelf wie dokumentiert: Release-Metadaten per `mcp__github__list_releases`/
+`get_release_by_tag`, `hub-2026-07-27.sqlite.gz` über den ungesperrten `releases/download`-Pfad
+per `curl` geladen (28.365.720 Byte, Größe stimmt mit dem Manifest-Eintrag überein), lokal unter
+`bestand/hub.sqlite` abgelegt, `kandidaten.py` **ohne** `--aus-snapshot` aufgerufen.
+
+**Nächtlicher Cron dauerhaft pausiert, kein Betriebsausfall.** `mcp__github__actions_list`
+bestätigt: Der einzige jemals verzeichnete Lauf von „Nächtliche Ernte" war am 27.07. um 06:43 UTC;
+`nightly.yml` trägt seither den Kommentar „PAUSIERT am 2026-07-27 (Frank)" — der Cron ist bewusst
+ausgesetzt, seit der Rückbau des Registers (`2026-07-27-register-rueckbau-und-scouts.md`) den
+Bestand von der Website genommen hat. Das erklärt, warum seit dem 27.07. kein neues
+Snapshot-Release erschienen ist, unabhängig von dieser Routine: der Rückstand an
+Merge-Kandidaten wächst nicht wegen eines Ausfalls, sondern weil die einzige Datenquelle
+(`snapshot-2026-07-27c`) absichtlich eingefroren ist.
+
+**Stale-Branch-Falle wie an den meisten Vortagen zu Sitzungsbeginn vorgefunden.** `HEAD` stand zu
+Sitzungsbeginn detached korrekt auf dem tatsächlichen Remote-Stand (`af37311`, 30. Lauf), aber die
+lokale `main`-Referenz war erneut auf `8446de9` (24. Lauf) hängen geblieben — mit `git fetch origin
+main` gefolgt von `git checkout -B main origin/main` korrigiert (Fetch-vor-Checkout-Reihenfolge wie
+am 31.08. festgehalten), bevor `kandidaten.py` lief.
+
+**40 von 40 kein_merge.** Alle 40 vorgelegten Kandidaten trugen `gleiches_werk_bereits: true` —
+29 Zenodo-Paare aus 25 Concept-/Versions-Gruppen (davon zwei echte Dreiergruppen mit allen drei
+Paaren vorgelegt: „Vulture Stone"-Konsolidierungsliste `21170149`/`21170150`/`21192519`, und die
+Combinatorial-Metamaterials-Gruppe `5992647`/`5992648`/`7071282`, deren dritte Fassung sieben
+Monate nach den ersten beiden erstellt wurde, dennoch per `IsVersionOf` regulär verknüpft), 4
+Mendeley-Basis-/Versions-Paare (je nur eine veröffentlichte Version laut
+`data.mendeley.com/public-api`), 6 figshare-Paare aus drei Dreiergruppen (`7793888`
+Zellklassifikation, `24126876` kausale Inferenz, `24867054` Alkoholstudie — je nur 2 der 3
+möglichen Paare als Kandidat vorgelegt, das dritte lag schon unter `bereits_beurteilte_paare`;
+bei allen dreien Dateiliste zwischen v1 und v2 laut
+`api.figshare.com/v2/articles/<id>/versions/<v>` byte-für-byte identisch, nur Metadaten-Update
+zwischen den Versionen) und 1 Illinois-Data-Bank-Paar (`IDB-0549579`/`IDB-9686195`, `_v1`/`_v2`-
+Suffix in der DOI, `IsNewVersionOf`-Relation). Jedes Paar einzeln per
+`api.datacite.org/dois/<doi>` auf die deklarierte Versionsrelation geprüft; bei 16 von 40
+zusätzlich beide Mitglieder auf Dateiebene verglichen (`zenodo.org/api/records/<id>`,
+`api.figshare.com/v2`, `data.mendeley.com/public-api`) — `zenodo.org/api/records/` war für
+`api.datacite.org` durchweg erreichbar, aber ungewöhnlich langsam und instabil (23 von 52
+benötigten Zenodo-Record-Abfragen blieben trotz mehrfachem Versuch über mehrere Minuten ohne
+Ergebnis, Netzwerk-Timeouts durch den Proxy); bei den betroffenen 24 Paaren stützt sich das Urteil
+allein auf die bestätigte DataCite-Relation. **Byte-Identität ändert nichts am Urteil:** wie an allen Vortagen
+seit 03.08. bleibt `kein_merge` auch dort, wo die Dateien nachweislich identisch sind (mehrere
+Zenodo-Gruppen, alle drei figshare-Dreiergruppen) — Fassungen einer bereits werk-verknüpften
+Concept-/Versions-Gruppe bleiben aus struktureller Vorsicht formal getrennt.
+
+**Neuer Host: databank.illinois.edu (Illinois Data Bank).** Erstmals unter den Kandidaten
+(`IDB-0549579`/`IDB-9686195`, University of Illinois at Urbana-Champaign, DOI-Suffix `_v1`/`_v2`)
+— DataCite-Quelle, kein neuer Adapter nötig.
+
+**Stichprobe (15 Einträge):** alle 15 Titel plausibel, alle Zugriffswege lösten auf (2 davon über
+eine Concept-DOI mit Ziel-Drift auf eine spätere, titelgleiche Fassung — bekanntes Muster, siehe
+Prüfauftrag unten, keine `markiert`-Fälle). Kein Ausfall in der Stichprobe.
+
+`bereits_beurteilte_paare` stand bei 1.320 vor diesem Lauf (1.280 + 40 kein_merge vom 30. Lauf),
+4.726 Kandidaten gefunden — exakt der vom 30. Lauf erwartete Rückstand (4.766 gefunden minus 40
+vorgelegte = 4.726) —, 40 vorgelegt, 4.686 erneut gekappt.
+
+**Regel/Prüfauftrag, jetzt zum 29. Mal wiederholt.** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform) bleibt
+über neunundzwanzig Urteilsläufe hinweg für das Zenodo-/Mendeley-/figshare-Alias-Muster
+unumgesetzt. Weiterhin geringe Dringlichkeit für die Automatisierung, da der Ernte-Cron dauerhaft
+(nicht nur vorübergehend) pausiert ist — der Rückstand wächst nicht mehr durch neue Ernten, nur
+noch durch die schrittweise Aufarbeitung des am 27.07. eingefrorenen Bestands.
+
+**Nicht getan:** Keine neue Quelle im Sinne eines neuen Adapters (Illinois Data Bank läuft über
+den bestehenden DataCite-Adapter). Für das Illinois-Data-Bank-Muster und die anhaltenden
+Concept-Drift-Funde keine automatische Erkennung in `normalisiere.py`/`baue_bestand.py`
+umgesetzt — Pipeline-Änderung außerhalb des Commit-Umfangs dieser Routine, wie an allen Vortagen.
+
 ## 2026-08-31 — Dreißigster Lauf: 39/40 kein_merge, **erster bestätigter Merge seit Beginn der Routine** (CSIRO Data Access Portal, Werk-Ebene, quellen-native Versionierungs-API statt DataCite-Relation), lokale git-`main`-Referenz vor Sitzungsbeginn auf einen falschen (24.) Lauf zurückgesetzt und korrigiert, neuer Host data.csiro.au, Concept-DOI-Wiederverwendung über eine wachsende Herbar-Digitalisat-Nummernserie in der Stichprobe
 
 **Vorfall zu Sitzungsbeginn, korrigiert, kein Datenverlust:** `git checkout -B main origin/main` wurde ausgeführt, bevor `origin/main` frisch gefetcht war — der lokale Remote-Tracking-Zeiger stand noch auf dem 24. Lauf (`8446de9`), obwohl der tatsächliche `HEAD` beim Sitzungsstart bereits korrekt detached auf dem 29. Lauf (`3f29158`) stand. Dadurch wurde `main` kurzzeitig auf den 24. Lauf zurückgesetzt und ein erster `kandidaten.py`-Lauf (Ergebnis: 1.080 bereits beurteilte Paare statt der erwarteten 1.280) auf diesem falschen Stand ausgeführt — rein lokal, nichts gepusht, kein Journal-Eintrag daraus committet. `git fetch origin main` zeigte die Diskrepanz (`8446de9...3f29158  main -> origin/main (forced update)`), danach `git checkout -B main origin/main` erneut mit frischem Fetch korrekt auf `3f29158` gesetzt und `kandidaten.py` neu ausgeführt (1.280 bereits beurteilte Paare, exakt 1.240 + 40 vom 29. Lauf — stimmt). Ursache: `--aus-snapshot` scheiterte wie an allen 29 Vortagen mit HTTP 403 auf `api.github.com` aus dem Python-Skript heraus, der Behelf (manueller Download über `releases/download`) berührt den lokalen `main`-Zeiger nicht direkt, aber die Reihenfolge git-Fetch-vor-Checkout wurde diesmal nicht eingehalten. Für künftige Läufe festgehalten: **immer zuerst `git fetch origin main`, erst danach `git checkout -B main origin/main`** — die umgekehrte Reihenfolge nutzt einen möglicherweise veralteten lokalen Tracking-Zeiger.
