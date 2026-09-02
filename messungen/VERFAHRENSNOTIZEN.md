@@ -3,6 +3,66 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-02 — Zweiunddreißigster Lauf: **alle 40 Journal-Einträge des 31. Laufs (01.09., Commit `dc947b5`) zurückgenommen — Belege gehörten fast durchweg zu anderen Datensätzen als den eingetragenen Mitgliedern**, dazu regulär 40/40 kein_merge + 1 markiert für den 32. Lauf selbst
+
+**Hauptbefund, wichtiger als das Tagesgeschäft: Der 31. Lauf hat systematisch falsch beschriftete Belege committet.** Beim Prüfen der heutigen 40 Kandidaten fiel auf, dass mehrere ihrer Quell-DOI-Nummern (u. a. `21170149`/`21170150`/`21192519`, `5992647`/`5992648`/`7071282`, `6027023`/`6027024`, `10475961`/`10475962`, `nzpsr89x5f`, `hckwmftryd`, `7793888`, `24126876`) wörtlich in Belegen des 31. Laufs auftauchen — obwohl deren Journal-Einträge dort ganz andere `mitglieder`-IDs tragen. Systematisch nachgeprüft: Für jeden der 40 `kein_merge`-Einträge aus `dc947b5` wurde per `bestand/hub.sqlite` der tatsächliche `quell_id` beider `mitglieder` ermittelt und geprüft, ob dessen unterscheidendes Kennzeichen (DOI-Suffix, figshare-/Mendeley-ID) überhaupt im zugehörigen `beleg`-Text vorkommt. Ergebnis: **0 von 40 bestehen den Test** — nicht ein einziger Beleg des 31. Laufs nennt eine Kennung, die zu seinen eingetragenen Mitgliedern gehört. Beispiel: Eintrag mit `mitglieder: ["dh-1d49de5c27e51cdd", "dh-c47b7e80a4a7f589"]` (tatsächliche `quell_id`: `10.5281/zenodo.18076314`/`18076315`) trägt als Beleg eine detaillierte, in sich schlüssige Dateilisten-Analyse von `zenodo.org/api/records/21192519` und `/21170150` — Datensätzen, die mit den eingetragenen Mitgliedern nichts zu tun haben. Das ist keine Ungenauigkeit, sondern echte Fehlzuordnung: konkrete, plausibel klingende Prüfsummen- und Dateinamen-Befunde, angeheftet an die falschen IDs — im Effekt erfundene Belege für die tatsächlich eingetragenen Paare, obwohl die zitierten Fakten selbst (für die falschen Paare) zutreffend gewesen sein mögen. Exakt das, was die Grundregel „ein Urteil ohne Beleg ist kein Urteil" verhindern soll.
+
+**Gegenprobe an den Vortagen:** derselbe Test auf den 30. Lauf (`af37311`) und den 29. Lauf (`3f29158`) angewendet — 39/40 bzw. 34/40 (die verbleibenden 6 sind Verweise wie „wie oben", keine echten Fehlzuordnungen, stichprobenartig nachgelesen) bestehen den Test. Der Fehler ist **auf den 31. Lauf begrenzt**, kein länger unbemerkter Dauerzustand des Journals.
+
+**Ursache nicht ermittelt.** Diese Sitzung hat keinen Einblick in den Ablauf des 31. Laufs — ob eine vorbereitende Recherche zu (im 31. Lauf noch gar nicht vorgelegten) späteren Kandidaten mit den tatsächlich vorgelegten 40 Paaren beim Schreiben des Journals vertauscht wurde, oder eine andere Ursache vorliegt, bleibt offen und wäre nur mit Einblick in die damalige Sitzung zu klären.
+
+**Maßnahme: Revert, kein Neu-Urteil.** Alle 40 Zeilen aus `dc947b5` wurden aus `journal/entscheidungen.jsonl` entfernt (exakte Zeilenidentität geprüft, keine anderen Einträge betroffen). Bewusst **nicht** in dieser Sitzung neu beurteilt — das wäre eine Vervielfachung des heutigen Arbeitsumfangs (weitere ~40 Paare) und stünde im Widerspruch zur Routine-Regel „Du baust den Bestand nicht selbst, Urteile wirken beim nächsten Bau". Die betroffenen Paare sind ab sofort wieder unbeurteilt (`beurteilte_paare` sinkt um 40) und werden vom nächsten `kandidaten.py`-Lauf automatisch erneut vorgelegt — dann mit tatsächlich geprüften Belegen. Der Verdacht liegt nahe, dass die materiellen Urteile (`kein_merge`) in der Sache weiterhin zutreffend gewesen wären (alle beobachteten falschen Belege beschrieben Concept-/Versions-Muster, die dem seit 03.08. etablierten Muster entsprechen) — das ändert nichts daran, dass ein Urteil ohne zutreffenden Beleg kein Urteil ist und zurückgenommen werden muss.
+
+**Für Frank: Das ist der bislang schwerwiegendste Fund dieser Routine.** Kein einzelner Fehlgriff, sondern ein Commit, dessen Belegtext durchgehend nicht zu seinen eigenen Journal-Zeilen passt — bei laufendem Vertrauen darauf, dass ein Journal-Eintrag genau das dokumentiert, was tatsächlich geprüft wurde. Empfehlung: die Sitzung/den Lauf vom 01.09. (sofern nachvollziehbar) auf die Ursache hin prüfen, bevor weitere automatisierte Läufe unbeaufsichtigt bleiben.
+
+**Regulärer Teil des 32. Laufs: 40/40 kein_merge, 1 markiert.** Beurteilter Stand: lokaler Bau aus
+`hub-2026-07-27.sqlite.gz` (Snapshot `snapshot-2026-07-27c`, per SHA-256 verifiziert;
+`--aus-snapshot` scheiterte wie an allen 31 Vortagen mit HTTP 403 auf `api.github.com`, Behelf wie
+dokumentiert über `mcp__github__get_release_by_tag` + `curl` auf den ungesperrten
+`releases/download`-Pfad). 40 Kandidaten vorgelegt, alle mit `gleiches_werk_bereits: true` — im
+Kern dieselbe Struktur wie am 31.08./01.09. (Zenodo-Concept-/Versions-Paare, Standard-Alias-Muster
+seit 03.08. per `zenodo.org/api/records/<id>`-`conceptrecid`-Feld einzeln für 22 Paare bestätigt;
+4 Mendeley-Basis-/v1-Paare, je genau eine veröffentlichte Version laut `data.mendeley.com/public-api`;
+6 figshare-Paare aus den drei bereits am 01.09. begonnenen Dreiergruppen `7793888`/`24126876`/
+`24867054`, Dateien laut `api.figshare.com/v2` byte-identisch zwischen v1/v2, Basis-URL = Alias auf
+die jüngste Version; 1 Illinois-Data-Bank-Paar `IDB-0549579`/`IDB-9686195`, `_v1`/`_v2`-Suffix,
+Zugriffswege beide HTTP 403 vom Host selbst — kein HTTP-Vergleich möglich, Versionierung aber
+direkt aus der Quell-ID belegt; 3 echte Concept-Drift-Funde ohne Vergleichsbasis zum vorgelegten
+Partnermitglied: `21170149`→`21625925`, `17211353`→`18331549`, `21532730`→`21763348`, letzterer
+Teil einer Dreiergruppe mit mindestens drei Fassungen). Byte-Identität ändert wie an allen Vortagen
+seit 03.08. nichts am Urteil.
+
+**Stichprobe (15 Einträge): 14 von 15 bestätigt, 1 markiert.** figshare-Artikel `30937415`
+(„Privacy and Surveillance in Digital Life 2025", Herausgeber „Human Clarity Institute", DOI
+`10.6084/m9.figshare.30937415.v1`) lässt sich über `api.figshare.com/v2/articles/30937415`,
+`.../versions` und `.../versions/1` **nicht** bestätigen — alle drei Endpunkte antworten mit HTTP
+404 „Entity not found", eine figshare-Volltextsuche nach dem exakten Titel liefert null Treffer,
+`api.datacite.org/dois/10.6084/m9.figshare.30937415.v1` ebenfalls 404. Die API selbst ist nicht
+generell gestört (dieselbe Sitzung erhielt im selben Lauf für andere Artikel, u. a. `7793888`,
+korrekte Antworten). `doi.org/10.6084/m9.figshare.30937415.v1` löst weiterhin per 302 auf die
+erwartete figshare-Landingpage auf, die wie andere (bestätigt gültige) figshare-Seiten mit HTTP 202
+und leerem Body antwortet — das ist das seit 04.08. dokumentierte Bot-Schutz-Verhalten und für sich
+kein Beleg gegen den Datensatz. Titel und Beschreibung sind ausschließlich über die geharvestete
+DataCite-Rohmetadaten geprüft, nicht unabhängig auf figshare bestätigbar. `typ: markiert` ins
+Journal geschrieben; Registereintrag selbst nicht verändert (Nichts-erfinden-Regel: der Harvest-Stand
+wird wörtlich weitergeführt, nicht nachträglich korrigiert).
+
+`bereits_beurteilte_paare` stand bei 1.360 vor diesem Lauf (der Zähler `vorlage.json` zählt den
+Journal-Stand *vor* dem heutigen Revert der 40 fehlerhaften Zeilen aus dem 31. Lauf — die
+tatsächliche Anzahl gültig beurteilter Paare nach dem Revert liegt 40 niedriger). 4.686 Kandidaten
+gefunden, 40 vorgelegt, 4.646 erneut gekappt.
+
+**Regel/Prüfauftrag, jetzt zum 30. Mal wiederholt, mit einer Ergänzung.** Der Prüfauftrag vom
+2026-08-03 (deterministische Concept-/Alias-DOI-Erkennung) bleibt über dreißig Urteilsläufe hinweg
+unumgesetzt — weiterhin geringe Dringlichkeit, da der Ernte-Cron dauerhaft pausiert ist. Neu und
+dringlicher: der Journal-Belegfund oben zeigt, dass die Journal-Integrität selbst nicht allein durch
+das Append-only-Prinzip gesichert ist — ein künftiges Prüfskript könnte bei jedem Lauf automatisch
+verifizieren, dass jede neu committete `beleg`-Zeile mindestens eine unterscheidende Kennung eines
+ihrer eigenen `mitglieder` enthält, und den Lauf bei Abweichung blockieren, statt den Fehler erst
+einen Tag später von Hand zu finden.
+
+---
+
 ## 2026-09-01 — Einunddreißigster Lauf: 40/40 kein_merge, kein neuer Merge, neuer Host databank.illinois.edu (Illinois Data Bank) in den Kandidaten, `mcp__github__list_releases`/`actions_list` bestätigt: nächtlicher Ernte-Cron seit dem einzigen Lauf am 27.07. weiterhin pausiert (bewusst, per `nightly.yml`-Kommentar — kein Ausfall), lokale git-`main`-Referenz erneut auf den 24. Lauf (`8446de9`) zurückgefallen, vor dem ersten `kandidaten.py`-Aufruf korrigiert
 
 Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot `snapshot-2026-07-27c`,
