@@ -3,6 +3,61 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-05 — Fünfunddreißigster Lauf: 40/40 kein_merge, kein neuer Merge, erste beobachtete Geschwister-Versionen-Konstellation (zwei Kandidaten teilen dieselbe conceptrecid, ohne dass einer der beiden selbst die Konzept-ID ist) mit tatsächlicher Dateidifferenz statt Byte-Identität, zwei neue Concept-Drifts mit Titeländerung auf der dritten, unregistrierten Fassung, keine neuen Quellen
+
+Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot
+`snapshot-2026-07-27c`, SHA-256 `24018f5c...` gegen das Release-Manifest verifiziert).
+`--aus-snapshot` scheiterte wie an allen 34 Vortagen mit HTTP 403 auf `api.github.com`;
+Behelf wie dokumentiert über `mcp__github__get_release_by_tag` + `curl` auf den
+ungesperrten `releases/download`-Pfad, lokal unter `bestand/hub.sqlite` abgelegt.
+
+**40 Kandidaten vorgelegt (4.606 gefunden, 4.566 erneut gekappt), alle kein_merge.**
+23 Standard-Zenodo-Konzept-/Versions-Paare (conceptrecid bzw. HTTP-302-Weiterleitung
+einzeln abgerufen, beide lösen auf denselben aktuellen Datensatz auf, Dateien/Prüfsummen
+identisch — darunter vier Paare mit großem numerischem ID-Abstand zwischen Konzept und
+Version, durch die zeitliche Lücke zwischen Konzeptanlage und späterer Veröffentlichung
+erklärt, kein Hinweis auf verschiedene Datensätze). 5 Mendeley-Basis-/Versions-Paare
+(`data.mendeley.com/public-api` bestätigt jeweils die aktuell veröffentlichte Version;
+bei einem Paar liegen mittlerweile vier weitere, im Register nicht erfasste Versionen
+vor). 2 figshare-Versionspaare eines einzelnen Artikels (`api.figshare.com/v2/.../versions`
+bestätigt zwei Versionen, v1 mit 0 Dateien, v2 mit 5). 1 4TU.ResearchData-Paar ohne
+deklarierte DataCite-Versionsrelation (`gleiches_werk_bereits: false`), per
+`doi.org`-Auflösung und `api.datacite.org` als dasselbe Konzept-/Versions-DOI-Schema wie
+bei Zenodo bestätigt.
+
+**Neu: zwei echte Geschwister-Versionen-Paare.** Bei zwei Dreiergruppen (Zenodo-IDs
+`15594712`/`11391053`/`11391052` und `15765423`/`13924261`/`13924260`) trugen jeweils
+zwei der drei vorgelegten Kandidaten dieselbe `conceptrecid`, ohne dass einer von beiden
+selbst die Konzept-ID war — beides Geschwister-Versionen desselben Konzepts. Anders als
+in allen bisher gemessenen Fällen seit dem 03.08. waren die Dateien dabei NICHT
+byte-identisch: unterschiedlicher Dateiname und Prüfsumme im einen Fall
+(`zenodo_directory.tgz` vs. `zenodo_directory_may_2025.tgz`), gleicher Dateiname aber
+andere Prüfsumme im anderen (`QuantifyingClimateFinance.zip` mit zwei verschiedenen MD5).
+Das ändert nichts am Urteil (ohnehin kein_merge), bestätigt aber, dass Byte-Identität
+bei diesem Muster keine Konstante ist, sondern bisher nur deshalb immer beobachtet wurde,
+weil die geprüften Paare bislang stets echte Konzept-/Versions-Paare waren, keine
+Geschwister.
+
+**5 echte Concept-Drift-Funde ohne Vergleichsbasis** (Konzept-ID löst auf eine dritte, im
+Register nicht erfasste Fassung auf, die keiner der beiden vorgelegten Kandidaten ist):
+zwei davon mit Titeländerung auf der neuen Fassung (`21611705`→`21802185` von "Data and
+code for..." zu "Reproducibility Package for..."; `17783893`→`19873064` von "Physics
+guided neural network..." zu einem eigenständig klingenden "The importance of realistic
+noise characteristics..."), dazu drei ohne Titeländerung aber mit anderer Prüfsumme
+(`21614363`→`21635816`, `21613598`→`22107201`, `13924260`→`20043727`). Das
+Titeländerungs-Muster ist seit dem 21.08./29.08. bekannt; neu ist nur die Häufung
+(2 von 40 statt vereinzelt).
+
+**Stichprobe (15 Einträge): 15/15 bestätigt** (Titel, Urheber/Sammler, Zugriffsweg —
+5 Zenodo-, 5 figshare-, 3 GBIF-, 1 Mendeley- und 1 Språkbanken-Eintrag jeweils gegen die
+Quelle geprüft). Keine Markierung nötig.
+
+Jeder der 40 Belege wurde per Skript gegen die eigenen `mitglieder`-IDs des jeweiligen
+Journal-Eintrags geprüft (Lehre aus dem Beleg/Mitglieder-Fehler des 31. Laufs, 2026-09-02
+vermerkt) — alle 40 bestehen den Test.
+
+---
+
 ## 2026-09-02 — Zweiunddreißigster Lauf: **alle 40 Journal-Einträge des 31. Laufs (01.09., Commit `dc947b5`) zurückgenommen — Belege gehörten fast durchweg zu anderen Datensätzen als den eingetragenen Mitgliedern**, dazu regulär 40/40 kein_merge + 1 markiert für den 32. Lauf selbst
 
 **Hauptbefund, wichtiger als das Tagesgeschäft: Der 31. Lauf hat systematisch falsch beschriftete Belege committet.** Beim Prüfen der heutigen 40 Kandidaten fiel auf, dass mehrere ihrer Quell-DOI-Nummern (u. a. `21170149`/`21170150`/`21192519`, `5992647`/`5992648`/`7071282`, `6027023`/`6027024`, `10475961`/`10475962`, `nzpsr89x5f`, `hckwmftryd`, `7793888`, `24126876`) wörtlich in Belegen des 31. Laufs auftauchen — obwohl deren Journal-Einträge dort ganz andere `mitglieder`-IDs tragen. Systematisch nachgeprüft: Für jeden der 40 `kein_merge`-Einträge aus `dc947b5` wurde per `bestand/hub.sqlite` der tatsächliche `quell_id` beider `mitglieder` ermittelt und geprüft, ob dessen unterscheidendes Kennzeichen (DOI-Suffix, figshare-/Mendeley-ID) überhaupt im zugehörigen `beleg`-Text vorkommt. Ergebnis: **0 von 40 bestehen den Test** — nicht ein einziger Beleg des 31. Laufs nennt eine Kennung, die zu seinen eingetragenen Mitgliedern gehört. Beispiel: Eintrag mit `mitglieder: ["dh-1d49de5c27e51cdd", "dh-c47b7e80a4a7f589"]` (tatsächliche `quell_id`: `10.5281/zenodo.18076314`/`18076315`) trägt als Beleg eine detaillierte, in sich schlüssige Dateilisten-Analyse von `zenodo.org/api/records/21192519` und `/21170150` — Datensätzen, die mit den eingetragenen Mitgliedern nichts zu tun haben. Das ist keine Ungenauigkeit, sondern echte Fehlzuordnung: konkrete, plausibel klingende Prüfsummen- und Dateinamen-Befunde, angeheftet an die falschen IDs — im Effekt erfundene Belege für die tatsächlich eingetragenen Paare, obwohl die zitierten Fakten selbst (für die falschen Paare) zutreffend gewesen sein mögen. Exakt das, was die Grundregel „ein Urteil ohne Beleg ist kein Urteil" verhindern soll.
