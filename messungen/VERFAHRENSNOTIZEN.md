@@ -3,6 +3,80 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-06 — Sechsunddreißigster Lauf: 40/40 kein_merge, kein neuer Merge, ein Mendeley-Basis-/Versions-Paar-Sonderfall mit genau einer je Datensatz veröffentlichten Version (Basis- und `.1`-DOI lösen buchstäblich auf dieselbe URL auf, dennoch wie die Mehrversions-Fälle behandelt), ein figshare-Fund mit aus der Versions-API verschwundener v1, keine neuen Quellen
+
+Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot
+`snapshot-2026-07-27c`, SHA-256 `24018f5c...cf3b2` gegen das Release-Manifest verifiziert).
+`--aus-snapshot` scheiterte wie an allen 35 Vortagen mit HTTP 403 auf `api.github.com`;
+Behelf wie dokumentiert über `mcp__github__get_release_by_tag` + `curl` auf den
+ungesperrten `releases/download`-Pfad, lokal unter `bestand/hub.sqlite` abgelegt.
+
+**40 Kandidaten vorgelegt (4.566 gefunden, 4.526 erneut gekappt), alle kein_merge.** 32
+Zenodo-Paare (conceptrecid bzw. HTTP-302-Weiterleitung des kleineren/Konzept-DOI einzeln
+per `zenodo.org/api/records/<id>` abgerufen und verglichen), 5 figshare-Paare
+(`api.figshare.com/v2/articles/<id>/versions` bestätigt je zwei oder mehr Versionen
+desselben Artikels), 3 Mendeley-Basis-/Versions-Paare (`data.mendeley.com/public-api`
+abgefragt).
+
+**Neue Beobachtung, ohne Auswirkung auf das Urteil: Mendeley-Basis-/Versions-Paare mit
+nur einer einzigen veröffentlichten Version.** Bei allen drei Mendeley-Paaren dieses
+Laufs (`hhr76c6bds`, `wfmr6f3frs`, `w83h66729n`) meldet `data.mendeley.com/public-api`
+genau eine Version (`version: 1`), und Basis-DOI wie `.1`-DOI lösen — sowohl über
+`doi.org` als auch über die Mendeley-Landingpage direkt — auf **buchstäblich dieselbe
+URL** auf (z. B. `data.mendeley.com/datasets/hhr76c6bds/1` für beide). Anders als beim
+üblichen Zenodo-/figshare-Muster gibt es hier also keine zweite, tatsächlich abweichende
+Fassung, gegen die man die Konzept-DOI abgrenzen könnte. Trotzdem als `kein_merge`
+beurteilt, konsistent mit dem 35. Lauf (Mendeley-Basis-/Versions-Paare dort ebenfalls
+kein_merge trotz Alias-Charakter) und mit dem generellen Umgang mit Zenodo-Konzept-DOIs:
+Die Basis-DOI ist strukturell eine Werk-/Konzept-Kennung des Quellsystems, kein
+unabhängiger Zweiteintrag — R3 (identische finale URL → Fassungs-Merge) greift hier
+nicht, weil die Übereinstimmung aus der Versionierungsarchitektur der Quelle folgt, nicht
+aus zwei unabhängigen Einreichungen. Eine automatische R3-Regel dürfte auf dieses Muster
+daher **nicht** angewendet werden, ohne vorher Konzept-/Alias-DOIs auszunehmen.
+
+**figshare-Fund: Version aus der Versions-API verschwunden.** Für das Paar
+`10.6084/m9.figshare.14885214.v1`/`.v2` listet `api.figshare.com/v2/articles/14885214/versions`
+aktuell nur noch Version 2 und 3; der direkte Abruf von Version 1
+(`.../versions/1`) liefert HTTP 404 „Entity not found: ArticleVersion". `doi.org` löst
+die v1-DOI dennoch weiterhin auf die erwartete figshare-URL mit Versionssegment `/1` auf
+(Landingpage selbst per HTTP 202 durch AWS-WAF blockiert, dokumentiertes Verhalten seit
+04.08., kein Befund gegen den Datensatz). Ähnlich dem figshare-404-Muster vom
+17./18.08., hier aber auf Versionsebene statt auf Artikelebene — die Versions-API vergisst
+alte Versionen, während die DOI-Auflösung sie weiter kennt.
+
+**Ein Zenodo-Paar ohne deklarierte DataCite-Versionsrelation** (`10.5281/zenodo.7928088`/
+`10.5281/zenodo.10141668`, `gleiches_werk_bereits: false`): Zenodo-eigene
+`relations.version` bestätigt für beide dieselbe `conceptrecid` (`7397062`, Version
+index 1 bzw. 2). Die Konzept-DOI selbst löst inzwischen per HTTP 302 auf eine dritte, im
+Register nicht erfasste Fassung (`10440515`) auf. Wie beim 4TU-Fund des 35. Laufs
+trotz bestätigter Werk-Zugehörigkeit als `kein_merge` beurteilt, kein `merge`-Ereignis
+auf Werk-Ebene ausgelöst — das Journal-Vokabular sieht dafür kein isoliertes Nachtragen
+einer sonst nur automatisch (R2) hergestellten Werk-Gruppierung vor, und ein Fehlgriff
+hier wäre schwerer zu reparieren als ein belegtes, aber ungruppiertes Paar.
+
+**Ein Tombstone:** `10.5281/zenodo.21385131` liefert von der Zenodo-API HTTP 410 „The
+record has been deleted"; `doi.org` löst die DOI trotzdem per Redirect auf
+`zenodo.org/records/21385132` auf — den zweiten Kandidaten, dessen eigene `conceptrecid`
+wiederum `21385131` ist. Gleiches Werk, gelöschte frühere Fassung, keine Dublette.
+
+**Zwei Concept-Drift-Funde ohne Auswirkung auf das Urteil:** Konzept-ID `11099802`
+(Dreiergruppe mit `11099803`/`13820311`) löst inzwischen auf eine dritte, nicht
+registrierte Fassung (`18707688`) auf; Konzept-ID `21557314` auf `22110423`. Bereits
+etabliertes Muster seit 08.03., hier ohne Titeländerung.
+
+**Jeder der 40 Belege per Skript gegen die eigenen `mitglieder`-IDs des jeweiligen
+Journal-Eintrags geprüft** (Lehre aus dem Beleg/Mitglieder-Fehler des 31. Laufs,
+2026-09-02 vermerkt) — alle 40 bestehen den Test: jede im Beleg genannte `quell_id`
+gehört tatsächlich zu einem der beiden eingetragenen Mitglieder.
+
+**Stichprobe (15 Einträge): 15/15 bestätigt** (Titel, Urheber/Sammler, Zugriffsweg — je
+gegen Zenodo-API, figshare-API, DataCite-API, GBIF-API, Mendeley-API, Harvard-Dataverse-
+API und ArcGIS-Item-API geprüft, darunter ein SAGE-figshare-Eintrag, dessen
+Landingpage AWS-WAF-blockiert und dessen Artikel-ID über die allgemeine
+`api.figshare.com`-Route nicht auffindbar ist — dort stattdessen über
+`api.datacite.org` vollständig bestätigt, inklusive aller sieben Autor:innen). Keine
+Markierung nötig.
+
 ## 2026-09-05 — Fünfunddreißigster Lauf: 40/40 kein_merge, kein neuer Merge, erste beobachtete Geschwister-Versionen-Konstellation (zwei Kandidaten teilen dieselbe conceptrecid, ohne dass einer der beiden selbst die Konzept-ID ist) mit tatsächlicher Dateidifferenz statt Byte-Identität, zwei neue Concept-Drifts mit Titeländerung auf der dritten, unregistrierten Fassung, keine neuen Quellen
 
 Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot
