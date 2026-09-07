@@ -3,6 +3,103 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-07 — Siebenunddreißigster Lauf: 40/40 kein_merge, kein neuer Merge, ein Cross-Platform-Fund (Science Data Bank/Mendeley) ohne Dateivergleichsbasis, ein InvenioRDM-Konzept-/Versions-Alias auf einem bislang unbeobachteten Host (LMU Munich RDM), neu dokumentiertes API-Limit von `data.mendeley.com/public-api`: die versionsparametrisierte Abfrage liefert für JEDE Versionsnummer `size: 0` ohne Dateiliste — kein Beleg für leere ältere Fassungen, keine neuen Quellen
+
+Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot
+`snapshot-2026-07-27c`, SHA-256 `24018f5cc9e4c0ff95d05abcddb7a11649c36fed12f2954899ff6a92cc1cf3b2`
+gegen das Release-Manifest verifiziert, `mcp__github__get_release_by_tag` bestätigt
+weiterhin kein neueres Release seit dem 27.07.). `--aus-snapshot` zuerst versucht;
+scheiterte wie an allen 36 Vortagen mit HTTP 403 auf `api.github.com` aus dem
+Python-Skript heraus (Sitzungsrichtlinie, kein Zufallsfehler). Behelf wie dokumentiert:
+Release-Metadaten per `mcp__github__get_release_by_tag`, `hub-2026-07-27.sqlite.gz`
+über den ungesperrten `releases/download`-Pfad per `curl` geladen, SHA-256 gegen den
+Release-Digest geprüft (Treffer, 28.365.720 Bytes), entpackt unter `bestand/hub.sqlite`
+abgelegt, `kandidaten.py` **ohne** `--aus-snapshot` aufgerufen.
+
+**40 Kandidaten vorgelegt (4.526 gefunden, 4.486 erneut gekappt, 1.520 bereits
+beurteilte Paare übersprungen), alle kein_merge.** 19 einfache Zenodo-Concept-/
+Versions-Paare (`zenodo.org/api/records/<id>` je für beide Mitglieder abgerufen,
+Dateiliste/MD5 verglichen — durchweg Standard-Alias-Muster seit 03.08., darunter ein
+Paar mit sehr großem numerischen ID-Abstand [7641780→16905603, MICrONS-Datensatz,
+Nature-koordinierte Veröffentlichung] und ein Paar mit HTTP-410-Tombstone auf der
+Konzept-ID ohne Tombstone-Metadaten). 18 Mendeley-Basis-/Versions-Paare
+(`data.mendeley.com/public-api` je abgefragt): 11 Ein-Versions-Fälle (Basis- und
+Versions-DOI referenzieren dieselbe, einzige Ablage), 7 aus zwei echten
+Mehrversions-Gruppen (`wmrjd7pjk2`, `mwwbc7cgy8`), davon 2 Paare mit beiden Mitgliedern
+= aktuelle Fassung (Standard-Alias) und 5 Paare alte gegen aktuelle Fassung ohne
+Dateivergleichsbasis (s. u.). 1 LMU-Munich-RDM-Konzept-/Versions-Alias (neuer Host,
+InvenioRDM). 2 Science-Data-Bank/Mendeley-Cross-Platform-Paare ohne Dateivergleichsbasis
+(s. u.).
+
+**Neu dokumentiert: `data.mendeley.com/public-api/datasets/<id>?version=<n>` liefert
+für JEDE angegebene Versionsnummer `"size": 0` ohne `files`-Array — auch für die
+Version, die der parameterlose Standardaufruf mit nachweislich vorhandener Datei
+zurückgibt.** Gegengeprüft an `r2w4nk92t3` (Standardaufruf ohne Parameter: Version 2,
+1 Datei, 5.203.323 Byte, SHA-256 `2b681421…21a8`; derselbe Datensatz mit
+`?version=2` explizit: `size: 0`, kein `files`-Schlüssel) und an `wmrjd7pjk2`
+(Standardaufruf: Version 2, 1 Datei `programs.zip`; mit `?version=2` explizit ebenfalls
+`size: 0`). Der Versionsparameter dieser Route ist also für Dateiabfragen grundsätzlich
+unbrauchbar — nicht nur für ältere, sondern auch für die aktuelle Fassung. Frühere
+Notizen dieses Verfahrens (24.08., 04.08.: „Mendeley-Mehrversions-Paar ohne
+Dateivergleichsbasis") hatten dasselbe Symptom bereits als Fehlen einer Vergleichsbasis
+vermerkt, aber nicht als Bug der Abfrageroute selbst benannt — das wird hiermit
+nachgetragen, damit ein künftiger Lauf `size: 0` nicht versehentlich als „ältere Fassung
+hat keine Dateien" fehlliest. Betrifft die Paare 14/15/17/20/22 dieses Laufs (alte gegen
+aktuelle Fassung); Paare mit beiden Mitgliedern auf der aktuellen Fassung (16/18/21/39)
+sind davon nicht betroffen, da für sie der parameterlose Standardaufruf ausreicht.
+
+**Neu: ein InvenioRDM-Konzept-/Versions-Alias auf einem bislang unbeobachteten Host.**
+Bei „Data for 'Can artificial intelligence-based weather prediction models simulate the
+butterfly effect?'" (`10.57970/e61hw-rrz34`/`10.57970/mrnk1-msj92`, LMU München, Fakultät
+für Physik) lösen beide DOIs per `curl -L` auf dieselbe finale URL
+`lmuphys.rdm.lab.lrz.de/records/e61hw-rrz34` auf; beide DOIs sind auf der Zielseite als
+zusammengehöriges Paar aufgeführt. LMU Munich RDM läuft wie `researchdata.tuwien.ac.at`
+(29.08. dokumentiert) auf InvenioRDM — dasselbe Konzept-/Versions-DOI-Schema wie Zenodo,
+`kein_merge` konsistent mit dem seit dem 35./36. Lauf etablierten Umgang mit
+Konzept-/Alias-DOIs.
+
+**Neu: ein Cross-Platform-Fund ohne Dateivergleichsbasis (Science Data Bank/Mendeley).**
+„Data-Development and Validation of the Artificial Intelligence Literacy Scale (AILS)
+among University Students" (García-Umaña, Beserra, 2025) liegt sowohl auf Science Data
+Bank (`10.57760/sciencedb.29616`) als auch auf Mendeley Data (`10.17632/6gpt44x94h`) mit
+identischem Titel, identischer Kurzbeschreibung und denselben zwei Urhebern. Die
+SciDB-Landingpage ist eine Nuxt-SPA, deren Datei-/Prüfsummenliste clientseitig
+nachgeladen wird und im per `curl` geladenen HTML nicht vorhanden ist — kein
+Dateivergleich zwischen den Plattformen möglich. `kein_merge` für beide Paare
+(SciDB gegen Mendeley-Basis-DOI, SciDB gegen Mendeley-`.1`-DOI) mangels Vergleichsbasis,
+„im Zweifel kein_merge".
+
+**Jeder der 40 Belege gegen die eigenen `mitglieder`-IDs des jeweiligen
+Journal-Eintrags geprüft** (Lehre aus dem Beleg/Mitglieder-Fehler des 31. Laufs,
+2026-09-02 vermerkt) — alle 40 bestehen den Test.
+
+**Stichprobe (15 Einträge): 15/15 bestätigt** (Titel und, wo von der Quelle geliefert,
+Urheber je gegen die Quell-API geprüft: figshare ×7 [`api.figshare.com/v2/articles/<id>`
+bzw. `/versions/<v>`, darunter zwei springernature.figshare-Einträge], Zenodo ×5
+[`zenodo.org/api/records/<id>`], GBIF ×2 [`api.gbif.org/v1/dataset/doi/<prefix>/<suffix>`,
+unkodierter Pfad], Harvard Dataverse ×1 [`api/datasets/:persistentId`]). Alle Titel und,
+wo geprüft, Autorenlisten stimmen exakt überein (Groß-/Kleinschreibung und
+Namensreihenfolge abweichend normalisiert, keine inhaltliche Abweichung). Keine
+Markierung nötig.
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten oder in der Stichprobe (LMU
+Munich RDM ist ein neuer *Host*, aber dieselbe bekannte Quelle `datacite`). Für das neu
+dokumentierte Mendeley-API-Limit (`?version=<n>` liefert durchweg `size: 0`) keine
+automatische Erkennung in `normalisiere.py`/`baue_bestand.py` umgesetzt — Pipeline-
+Änderung außerhalb des Commit-Umfangs dieser Routine, wie an allen Vortagen.
+
+**Regel/Prüfauftrag, jetzt zum 26. Mal wiederholt:** Der Prüfauftrag vom 2026-08-03
+(deterministische Concept-/Alias-DOI-Erkennung aus der geharvesteten `roh`-Metadatenform)
+bleibt über sechsunddreißig Urteilsläufe hinweg unumgesetzt. Neu dazu: Ein künftiges
+Prüfskript, das Mendeley-Versionsinhalte vergleichen will, darf sich nicht auf
+`?version=<n>` verlassen (liefert grundsätzlich keine Dateiliste) — nur der
+parameterlose Standardaufruf liefert Dateien, und zwar ausschließlich für die jeweils
+aktuelle Fassung. Ein Vergleich älterer gegen aktuelle Mendeley-Fassungen ist über die
+Public API strukturell nicht möglich; das betrifft potenziell alle bisherigen
+„Mendeley-Mehrversions-Paar ohne Dateivergleichsbasis"-Funde seit dem 04.08., nicht nur
+die heutigen. Weiterhin geringe Dringlichkeit, da der Ernte-Cron seit dem 27.07.
+pausiert ist.
+
 ## 2026-09-06 — Sechsunddreißigster Lauf: 40/40 kein_merge, kein neuer Merge, ein Mendeley-Basis-/Versions-Paar-Sonderfall mit genau einer je Datensatz veröffentlichten Version (Basis- und `.1`-DOI lösen buchstäblich auf dieselbe URL auf, dennoch wie die Mehrversions-Fälle behandelt), ein figshare-Fund mit aus der Versions-API verschwundener v1, keine neuen Quellen
 
 Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot
