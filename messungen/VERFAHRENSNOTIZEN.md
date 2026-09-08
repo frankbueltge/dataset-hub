@@ -3,6 +3,107 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-08 — Achtunddreißigster Lauf: 38/40 kein_merge, **zwei bestätigte Merges** (erster Fassungs-Ebene-Merge der Routine: Zenodo-Datensatz-Zusammenlegung per HTTP-Redirect belegt; zweiter Werk-Ebene-Merge: figshare-Mehrversions-Artikel über die quellen-native Versions-API), zwei neue Concept-Drift-Funde mit echter Inhaltsänderung (eine davon mit zusätzlicher Zenodo-Datensatz-Umleitung), zwei Konzept-Tombstones, transienter Zenodo-Ausfall während der Stichprobensichtung (selbst behoben), `api.github.com` erneut mit HTTP 403
+
+Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot
+`snapshot-2026-07-27c`, SHA-256 `24018f5cc9e4c0ff95d05abcddb7a11649c36fed12f2954899ff6a92cc1cf3b2`
+gegen das Release-Manifest verifiziert, `mcp__github__list_releases`/`get_release_by_tag`
+bestätigen weiterhin kein neueres Release seit dem 27.07.). `--aus-snapshot` zuerst
+versucht; scheiterte wie an allen 37 Vortagen mit HTTP 403 auf `api.github.com` aus dem
+Python-Skript heraus — auch unauthentifiziert und mit dem in dieser Sitzung gesetzten
+`GITHUB_TOKEN` reproduziert (Sitzungsrichtlinie/Rate-Limit auf `api.github.com`, kein
+Zufallsfehler; `github.com` und `objects.githubusercontent.com` bleiben unversperrt).
+Behelf wie dokumentiert: Release-Metadaten per `mcp__github__list_releases`/
+`get_release_by_tag`, `hub-2026-07-27.sqlite.gz` über den ungesperrten
+`releases/download`-Pfad per `curl` geladen (28.365.720 Byte), SHA-256 gegen den
+Release-Digest geprüft (Treffer), entpackt unter `bestand/hub.sqlite` abgelegt,
+`kandidaten.py` **ohne** `--aus-snapshot` aufgerufen, `beurteilter_stand` in
+`urteil/vorlage.json` von Hand auf den tatsächlich beurteilten Snapshot korrigiert (das
+Skript hätte sonst „lokaler Bau" eingetragen, was den Nachweis verwischt hätte).
+
+**40 Kandidaten vorgelegt (4.486 gefunden, 4.446 erneut gekappt, 1.560 bereits
+beurteilte Paare übersprungen).** 22 Zenodo-, 17 Mendeley-, 1 figshare-Paar. Jedes Paar
+einzeln per Quellen-API geprüft (Dateiprüfsummenvergleich wo Dateien vorhanden,
+`data.mendeley.com/public-api` je für die 17 Mendeley-Paare, `zenodo.org/api/records/<id>`
+für alle 22 Zenodo-IDs einschließlich der drei umgeleiteten).
+
+**Erster bestätigter Merge auf Fassungs-Ebene der gesamten Routine:** Kandidat
+`dh-88ea292b0d069b93`/`dh-9bc8450201deaab4` (Zenodo 11192143/11199061, Titel „Evaluating
+the generalizability of graph neural networks for predicting collision cross section").
+`zenodo.org/records/11192143` per `curl -I` aufgerufen: HTTP 302 auf
+`/records/11199061` — keine Concept-DOI-Weiterleitung (die zeigt immer auf die jeweils
+neueste Fassung), sondern eine direkte Weiterleitung der spezifischen Versions-Landing-Page
+auf eine andere spezifische Versions-ID. `zenodo.org/api/records/11192143` liefert
+`id: 11199061` zurück (identisch mit der direkten Abfrage von `/11199061`), beide mit
+byte-identischem `created`-Zeitstempel (`2024-05-15T15:02:51.505152+00:00`, nicht nur
+gleiches Datum) und identischer Datei-Prüfsumme (`ccs-prediction-outputs.zip`,
+MD5 `1eb8a0c7…`). Das dritte Kandidatenmitglied derselben Dreiergruppe, `11192144`
+(eigene, nicht umgeleitete Landing-Page, andere Prüfsumme `67cccc26…`), bleibt gegen
+beide kein_merge — echte Inhaltsdifferenz. Anders als die Concept-/Versions-Alias-Fälle
+(dort zeigt eine mutable Concept-DOI auf wechselnde Fassungen) handelt es sich hier um
+eine plattformseitige Zusammenlegung zweier spezifischer Versions-DOIs auf dieselbe
+Ablage — genau der Fall, den R3 automatisch erfassen soll („identische finale URL nach
+tatsächlicher HTTP-Auflösung"), der aber noch nicht automatisch nachvollzogen wurde
+(vermutlich weil die Auflösung vor der Zenodo-seitigen Zusammenlegung lief). Kein Eingriff
+in `baue_bestand.py` in dieser Sitzung — das Journal-Ereignis wirkt beim nächsten Bau.
+
+**Zweiter bestätigter Merge, auf Werk-Ebene:** Kandidat `dh-50d53c2b476e924b`/
+`dh-a7f71639b59aa186` (figshare 21861948.v2/.v1, „Flexible, Model-Agnostic Method for
+Materials Data Extraction from Text Using General Purpose Language Models"),
+`gleiches_werk_bereits: false` (keine DataCite-Relation deklariert). Einzeln über
+`api.figshare.com/v2/articles/21861948/versions/1` und `/versions/2` abgefragt: v1 enthält
+zwei Dateien (MD5-identisch auch in v2 vorhanden), v2 ergänzt zwei weitere
+(`MPPolak_BulkModulus_ValidationData.xlsx`, `README`) — kumulative, quellen-native
+Versionierung desselben Artikels, wie beim CSIRO-Fund vom 30. Lauf über die
+Quellen-API statt über eine DataCite-Relation belegt.
+
+**Zwei neue Concept-Drift-Funde mit echter Inhaltsänderung:**
+`dh-88303afa47cee1bb`/`dh-a6fbd5512f0bdc61` (Zenodo 10499818→18097911 per Redirect/14788913,
+„Exploring specialization and sensitivity of convolutional neural networks…") — drei von
+fünf Dateien MD5-identisch, eine mit abweichender Prüfsumme, eine (`0_models.7z`) nur in
+der neueren Fassung; `dh-93c19983fc4d9a06`/`dh-eb744bc3fe004ce5` (Zenodo 21278657→21855429
+per Redirect/21278658, „Hyperfine and quadrupole fingerprint…") — Dateiname, Prüfsumme und
+Größe vollständig verschieden (16,5 MB vs. 1,6 MB). Beide kein_merge, bereits über
+`gleiches_werk_bereits: true` auf Werk-Ebene zusammengeführt.
+
+**Zwei Konzept-Tombstones**, etabliertes Muster: `dh-0977ab29112774ba`/
+`dh-dc4de395c6bda4e8` (Zenodo 21317157 Concept-DOI mit HTTP 410 ohne Tombstone-Metadaten,
+21317158 lebendig) und `dh-3744d7a25408d741`/`dh-cfaea77b44fd03c8` (Zenodo 15124609 Concept-DOI
+HTTP 410, 15124610 lebendig). Beide kein_merge.
+
+**Restliche 36 Kandidaten:** 15 Zenodo- und 17 Mendeley-Paare mit exakt übereinstimmenden
+Datei-Prüfsummen bzw. genau einer veröffentlichten Mendeley-Version — Standard
+Concept-/Versions-DOI-Alias- bzw. Mendeley-Alias-Muster, kein_merge wie an allen Vortagen
+seit 03./04.08.
+
+**Stichprobe (15 Einträge), mit transientem Zenodo-Ausfall.** Acht Nicht-Zenodo-Einträge
+(Språkbanken ×2, figshare ×2, Wyoming-/Borealis-Dataverse, GBIF-IPT, Mendeley) sofort
+per HTTP bestätigt, Titel und Zugriffsweg plausibel. Bei den sieben Zenodo-Einträgen
+wurde `zenodo.org` mitten in der Sichtung für rund zehn Minuten unerreichbar
+(`curl`-Timeouts ohne Antwort, dann kurzzeitig HTTP 502/503, vermutlich Folge der
+umfangreichen vorangegangenen API-Abfragen für die Kandidatenprüfung dieses Laufs) — kein
+Proxy-Fehler (`recentRelayFailures` blieb leer), sondern eine Zenodo-seitige Drosselung.
+Nach Abwarten und erneutem Versuch antwortete `zenodo.org/api/records/<id>` wieder
+normal; alle sieben Titel stimmten mit den Registereinträgen überein. Kein Ausfall stehen
+geblieben, aber festgehalten, weil Zenodo-Anfragen künftig auf Kandidatenprüfung und
+Stichprobe verteilt werden sollten, statt beide im selben Lauf zu bündeln. Keine
+`markiert`-Fälle.
+
+**Nicht getan:** Keine Automatisierung der Zenodo-Redirect-Erkennung (R3-Lücke oben) in
+`aufloese.py`/`baue_bestand.py` umgesetzt — Pipeline-Änderung außerhalb des
+Commit-Umfangs dieser Routine. Kein Rate-Limiting/Pacing für Zenodo-API-Aufrufe in dieser
+Routine selbst ergänzt, obwohl der Ausfall oben genau das nahelegt — ebenfalls
+Pipeline-/Skript-Änderung, nicht Journal-Ereignis.
+
+**Regel/Prüfauftrag, jetzt zum 31. Mal wiederholt (Concept-/Alias-DOI-Erkennung,
+2026-08-03), plus neuer Punkt.** Neu: Der R3-Fund oben (zwei spezifische Versions-DOIs,
+die Zenodo-seitig auf dieselbe Ablage zusammengelegt wurden) zeigt eine Lücke in der
+automatischen Fassungs-Dedup, die über den reinen Concept-DOI-Fall hinausgeht — R3 prüft
+laut `schema/SCHEMA.md` die *aktuell* aufgelöste finale URL, aber der Zeitpunkt der
+letzten Auflösung lag hier vor der Zenodo-Zusammenlegung. Ein periodischer
+Neuauflösungslauf über bereits „geprüfte" Einträge (nicht nur `--wiederholen` für
+gescheiterte) würde solche nachträglichen Zusammenlegungen automatisch finden.
+
 ## 2026-09-07 — Siebenunddreißigster Lauf: 40/40 kein_merge, kein neuer Merge, ein Cross-Platform-Fund (Science Data Bank/Mendeley) ohne Dateivergleichsbasis, ein InvenioRDM-Konzept-/Versions-Alias auf einem bislang unbeobachteten Host (LMU Munich RDM), neu dokumentiertes API-Limit von `data.mendeley.com/public-api`: die versionsparametrisierte Abfrage liefert für JEDE Versionsnummer `size: 0` ohne Dateiliste — kein Beleg für leere ältere Fassungen, keine neuen Quellen
 
 Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot
