@@ -3,6 +3,53 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-09 — Neununddreißigster Lauf: 38/40 kein_merge, **zwei bestätigte Fassungs-Merges** (erstmals: dieselbe Ressource über zwei verschiedene Zugriffsprotokolle desselben Herausgebers, nicht über Zenodo-Redirects), `--aus-snapshot` lief erstmals seit dem 27.07. ohne den bekannten HTTP-403-Behelf durch
+
+Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 38 Vorläufen — kein neueres
+Release). **`--aus-snapshot` funktionierte in dieser Sitzung direkt**, ohne den seit dem
+2. Lauf dokumentierten Behelf (Release-Metadaten per `mcp__github__list_releases`,
+`hub-<datum>.sqlite.gz` per `curl` über `releases/download`, `kandidaten.py` ohne
+`--aus-snapshot`) — der HTTP-403-Fehlschlag auf `api.github.com` aus dem Python-Skript
+heraus trat diesmal nicht auf. Ob das eine dauerhafte Änderung der Sitzungsrichtlinie ist
+oder ein Einzelfall, ist mit einem Datenpunkt nicht zu entscheiden; der Behelf bleibt
+dokumentiert, falls der 403 wiederkehrt.
+
+**40 Kandidaten vorgelegt (697 gefunden, 657 gekappt, 1.600 bereits beurteilte Paare
+übersprungen).** 15 DiSSCo-Herbarbeleg-Paare (RBGE-Barcodes einzeln per DataCite-API
+geprüft, durchweg verschiedene physische Exemplare — Musterfall seit vielen Vorläufen),
+13 ICPSR/datalumos-Basis-/Versions-DOI-Paare (`HasVersion`/`IsVersionOf` wechselseitig
+geprüft, Muster seit 27.07.), 6 Zenodo-Concept-/Versions-DOI-Paare (davon eines mit
+vollständiger Dateiidentität zwischen zwei echten, zeitversetzten Versionen — Regel seit
+08.08.), 2 ArcGIS-Zeitscheiben (japanische Hitzewarnungs-Tagesbulletins, unterschiedliche
+Service-IDs und Bearbeitungszeitstempel), 1 DataCite/checklistbank-Concept-Drift
+(Basis-DOI zeigt jetzt auf Import-Versuch 3, das verglichene Mitglied auf den überholten
+Versuch 2 — Taxon- und Namenszahl weichen ab), 1 DASI-Epigraph-Paar (`CIH 366 b`/`CIH 366
+b'` sind laut Fließtext der Quelle zwei verschiedene Textzeugen aus unterschiedlichen
+Fragmentgruppen, keine Dublette trotz Prim-ähnlichem Titel).
+
+**Zwei bestätigte Fassungs-Merges, neue Belegart:** Beide Male dieselbe Ressource der
+Système d'Information du Territoire à Genève (SITG), einmal über WFS- und
+REST-FeatureServer-Schnittstellen desselben Hosts (`DPS_INVENTAIRE`, 1.739 Objekte auf
+beiden Wegen, Einzelfeature OBJECTID 1 attributs- und geometriegleich geprüft), einmal
+über zwei verschiedene Hosts desselben Herausgebers (`PCMOB_CHANTIER_CONSULT`,
+vector.sitg.ge.ch vs. app2.ge.ch, 167 Objekte auf beiden Wegen, OBJECTID 1 sachdatengleich
+geprüft). Anders als die bisherigen Zenodo-Fassungs-Merges (HTTP-Redirect auf denselben
+Record) handelt es sich hier um zwei technisch unabhängige, aber inhaltlich Feature-für-
+Feature identische Veröffentlichungen desselben Datensatzes — kein Redirect, sondern
+Einzelvergleich der Sachdaten war der Beleg.
+
+**Stichprobe (15 Einträge), alle plausibel — zwei Zugriffswege durch Host-Sperre nicht
+abschließend bestätigbar.** 13 Einträge direkt per HTTP/API bestätigt (3× DASI, 3× DiSSCo,
+2× GBIF-Occurrence-Download, 1× Kaggle-DOI über DataCite, 3× ArcGIS-Hub-Item-Metadaten
+gegen Titel/Herausgeber/URL geprüft, 1× Zenodo). Zwei EMSL-Einträge (`osti.gov/servlets/
+purl/…`, DOI-Präfix `10.25582`) lösen korrekt über `osti.gov` auf `release.my.emsl.pnnl.gov`
+weiter, dort antwortet der Zielhost aber mit einer WAF-Seite („Request Rejected") statt
+Inhalt — auch mit Browser-User-Agent. Neu beobachtet, noch nicht als Muster einzuordnen
+(zwei Einträge aus einem Lauf); ähnelt strukturell dem GBIF-403-Fall (schema/SCHEMA.md
+`zugang.geprueft: versucht`), aber unbestätigt, ob automatisierter Zugriff generell oder
+nur diese Anfrage betroffen war. Keine `markiert`-Fälle — die DOI/Titel-Zuordnung selbst
+ist an beiden Einträgen plausibel, nur der Datenabruf war nicht abschließend prüfbar.
+
 ## 2026-09-08 — Achtunddreißigster Lauf: 38/40 kein_merge, **zwei bestätigte Merges** (erster Fassungs-Ebene-Merge der Routine: Zenodo-Datensatz-Zusammenlegung per HTTP-Redirect belegt; zweiter Werk-Ebene-Merge: figshare-Mehrversions-Artikel über die quellen-native Versions-API), zwei neue Concept-Drift-Funde mit echter Inhaltsänderung (eine davon mit zusätzlicher Zenodo-Datensatz-Umleitung), zwei Konzept-Tombstones, transienter Zenodo-Ausfall während der Stichprobensichtung (selbst behoben), `api.github.com` erneut mit HTTP 403
 
 Beurteilter Stand: lokaler Bau aus `hub-2026-07-27.sqlite.gz` (Snapshot
