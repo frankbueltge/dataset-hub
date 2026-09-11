@@ -3,6 +3,65 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-11 — Vierzigster Lauf: 40/40 kein_merge, kein neuer Merge, `--aus-snapshot` lief zweiten Tag in Folge ohne HTTP-403-Behelf durch, ein ArcGIS-FeatureServer/MapServer-Paar mit einseitig verweigertem Zugriff (anders als der SITG-Fund vom 39. Lauf nicht bestätigbar), ein Zenodo-Concept-Drift-Fund auf eine dritte, noch neuere Fassung außerhalb des Kandidatenpaars, EMSL/OSTI in der Stichprobe diesmal ohne WAF-Sperre
+
+Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 39 Vorläufen — kein
+neueres Release; `--aus-snapshot` bestätigt dies selbst gegen den jüngsten
+veröffentlichten Bestand). **`--aus-snapshot` funktionierte zweiten Tag in Folge
+direkt**, ohne den seit dem 2. Lauf dokumentierten Behelf über
+`releases/download`+`curl`. Mit nun zwei Datenpunkten (39. und 40. Lauf) spricht
+mehr dafür, dass der HTTP-403 auf `api.github.com` eine vorübergehende
+Sitzungsrichtlinie war als für einen Dauerzustand — der Behelf bleibt trotzdem
+dokumentiert, bis ein dritter Rückfall das endgültig widerlegt oder bestätigt.
+
+**40 Kandidaten vorgelegt (697 gefunden, 657 gekappt, 1.640 bereits beurteilte
+Paare übersprungen), alle kein_merge.** 28 DiSSCo-Herbarbeleg-Paare (RBGE, 38
+eindeutige DOIs einzeln per DataCite-API geprüft — jede `primarySpecimenObjectId`
+ein anderes Herbarblatt, `E01677666` bis `E01679916`, teils fortlaufend nummeriert
+wie bei Sammelserien — Musterfall seit vielen Vorläufen, durchweg verschiedene
+physische Exemplare), 11 Zenodo-Concept-/Versions-DOI-Paare (`zenodo.org/api/
+records/<id>` für beide Mitglieder jedes Paars abgerufen; bei 10 von 11 liefert
+die Concept-ID aktuell dieselbe Fassungs-ID wie das Versions-Mitglied des Paars
+zurück — Datei-Prüfsummen wo vorhanden identisch, sonst `access_right: restricted`
+ohne Dateiliste —, Standard-Alias-Muster seit 03./04.08., kein_merge trotz
+aktueller Identität, weil die Concept-DOI ein veränderlicher Zeiger ist), 1
+ArcGIS-Paar (Stadt Kingston, „Cycling Facilities", FeatureServer vs. MapServer
+unter zwei verschiedenen Server-GUIDs desselben Hosts `utility.arcgis.com`).
+
+**Ein Zenodo-Concept-Drift-Fund über das Kandidatenpaar hinaus:** Bei
+`dh-064d7341246c4bf8`/`dh-0ae08d14ab003636` (Zenodo 21508372/21508371,
+„Automated Ethogram Elaboration…") zeigt die Concept-ID 21508371 inzwischen auf
+eine DRITTE Fassung (21672272, erstellt 2026-07-29), nicht mehr auf 21508372 —
+seit dem Ernte-Stand ist mindestens eine weitere Version erschienen. Verschärft
+nur die Eindeutigkeit von kein_merge, ändert aber nichts am Urteil.
+
+**Ein Zugriffsweg einseitig nicht bestätigbar (ArcGIS Kingston):** Die
+FeatureServer-Seite des Paars (`utility.arcgis.com/.../FeatureServer/1`)
+antwortet auf `f=json` durchweg mit HTTP 403 (`GWM_0003`), auch mit
+Browser-User-Agent und Referer — die MapServer-Seite liefert 200 mit
+plausiblem Layer-Namen und -Thema. Anders als der SITG-Fund vom 39. Lauf
+(dort: Sachdatenvergleich über zwei erreichbare Wege bestätigte Identität)
+bleibt hier keine Vergleichsbasis — kein_merge im Zweifel, kein Versuch, über
+die blockierte Seite hinweg auf Gleichheit zu schließen.
+
+**Stichprobe (15 Einträge), alle plausibel, kein Ausfall.** 3× DASI-Epigraphen
+(Titel nach Redirect auf der Landing-Page bestätigt), 3× DiSSCo/RBGE-Herbarbelege
+(Titel und `primarySpecimenObjectId` per DataCite-API bestätigt), 6× ArcGIS
+(Layer-Metadaten gegen Titel/Herausgeber geprüft, alle 200), 1× Zenodo, 1×
+figshare (Titel/Autorenliste per Quellen-API bestätigt), 1× EMSL/OSTI
+(`osti.gov/servlets/purl/3386198` löst über `release.my.emsl.pnnl.gov` auf eine
+inhaltlich passende „MyEMSL Upload Report"-Seite mit Projektnummer 51287 auf —
+**diesmal ohne die WAF-Sperre, die zwei andere EMSL-Einträge im 39. Lauf
+zeigten**; mit nur einem Datenpunkt pro Lauf weiterhin nicht zu entscheiden, ob
+das ein Host-/Pfad-Unterschied oder eine intermittierende Sperre war. Keine
+`markiert`-Fälle.
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten oder in der Stichprobe.
+Für das ArcGIS-FeatureServer/MapServer-Muster (anders als SITG nicht bestätigt)
+keine automatische Erkennung in `normalisiere.py`/`baue_bestand.py` umgesetzt —
+Pipeline-Änderung außerhalb des Commit-Umfangs dieser Routine, wie an allen
+Vortagen.
+
 ## 2026-09-09 — Neununddreißigster Lauf: 38/40 kein_merge, **zwei bestätigte Fassungs-Merges** (erstmals: dieselbe Ressource über zwei verschiedene Zugriffsprotokolle desselben Herausgebers, nicht über Zenodo-Redirects), `--aus-snapshot` lief erstmals seit dem 27.07. ohne den bekannten HTTP-403-Behelf durch
 
 Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 38 Vorläufen — kein neueres
