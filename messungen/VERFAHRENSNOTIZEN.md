@@ -3,6 +3,75 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-12 — Einundvierzigster Lauf: 40/40 kein_merge, ein ArcGIS-Zeitscheiben-Fund mit veralteter Layer-URL als Trugbild, ein GCOOS-Tagesdatensatz in der Stichprobe nicht mehr auffindbar
+
+Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 40 Vorläufen). `--aus-snapshot`
+funktionierte dritten Tag in Folge direkt.
+
+**40 Kandidaten vorgelegt (617 gefunden, 577 gekappt, 1.680 bereits beurteilte Paare
+übersprungen), alle kein_merge.** 34 Zenodo-Concept-/Versions-DOI-Paare (je per
+`zenodo.org/api/records` für beide Mitglieder geprüft: identische `conceptrecid`,
+Standard-Alias-Muster seit 03./04.08.), darunter erneut ein Concept-Drift-Fund
+(ACAP-HPAI-Datenbank: Concept-DOI 17683269 löst inzwischen auf Record 22276493 vom
+2026-09-03 auf — eine DRITTE Fassung außerhalb des Kandidatenpaars, wie beim
+40. Lauf). 1 Plazi/ChecklistBank-Paar (`api.checklistbank.org` abgefragt: unversionierte
+DOI `10.48580/dgyhk` zeigt auf den jeweils aktuellen Importstand, `.v4` ist fest an
+Importversuch 4 gebunden — dasselbe Alias-Muster wie bei Zenodo, nur mit anderem
+Anbieter; Website-Zugriff auf checklistbank.org und der doi.org-Redirect dorthin
+lieferten beidseitig HTTP 403 mit Cookie-Challenge, die API blieb offen).
+
+**Neuer Fehlerfall, gemessen: eine live nachnummerierte ArcGIS-FeatureServer-Ebene
+täuscht URL-Identität vor (4 Kandidatenpaare, FEMA AGOL "Days 1-5 ...").** Vier
+Einträge von `FEMA_Region9_GIS` trugen im Register identische, generische Titel
+("Days 1-5 - Rapid Onset Flooding Probability" bzw. "... - Hotspots - Average ...")
+UND identische Zugriffs-URLs (`.../FeatureServer/4` bzw. `/5`) — ein Bild, das nach
+klarer Dublette aussieht. `f=json` auf beide Layer-Nummern liefert heute HTTP 200 mit
+`{"error":{"code":404,"message":"Layer not found"}}` im Rumpf: Der zugrundeliegende
+NOAA/NWS-"Live"-Dienst listet inzwischen nur noch die Layer 0 und 1, nicht mehr 4/5 —
+er wurde seit der Ernte umnummeriert. Erst der Abruf der ArcGIS-Item-Metadaten
+(`www.arcgis.com/sharing/rest/content/items/<id>`) zeigte die tatsächlichen,
+aktuellen Item-Titel: "Day 1", "Day 2", "Day 3", "Days 1-5" und
+"Hotspots - Average" — fünf verschiedene Tagesscheiben/Aggregat-Layer desselben
+Live-Dienstes, keine Dubletten. Die im Register übereinstimmende Zugriffs-URL ist
+demnach kein Beleg für Identität, sondern ein Artefakt einer Umnummerierung beim
+Anbieter, die zufällig zwei (inzwischen falsche) Layer-Indizes auf denselben Wert
+kollabieren ließ. Wie beim Herbarbeleg-Muster gilt: Titel/URL-Übereinstimmung allein
+genügt nicht — hier hätte sogar die tatsächlich identische, per HTTP aufgelöste
+Access-URL in die Irre geführt, weil die Auflösung selbst (404-im-200-Rumpf) nicht
+mehr auf den ursprünglich gemeinten Layer zeigt.
+
+**Regel/Prüfauftrag daraus:** Bei "Live"-ArcGIS-Diensten (Titel/Beschreibung nennt
+"Live" oder ein Aktualisierungsintervall) ist eine per Layer-Index gebildete
+Zugriffs-URL nicht stabil — der Index kann sich beim Anbieter ändern, ohne dass sich
+die Item-ID ändert. Ein `f=json`-Erfolg mit HTTP 200 ist bei ArcGIS REST kein
+hinreichender Beleg für eine erfolgreiche Auflösung; der Rumpf kann trotzdem
+`{"error": ...}` enthalten (ArcGIS meldet Fehler mit 200, nicht mit einem
+4xx-Statuscode). Nur ein Datenpunkt bisher — ob das die künftige
+`aufloese.py`-Prüfung betreffen sollte (Rumpf auf `"error"`-Schlüssel prüfen, nicht
+nur HTTP-Status), bleibt offen, bis sich das Muster wiederholt.
+
+**Stichprobe (15 Einträge): 14 plausibel, 1 markiert.** 4× DASI-Epigraphen (Titel
+gegen DataCite-Metadaten geprüft, Zugriffsweg 200), 6× DiSSCo-Herbarbelege (Titel
+gegen DataCite-Metadaten geprüft, `disscover.dissco.eu` 200), 2× EMSL/OSTI
+(`osti.gov/servlets/purl/...` 200, Titel passend), 1× figshare (Web-Zugriff HTTP 202
+mit `x-amzn-waf-action: challenge` — AWS-WAF-Bot-Sperre wie bei EMSL/GBIF bereits
+bekannt; über `api.figshare.com/v2/articles/...` bestätigt: Artikel existiert, Autor
+und Datei stimmen), 2× ArcGIS. Von den beiden ArcGIS-Einträgen: Moreton Bay Council
+Planned Burns bestätigt (Item-Metadaten und Feature-Layer stimmen exakt). **Markiert:**
+GCOOS "HYCOM Surface Water Currents – 2026-07-25" — Item-Abfrage liefert
+`"Item does not exist or is inaccessible"` (CONT_0001), der zugehörige ImageServer
+existiert ebenfalls nicht mehr (leere Services-Liste des Hosts). Der Titel trägt ein
+Tagesdatum; vermutlich legt GCOOS für diesen Dienst täglich einen neuen Item an und
+entfernt das alte — zum Zeitpunkt der Stichprobe (sieben Wochen nach der Ernte) ist
+das geerntete Item verschwunden. Journal-Eintrag `typ: "markiert"` gesetzt, damit der
+nächste Bau das nicht mehr als `ungeprueft`, sondern als geprüft-und-nicht-bestätigt
+führt.
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten oder in der Stichprobe. Für
+das ArcGIS-Umnummerierungs-Muster keine deterministische Regel eingeführt — ein
+Datenpunkt reicht nicht, um `aufloese.py` oder `ernte_arcgis.py` zu ändern; nur
+vermerkt.
+
 ## 2026-09-11 — Vierzigster Lauf: 40/40 kein_merge, kein neuer Merge, `--aus-snapshot` lief zweiten Tag in Folge ohne HTTP-403-Behelf durch, ein ArcGIS-FeatureServer/MapServer-Paar mit einseitig verweigertem Zugriff (anders als der SITG-Fund vom 39. Lauf nicht bestätigbar), ein Zenodo-Concept-Drift-Fund auf eine dritte, noch neuere Fassung außerhalb des Kandidatenpaars, EMSL/OSTI in der Stichprobe diesmal ohne WAF-Sperre
 
 Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 39 Vorläufen — kein
