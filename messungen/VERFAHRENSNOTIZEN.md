@@ -3,6 +3,109 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-13 — Zweiundvierzigster Lauf: 40/40 kein_merge, zwei echte Zenodo-Tombstones mit vollständigem Löschprotokoll (einer davon: beide Kandidatenmitglieder betroffen), erster figshare-Fund mit Dateiidentität trotz redaktioneller Titeländerung, CCDC blockiert automatisierten Zugriff mit HTTP 404 statt 403
+
+Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 41 Vorläufen). `--aus-snapshot`
+funktionierte vierten Tag in Folge direkt.
+
+**40 Kandidaten vorgelegt (577 gefunden, 537 gekappt, 1.720 bereits beurteilte Paare
+übersprungen), alle kein_merge.** 22 einfache Zenodo-Concept-/Versions-DOI-Paare mit dem
+seit 03./04.08. etablierten Standard-Alias-Muster (Dateiprüfsummen identisch, Concept-DOI
+löst auf das jeweils andere Mitglied auf). 1 Plazi/ChecklistBank-Paar (`10.48580/dgyl4.v2`
+gegen die Basis-DOI, die inzwischen auf Importversuch 3 zeigt statt auf den vorgelegten
+Versuch 2 — Namens-/Taxazahl weicht ab, 10 gegen 8 Namen — dasselbe Alias-Muster wie beim
+`10.48580/dgyhk`-Fund vom 41. Lauf, hier mit belegter Inhaltsänderung statt nur
+unterschiedlicher Zugriffssperre). 2 ICPSR-Basis-/Versions-Paare (Muster seit 27.07.,
+diesmal einmal mit korrekter wechselseitiger `HasVersion`/`IsVersionOf`-Relation, einmal
+ohne — die Basis-DOI erklärt eine Relation zu einer im Kandidatenpaar nicht enthaltenen
+dritten Version). 2 figshare-Paare (`32923646` v1/Basis und v1/v2, dazu unten). 11 weitere
+Zenodo-Paare mit Concept-Drift (die Concept-DOI löst zum Prüfzeitpunkt nicht auf das
+vorgelegte Mitglied, sondern auf eine andere, jüngere oder unregistrierte Fassung) — davon
+2 ohne jede vergleichbare Dateiliste (`restricted`/`embargoed` auf beiden Seiten), 1 mit
+Statuswechsel `restricted`→`open` (Inhalt erst in der jüngeren Fassung öffentlich), 1 mit
+belegter Dateiidentität trotz Drift (reine Dokumentationskorrektur, siehe „El Camino de la
+Luz" unten) und 7 mit tatsächlicher Prüfsummen- oder Dateilistenabweichung, darunter die
+Dreiergruppe „Digitization and augmentation of Appendix 27..." (3 Paare, dazu unten). 2
+echte Tombstones (dazu unten).
+
+**Neu: zwei Zenodo-Tombstones mit vollständigem Löschprotokoll statt bloßem HTTP 410 ohne
+Angaben.** Bisher (26.–41. Lauf) trugen beobachtete Tombstones entweder keine Angaben oder
+— einmal, 29.08. — ein maschinenlesbares `removal_reason.id: "duplicate"`. Diesmal lieferte
+die Zenodo-Weboberfläche (`zenodo.org/records/<id>`, nicht die API) für beide Fälle ein
+vollständiges Tombstone-Formular: **(a)** `21592541` — „Reason for removal: Personal data
+issue", entfernt durch den Eigentümer am 2026-07-28; der Kandidatenpartner (Concept-DOI
+`21450238`) löst inzwischen auf einen anderen, existierenden Datensatz (`21640791`,
+ebenfalls vom 28.07., inhaltlich verschieden) auf — ein zurückgezogenes Objekt neben einem
+lebenden, verschiedenen Objekt, kein_merge trivial. **(b)** `21584519`/`21584518` — hier
+sind **beide** Kandidatenmitglieder betroffen: `21584519` trägt „Reason for removal:
+Retraction/Withdrawal of a record" (entfernt 2026-07-27), `21584518` ist die zugehörige
+Concept-DOI und löst per 302 auf ebendieses zurückgezogene Objekt. Der gesamte Datensatz
+ist verschwunden, nicht nur eine Fassung davon — erster beobachteter Fall, bei dem ein
+komplettes Kandidatenpaar keinerlei erreichbaren Inhalt mehr hat. kein_merge mangels jeder
+Vergleichsbasis auf beiden Seiten. Keine `markiert`-Journaleinträge dafür gesetzt: wie bei
+allen bisher beobachteten Tombstones unter Merge-Kandidaten (seit dem 29. Lauf, 30.08.,
+zuletzt 35./38. Lauf am 05./08.09.) bleibt `markiert` der Sichtung der Stichprobe
+vorbehalten (Abschnitt 2 der Urteilsroutine); hier wird der Fund nur vermerkt.
+
+**Neu: erster figshare-Fund mit vollständiger Dateiidentität trotz redaktioneller
+Titeländerung, Analogon zum Zenodo-Titeländerungs-Muster vom 29.08., hier erstmals unter
+Merge-Kandidaten statt in der Stichprobe.** Bei `10.6084/m9.figshare.32923646` (Basis, v1,
+v2) sind die zwei enthaltenen Dateien MD5- und größenidentisch über alle drei Abfrageformen
+(`api.figshare.com/v2/articles/32923646/versions/1`, `/versions/2`, unversioniert). Nur der
+Titel wurde zwischen v1 und v2 rein orthografisch korrigiert (Groß-/Kleinschreibung,
+Bindestrich → Halbgeviertstrich: „Loeys-Dietz" → „Loeys–Dietz"). Wie beim etablierten
+Zenodo-Muster: kein_merge trotz aktueller Dateiidentität, weil Basis-DOI und ältere
+Versions-DOI strukturell veränderliche bzw. künftig überholbare Zeiger bleiben.
+
+**Eine Dreiergruppe mit zusätzlicher Konzept-Drift auf eine vierte, unregistrierte
+Fassung:** Zenodo-Werk „Digitization and augmentation of Appendix 27..." (Concept
+`21602626`) mit drei im Register vertretenen, tatsächlich verschiedenen, innerhalb von vier
+Stunden am 26.07. veröffentlichten Fassungen (`21602627` 13:48 UTC ohne Crosswalk-Datei,
+`21603355` 13:54 UTC mit Crosswalk-Datei, `21602626` selbst als eigener Registereintrag —
+die Concept-DOI). Die Concept-DOI löst aber inzwischen weder auf `21602627` noch auf
+`21603355`, sondern auf eine vierte, im Register nicht erfasste Fassung `21609555` (17:37
+UTC, vier gegenüber `21603355` geänderte Prüfsummen bei gleichen Dateinamen). Alle drei
+vorgelegten Paare `kein_merge`, jedes einzeln per Datei-/Prüfsummenvergleich geprüft, nicht
+nur am Konzeptbezug.
+
+**Ein weiterer Dreier-Fund, Konzept-Drift plus fehlende Datei in der ältesten Fassung:**
+„El Camino de la Luz"
+(Concept `21541280`): `21563758` (16:31 UTC) enthält nur `readme_v1.1.md`, die eigentliche
+Datendatei fehlt; `21564561` (16:48 UTC, 17 Minuten später) enthält beide Dateien
+vollständig. Die aktuelle Zielfassung der Concept-DOI (`21842130`, 07.08., „v1.2 —
+Corrección de documentación") trägt dieselbe Datendatei MD5-identisch zu `21564561` und ein
+zu `readme_v1.1.md` MD5-identisches, nur umbenanntes `README.md` — reine
+Dokumentationskorrektur ohne Datenänderung zwischen `21564561` und der aktuellen Fassung,
+aber ein echter unvollständiger Upload bei `21563758`. Alle drei Paare kein_merge.
+
+**Jeder der 40 Belege nach dem seit dem 31. Lauf (02.09.) etablierten Verfahren gegen die
+eigenen `mitglieder`-IDs geprüft** — alle 40 bestehen: jede im Beleg genannte Quell-ID
+gehört zu einem der beiden eingetragenen Mitglieder.
+
+**Stichprobe (15 Einträge): 15/15 bestätigt, nichts markiert.** 8× DiSSCo/RBGE-Herbarbelege
+(Titel/Sammlung per `api.datacite.org` bestätigt), 1× DASI-Epigraph (`dasi.cnr.it`, Titel
+bestätigt), 2× Zenodo (Titel per API bestätigt, einer davon `dh-19a1db8a2e28c08d` auch unter
+den heutigen Kandidaten, Paar 31), 3× ArcGIS (Brno ×2, Lee County Florida — `f=json` je
+HTTP 200 ohne `"error"`-Schlüssel im Rumpf, Layer-Namen plausibel zum Titel; explizit auf
+das ArcGIS-Umnummerierungsmuster vom 41. Lauf geprüft, hier nicht aufgetreten), 1× CCDC
+(dazu unten).
+
+**Neu: CCDC (Cambridge Crystallographic Data Centre) weist automatisierten Zugriff mit HTTP
+404 ab, nicht mit 403 — Bot-Schutz mit ungewöhnlichem Statuscode.** `doi.org/10.5517/cc8y7cs`
+löst mit Standard-`curl`-User-Agent über zwei Redirects auf
+`ccdc.cam.ac.uk/structures/search?...` mit HTTP 404 auf; mit Browser-User-Agent liefert
+derselbe Zugriffsweg HTTP 200 (Landing-Page „Validation request"). Strukturell derselbe Fall
+wie GBIF (26.07.) und die AWS-WAF-Hosts (04.08.) — der Datensatz existiert (Titel „CCDC
+266425: Experimental Crystal Structure Determination" per `api.datacite.org` bestätigt),
+nur die automatisierte Prüfung wird abgewiesen. Neu daran: die Abweisung erfolgt als 404
+(„nicht gefunden"), nicht als 403 („verboten") — ein Statuscode, der bei naiver
+Ausfall-Behandlung leicht als toter Link fehlgedeutet würde. Kein Eintrag markiert, da kein
+Beleg gegen den Datensatz vorliegt, nur ein verwehrter Prüfversuch mit Standard-UA.
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten oder in der Stichprobe. Für den
+CCDC-404-Befund keine Änderung an `aufloese.py` vorgenommen — ein Datenpunkt reicht nicht,
+um zu entscheiden, ob 404 dort generell wie 403 behandelt werden sollte; nur vermerkt.
+
 ## 2026-09-12 — Einundvierzigster Lauf: 40/40 kein_merge, ein ArcGIS-Zeitscheiben-Fund mit veralteter Layer-URL als Trugbild, ein GCOOS-Tagesdatensatz in der Stichprobe nicht mehr auffindbar
 
 Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 40 Vorläufen). `--aus-snapshot`
