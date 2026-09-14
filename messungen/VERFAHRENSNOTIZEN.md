@@ -3,7 +3,70 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
-## 2026-09-13 — Zweiundvierzigster Lauf: 40/40 kein_merge, zwei echte Zenodo-Tombstones mit vollständigem Löschprotokoll (einer davon: beide Kandidatenmitglieder betroffen), erster figshare-Fund mit Dateiidentität trotz redaktioneller Titeländerung, CCDC blockiert automatisierten Zugriff mit HTTP 404 statt 403
+## 2026-09-14 — Dreiundvierzigster Lauf: 40/40 kein_merge, eine Concept-ID ohne eigenen Datensatz (HTTP 410, reiner Alias auf die einzige existierende Fassung), vier echte Zenodo-Fassungsunterschiede, CCDC- und GBIF-Bot-Sperren erneut bestätigt
+
+Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 42 Vorläufen). `--aus-snapshot`
+funktionierte fünften Tag in Folge direkt.
+
+**40 Kandidaten vorgelegt (537 gefunden, 497 gekappt — folgen im nächsten Lauf, 1.760
+bereits beurteilte Paare übersprungen), alle kein_merge.** 32 Standard-Zenodo-Concept-/
+Versions-Alias-Paare (`zenodo.org/api/records/<id>` je für beide Mitglieder geprüft:
+identische `conceptrecid`, Dateilisten inkl. MD5-Prüfsummen byte-identisch — Muster seit
+03./04.08. unverändert), darunter ein neuer Unterfall: Bei `dh-b6fe6bc437a89500`/
+`dh-cca1b4a1c9ea4e4f` (CNC-End-Milling-Datensatz, Myhovych) liefert `api/records` für die
+Concept-ID selbst HTTP 410 — sie trägt nie einen eigenen Datensatz, `doi.org` löst sie per
+Redirect direkt auf die einzige existierende Fassung auf. Bisher wurde bei diesem Muster
+stets ein eigener (wenn auch inhaltlich identischer) API-Datensatz für die Concept-ID
+beobachtet; hier fehlt er ganz — derselbe Befund (veränderlicher Zeiger, kein eigenständiges
+zweites Ding) trägt das Urteil trotzdem.
+
+**4 echte Zenodo-Fassungsunterschiede** (gleiche `conceptrecid`, aber Dateilisten weichen
+tatsächlich ab — keine Alias-Fälle, sondern echte inhaltliche Versionen desselben Werks):
+„EU AI Act Obligations Matrix — Italy focus 2026" (10 vs. 6 Dateien, u. a. LICENSE/
+METHODOLOGY/data.csv/data.json/metadata.jsonld mit unterschiedlichen Prüfsummen trotz
+gleicher Dateinamen), „FieldBench Corpus" (v0.4.0 vs. v0.3.0, verschiedene Archive), und
+2 der 3 Paare aus der FHA-Mortgage-Denial-Dreiergruppe (`21575105`/`21590145`/`21575106`
+— `21575105` und `21590145` sind untereinander byte-identisch, `21575106` einen Tag älter
+mit durchweg anderen Prüfsummen bei identischen Dateinamen: eine echte Korrekturfassung).
+Alle 4 kein_merge auf Fassungsebene; die Werk-Gruppierung (bereits automatisch gesetzt)
+bleibt unverändert richtig.
+
+**1 Plazi/ChecklistBank-Paar** (`10.48580/dgyl2.v3` gegen die Basis-DOI `10.48580/dgyl2`):
+`api.checklistbank.org/dataset/315839` zeigt die Basis-DOI inzwischen mit `versionDoi:
+10.48580/dgyl2.v4` (Importversuch 4, 2026-08-01) — nicht die vorgelegte `.v3`, dasselbe
+Alias-Muster wie bei den `dgyhk`- und `dgyl4`-Funden der letzten beiden Läufe. Ein
+Inhaltsvergleich v3 gegen v4 war diesmal nicht möglich: der Attempt-3-Endpunkt liefert
+404 (kein archiviertes Objekt je Versuch), `checklistbank.org` selbst HTTP 403 mit
+Cookie-Challenge. kein_merge nach Standardregel, ohne die zusätzliche Inhaltsbestätigung,
+die beim `dgyhk`-Fund möglich war.
+
+**2 figshare-Paare, ein Artikel** (`32976775`, Basis/v2 gegen v1, und v2 gegen v1 direkt):
+`api.figshare.com/v2` bestätigt Dateiidentität (3 Supplementary-Dateien, MD5) zwischen
+allen drei geprüften Objekten; einziger Unterschied eine Autorennamen-Korrektur
+(„Rowieda" in v1, „Rowayda" in der aktuellen Fassung) — reine Redaktionskorrektur wie
+beim figshare-Fund des 42. Laufs, hier ohne Titeländerung. Beide Paare kein_merge, Basis-
+DOI bleibt veränderlicher Zeiger.
+
+**13 der 40 Paare sind Barry Brents „Fig NNx ...notebook & data"-Serie** (verschiedene
+Abbildungen/Notebooks, ein Paar je Abbildung). Wichtig für die im Startauftrag genannte
+Fehlerklasse „Serie sieht aus wie Dublette": Hier ist das Gegenteil geprüft — jedes Paar
+trägt eine über `conceptrecid` von Zenodo selbst bestätigte Versions-/Concept-Beziehung
+(nicht nur gleicher Titel), plus byte-identische Dateien einschließlich der `run*.txt`-
+Lognamen. Kein Risiko einer fälschlich zusammengeführten Serie, weil hier gar nicht
+zusammengeführt wird — jedes Abbildungspaar bleibt für sich kein_merge, wie alle
+Concept-/Versions-Alias-Paare.
+
+**Stichprobe (15 Einträge): 15/15 bestätigt, nichts markiert.** 6 DASI-Epigraphen
+(`dasi.cnr.it/epigraphs/<id>`, serverseitig JS-gerendert — Titel im HTML-Metatag
+`"<Titel>: a DASI Epigraph resource"` je einzeln gegen den Registereintrag geprüft, alle
+sechs stimmen). 2 EMSL/OSTI-PDFs (`osti.gov/servlets/purl/<id>`, beide HTTP 200, diesmal
+ohne die WAF-Sperre aus früheren Läufen). 2 ArcGIS-Layer (PA DEP Anthracite-Mining-
+Permits, City-of-Charlottesville Real-Estate) — `?f=json` abgefragt, `name`-Feld
+wortgleich mit dem Registertitel. 1 NERC-EDS-Katalogeintrag (200). 1 DiSSCo-Digital-
+Specimen (200). 2 CCDC-Strukturabfragen — wie im 42. Lauf HTTP 404 statt 403 (Bot-Sperre,
+kein toter Link, jetzt zweiter Lauf in Folge mit demselben Befund). 1 GBIF-Occurrence-
+Download — HTTP 403, das seit `schema/SCHEMA.md` v0.2.0 dokumentierte GBIF-Bot-Sperrmuster
+(Host verweigert automatisierten Zugriff generell, `zugang.geprueft: versucht`).
 
 Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 41 Vorläufen). `--aus-snapshot`
 funktionierte vierten Tag in Folge direkt.
