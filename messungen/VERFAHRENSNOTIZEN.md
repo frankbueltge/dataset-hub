@@ -3,6 +3,31 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-18 — Neuer Kandidatentyp: GBIF/ChecklistBank-Kreuzregistrierung ohne relatedIdentifiers, Zahlen weichen ab
+
+45. Lauf, ein Kandidatenpaar ("Global Register of Invasive and Introduced Species -
+Norway"): eine GBIF-DOI (`10.15468/9oaedf`) und eine ChecklistBank-DOI
+(`10.48580/d37gb`) für denselben Titel, gleiches Versionsdatum (2026-07-26). Anders
+als beim bekannten Plazi/ChecklistBank-Concept-DOI-Muster (Basis-DOI zeigt auf
+wechselnde Importversuche) trägt hier **keine** der beiden DataCite-Metadaten
+`relatedIdentifiers` — die Verknüpfung ist nur über die Plattformen selbst zu finden:
+ChecklistBank nennt `gbifKey` identisch zur GBIF-Datensatz-UUID, GBIF listet
+`CLB_DATASET_KEY 28950` als eigenen Identifier. R2 (relatedIdentifiers) kann dieses
+Muster nicht fangen, weil die Quelle die Beziehung an anderer Stelle erklärt als dort,
+wo R2 hinschaut.
+
+Trotz der eindeutigen Kreuzverknüpfung: Die Namenszahlen weichen ab (ChecklistBank
+`nameusage/search` total=5468 gegen GBIF `distinctNamesCount`=5279 /
+`usagesCount`=7504, keine der beiden deckungsgleich) — ob das dieselbe Indexierung
+mit anderer Zählweise ist oder eine tatsächlich abweichende taxonomische Aufbereitung,
+war mit den geprüften Endpunkten nicht zu klären. Urteil: kein_merge (im Zweifel).
+
+**Für künftige Läufe:** Taucht das GBIF/ChecklistBank-Muster erneut auf (`gbifKey`
+bzw. `CLB_DATASET_KEY` wechselseitig gesetzt), lohnt ein tieferer Vergleich der
+Namenslisten selbst (nicht nur der Totalzahlen), bevor über einen Merge entschieden
+wird — die Diskrepanz könnte an unterschiedlicher Synonym-Behandlung liegen und sich
+auflösen lassen, statt offen zu bleiben.
+
 ## 2026-09-14 — Dreiundvierzigster Lauf: 40/40 kein_merge, eine Concept-ID ohne eigenen Datensatz (HTTP 410, reiner Alias auf die einzige existierende Fassung), vier echte Zenodo-Fassungsunterschiede, CCDC- und GBIF-Bot-Sperren erneut bestätigt
 
 Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 42 Vorläufen). `--aus-snapshot`
