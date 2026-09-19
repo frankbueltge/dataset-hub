@@ -3,6 +3,59 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-19 — Sechsundvierzigster Lauf: Concept-/Versions-Alias-Muster ist jetzt die Mehrheit der Kandidaten, nicht mehr die Ausnahme — Vorschlag für eine deterministische Regel
+
+Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 46 Vorläufen). 40 Kandidaten
+vorgelegt (417 gefunden, 377 gekappt, 1.880 bereits beurteilte Paare übersprungen).
+
+**27 von 40 Kandidaten (68 %)** folgen dem seit 03./04.08. wiederholt notierten
+Zenodo-/CaltechDATA-/B2SHARE-/figshare-Muster: eine Concept- oder unversionierte DOI
+und eine feste Versions-DOI desselben Deposits, bereits automatisch per R2 auf
+denselben Werk zusammengeführt, weil die Quelle selbst `IsVersionOf`/`HasVersion`/
+`IsPreviousVersionOf` deklariert (bei figshare) bzw. die Concept-DOI dieselbe
+`conceptrecid` trägt (bei Zenodo). 20 davon aktuell dateiidentisch (MD5-Prüfsummen
+paarweise geprüft), 7 aktuell inhaltlich abweichend, weil die Concept-DOI inzwischen
+auf eine neuere Fassung zeigt (u. a. `dh-3c8a618db64ec84d`/`dh-3f929bfa1e9dfffe`: die
+Concept-DOI zeigt jetzt auf einen komplett anderen Titel; RKI-Intensivregister und
+zwei Zenodo-Datenarchive mit laufend aktualisierten Ständen). Alle 27 kein_merge,
+konsistent mit den Urteilen vom 14./15.09.
+
+**Das ist jetzt kein Randfall mehr, sondern die Mehrheit des vorgelegten Stapels.**
+Der Grund, warum diese Paare überhaupt als Kandidaten erscheinen, ist mechanisch klar:
+`kandidaten.py` legt jedes Paar mit `werk_id == werk_id` erneut zur Fassungs-Prüfung
+vor, unabhängig davon, **welche** R2-Relation die Werk-Gruppierung ausgelöst hat.
+Aber genau diese Relation entscheidet die Antwort schon vollständig: `IsIdenticalTo`
+löst laut `schema/SCHEMA.md` bereits eine automatische **Fassungs**-Zusammenführung
+aus (kein Kandidat nötig); `IsVersionOf`/`HasVersion`/`IsNewVersionOf`/
+`IsPreviousVersionOf` dagegen bedeuten per Definition „Fassung des Werks", nie
+„dasselbe Ding" — eine Eskalation auf Fassungsebene ist bei dieser Relation logisch
+ausgeschlossen, nicht nur empirisch bisher immer verneint worden.
+
+**Vorschlag (nicht selbst umgesetzt — die Urteilsroutine baut den Bestand nicht):**
+Paare, deren Werk-Zusammenführung ausschließlich durch eine `IsVersionOf`-Familie
+(nicht `IsIdenticalTo`) ausgelöst wurde, in `kandidaten.py` von der
+Fassungs-Kandidatenliste ausnehmen — die Frage ist dort durch die eigene Behauptung
+der Quelle bereits beantwortet. Das würde die Kappe (aktuell 40) für Muster freimachen,
+die tatsächlich Lektüre brauchen (in diesem Lauf: 4 DiSSCo-Herbarbelegpaare, 2
+SITG-WFS/REST-Fassungsmerges, je ein CaltechDATA-, B2SHARE- und zwei
+figshare-Versionspaare — 9 von 40, der Rest war mechanisch vorentschieden).
+
+**2 SITG-Fassungsmerges** (Inventaire fédéral des bas-marais, Inventaire fédéral des
+prairies et pâturages secs): REST-`FeatureServer` und `WFS`-`GetCapabilities` je
+abgerufen, identischer Layername und identische räumliche Ausdehnung — derselbe
+Kartendienst über zwei Zugriffswege, wie in den Urteilen vom 12./13.09.
+
+**4 DiSSCo-Herbarbelegpaare** (Hypotrachyna, Kelleria villosa, 2× Lethedon): über
+`api.datacite.org` geprüft, `primarySpecimenObjectId` (RBGE-Herbarbarcode) je
+unterschiedlich — der in `URTEILSROUTINE.md` benannte häufigste Fehlerfall, hier
+viermal bestätigt. kein_merge.
+
+**Stichprobe (15 Einträge):** alle plausibel — Titel, Herausgeber und Zugriffsweg
+stimmen überein (6 DiSSCo-Herbarbelege, 5 ArcGIS-FeatureLayer, 2 GBIF-Downloads, 1
+COCOON/Huma-Num-, 1 DASI-Epigraph-Eintrag). Die beiden GBIF-Einträge antworten mit
+HTTP 403 auf der Landing-Page — das seit dem 26.07. bekannte Bot-Sperrmuster
+(`schema/SCHEMA.md` v0.2.0), kein neuer Befund. Nichts markiert.
+
 ## 2026-09-18 — Neuer Kandidatentyp: GBIF/ChecklistBank-Kreuzregistrierung ohne relatedIdentifiers, Zahlen weichen ab
 
 45. Lauf, ein Kandidatenpaar ("Global Register of Invasive and Introduced Species -
