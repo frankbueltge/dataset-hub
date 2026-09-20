@@ -3,6 +3,91 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-20 — Siebenundvierzigster Lauf: zwei weitere SITG-Fassungsmerges, FEMA-„Live"-Umnummerierung bestätigt sich ein zweites Mal, erste Redivis- und COCOON-Funde unter den Kandidaten
+
+Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 47 Vorläufen). `--aus-snapshot`
+funktionierte direkt.
+
+**40 Kandidaten vorgelegt (377 gefunden, 337 gekappt, 1.920 bereits beurteilte Paare
+übersprungen). 38/40 kein_merge, 2 SITG-Fassungsmerges.** 33 Standard-Zenodo-Concept-/
+Versions-Alias-Paare (`zenodo.org/api/records` je für beide Mitglieder geprüft; darunter
+4 mit Concept-Drift auf einen dritten, im Register nicht erfassten Datensatz außerhalb
+des Paars — Lexicon-C19 v3.2.1, Moltbook, sowie zwei der drei MetaXfam22-Paare, davon
+eines mit **geändertem Titel** beim Drift-Ziel: „MetaXfam22: a 22-family de-confounded
+benchmark..." → „MetaXFam-D: a distinct-rasterisation benchmark for cross-topology
+generalization..." — dieselbe Concept-ID, aber der Nachfolgedatensatz firmiert unter
+einem erkennbar anderen Projektnamen). 3 DiSSCo-Herbarbelegpaare (Lethedon salicifolia,
+Dreiergruppe: `primarySpecimenObjectId` je einzeln verschieden, E01680036/37/38 —
+derselbe Fehlerfall wie in praktisch jedem Lauf seit Wochen). 4 figshare-Paare (2×
+„Matbench Discovery" Diatomics/Molecular-Dynamics, je Basis-/v-N-Paar): anders als beim
+reinen Zenodo-Alias-Muster sind das **kontinuierlich wachsende** Datensätze — Dateien der
+älteren Version vollständig und MD5-identisch in der neueren enthalten, die neuere trägt
+zusätzliche, seither ergänzte Modellergebnisse. 1 ChecklistBank-Paar (Basis-DOI zeigt
+diesmal ohne Drift auf genau die vorgelegte `.v3`, `attempt: 3` bestätigt). 1
+4TU.ResearchData-Paar mit ungewöhnlicher Relationsrichtung (dazu unten).
+
+**Neu: erster Redivis-Fund unter den Kandidaten (LibreChat, 3 Paare, Dreiergruppe).**
+`10.57783/pxnq-zs79` (unversionierte Basis-DOI) erklärt über zwanzig `HasVersion`-
+Relationen; die beiden anderen Paarmitglieder (`mtbn-yw89`, `gtyv-ab53`) erklären
+wechselseitig `IsVersionOf` gegenüber der Basis sowie `IsNewVersionOf`/
+`IsPreviousVersionOf` zueinander (v15.54 löst v15.53 ab). Strukturell identisch zum
+etablierten ICPSR-Basis-/Versions-Muster, nur ein neuer Anbieter (Redivis, Columbia)
+und deutlich mehr Versionen als bisher bei einem einzelnen Werk beobachtet (>20). Alle 3
+Paare kein_merge.
+
+**Neu: erster COCOON-Fund unter den Kandidaten — derselbe Messreihen-Fehlerfall wie bei
+Herbarbelegen, hier bei Sprachaufnahmen.** Zwei DOIs mit wortgleichem Titel, Herausgeber
+und Beschreibung („Monosyllabic words with Rising tone... consultant M5... 'Impatient'")
+und derselben `IsPartOf`-Elternsammlung, aber unterschiedlichen `HasPart`-Zieldateien
+(`391c8e9c.egg` vs. `4229eff7.egg`, verschiedene Laryngograph-Aufnahmen) und
+unterschiedlichen `Requires`-DOIs. Zwei verschiedene Aufnahmedurchgänge derselben
+Leseaufgabe — der im Startauftrag benannte Fehlerfall „Serie sieht aus wie Dublette" gilt
+damit nachweislich nicht nur für Herbarbelege und Zeitscheiben, sondern auch für
+Sprachkorpora mit wiederholten Testbedingungen. kein_merge.
+
+**2 weitere SITG-Fassungsmerges** (Macrophytes du lac — Herbier, Macrophytes du lac —
+Zones sensibles): bei „Herbier" WFS-`GetCapabilities` gegen FeatureServer/0 geprüft
+(identischer FeatureType-/Layername `LCE_HYB_MACROPHYTES_LAC_HERBE`, deckungsgleiche
+BBox); bei „Zones sensibles" MapServer/0 gegen FeatureServer/0 (identischer Layername
+`LCE_HYB_MACROPHYTES_LAC_SENSIB`, exakt identische Ausdehnung). Derselbe wiederkehrende
+SITG-Befund wie in den Läufen seit 12./13.09., diesmal auf zwei neuen Diensten.
+
+**FEMA-„Live"-Umnummerierung (41. Lauf, 12.09.) bestätigt sich ein zweites Mal, andere
+Layer-Nummer.** Zwei „Moderate Events"-Einträge (FEMA AGOL) mit identischem Titel UND
+identischer Zugriffs-URL (`.../NWS_Watches_Warnings_v1/FeatureServer/10`), aber
+verschiedenen Item-GUIDs. Die Item-Metadaten der beiden GUIDs zeigen tatsächlich
+unterschiedliche Originaltitel („Hazard - All Hazards - Live..." bzw. „... Wildfire - Live
+- ... Red Flag Warnings..."); die aktuelle Layer-10-Definition trägt eine dritte,
+mit keinem der beiden Item-GUIDs identische `serviceItemId`. Wie beim Fund vom 41. Lauf:
+identische Zugriffs-URL ist ein Artefakt einer späteren Layer-Umnummerierung beim
+Anbieter, kein Identitätsbeleg. Mit zwei Datenpunkten (unterschiedliche FEMA-Region9-
+Dienste, unterschiedliche Layer-Indizes) bestätigt sich, dass dies kein Einzelfall ist —
+weiterhin keine automatische Erkennung in `aufloese.py` umgesetzt (Pipeline-Änderung
+außerhalb des Commit-Umfangs dieser Routine), aber der Vorschlag aus dem 41. Lauf
+(Rumpf auf `"error"`-Schlüssel prüfen, nicht nur HTTP-Status) gewinnt mit dem zweiten
+Fund an Gewicht.
+
+**1 4TU.ResearchData-Paar mit umgekehrter Relationsrichtung:** Die unversionierte
+Basis-DOI (`10.4121/023f77ad-...`) erklärt selbst `IsVersionOf` gegenüber der
+`.v1`-DOI — nicht wie sonst üblich die Versions-DOI gegenüber der Basis. Nach der seit
+dem 19.09. dokumentierten Regel (jede `IsVersionOf`-Familie ist per Definition eine
+Werk-, keine Fassungsrelation) ändert die Richtung nichts am Urteil: kein_merge, ohne
+dass ein Dateivergleich nötig war.
+
+**Stichprobe (15 Einträge): 15/15 plausibel, nichts markiert.** 2× DiSSCo (Titel und
+Zugriffsweg bestätigt), 3× ArcGIS (`?f=json`, `name`-Feld passend zum Titel), 2× DASI-
+Epigraphen (diesmal kein eigenes Metatag mehr auf `dasi.cnr.it` — die Seite hat sich
+umgestellt —, Titel steht jetzt direkt im gerenderten `<h1>`, beide bestätigt), 4× Zenodo
+(Titel über die API bzw. nach Redirect auf die aktuelle Fassung bestätigt), 1× EMSL/OSTI
+(200, ohne WAF-Sperre), 3× CCDC (2 von 3 mit dem seit dem 42. Lauf bekannten HTTP-404-
+Bot-Sperrmuster, Titel je über `api.datacite.org` bestätigt statt über die Website).
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten oder in der Stichprobe außer den
+oben genannten Redivis-/COCOON-Erstfunden (COCOON war bereits als Quelle bekannt, nur
+nicht unter Merge-Kandidaten). Keine Änderung an `kandidaten.py` oder `aufloese.py`
+vorgenommen — der am 19.09. vorgeschlagene Ausschluss reiner `IsVersionOf`-Paare aus der
+Fassungs-Kandidatenliste bleibt ein offener Vorschlag, nicht selbst umgesetzt.
+
 ## 2026-09-19 — Sechsundvierzigster Lauf: Concept-/Versions-Alias-Muster ist jetzt die Mehrheit der Kandidaten, nicht mehr die Ausnahme — Vorschlag für eine deterministische Regel
 
 Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 46 Vorläufen). 40 Kandidaten
