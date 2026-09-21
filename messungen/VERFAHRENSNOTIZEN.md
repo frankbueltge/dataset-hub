@@ -3,6 +3,73 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-21 — Achtundvierzigster Lauf: 40/40 kein_merge, Tombstone-Duplicate-Fund mit benanntem Ziel aber gelöschtem Dateiinhalt, OSTI/MyEMSL täuscht bei nacktem curl einen WAF-Block mit HTTP 200 vor
+
+Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 48 Vorläufen). `--aus-snapshot`
+funktionierte direkt. 40 Kandidaten vorgelegt (337 gefunden, 297 gekappt, 1.960 bereits
+beurteilte Paare übersprungen). **40/40 kein_merge, kein neuer Merge.** 31 Zenodo-Concept-/
+Versions-Alias-Paare (Standardmuster), 2 ChecklistBank-Basis-/`.v3`-Paare (Basis-DOI/
+`versionDoi` und `attempt: 3` über `api.checklistbank.org` bestätigt, wie im 47. Lauf), 2
+figshare-Paare (Obstetric-Datensatz, dazu unten), 4 ArcGIS-OSM-„Medical"-Paare (dazu unten),
+1 DiSSCo-Herbarbelegpaar (RBGE E00336626/E00336628, etablierter Fehlerfall) — keine neue
+Quelle.
+
+**Neu: ein Zenodo-Tombstone mit `removal_reason: duplicate` UND benanntem Ziel — anders als
+beim Fund vom 29. Lauf (Metacoupled, Ziel unbekannt) —, aber weiterhin ohne vergleichbaren
+Dateiinhalt.** "NGS Mount Everest AWS Network" (Kandidatenpaare `dh-3d7615c7dcc1e9e7` mit
+`dh-8ac6b3d3fdb7b650` und `dh-a00964861791c653`): `zenodo.org/api/records/21581269` liefert
+HTTP 410 mit vollständigem Tombstone (`duplicate`, entfernt 2026-07-29T05:37Z). Die
+geharvestete Relation dieses Eintrags nennt explizit `IsVersionOf → zenodo.18849098` — anders
+als beim 29. Lauf ist das Ziel also bekannt, und die Werk-Gruppierung stimmt bereits (R2). Der
+Konzept-Datensatz 18849098 erhielt ~5 Stunden nach der Löschung (10:32Z) eine neue Version
+(21666973) — ein plausibles Bild: falsche Ablage, dann gelöscht, dann korrekt nachgereicht.
+Trotzdem bleibt `kein_merge` auf Fassungsebene richtig: Der gelöschte Datensatz liefert keine
+Datei mehr zum Abgleich gegen 18849098/21666973 oder gegen die dritte Fassung 19494332 — ein
+benanntes Ziel ersetzt keinen Dateibeleg. **Ergänzung zur Regel vom 29. Lauf:** Auch ein
+Tombstone mit Zielangabe bleibt ohne Dateiinhalt ein Indiz, kein Beleg.
+
+**Neu: `www.osti.gov/servlets/purl/…` liefert bei nacktem `curl` (ohne `User-Agent`) HTTP 200
+mit einer WAF-Ablehnungsseite ("Request Rejected") statt des angekündigten Dokuments — ein
+Bot-Block, der sich als Erfolg tarnt, statt wie GBIF (403) oder CCDC (404) als Fehlschlag
+sichtbar zu sein.** Fund während der Stichprobensichtung (zwei EMSL/OSTI-Einträge, Paare 7 und
+14). Mit der projekteigenen `hub_lib.UA` (`dataset-hub-pipeline/0.1 …`, wie sie `aufloese.py`
+tatsächlich sendet) und ebenso mit einer Browser-UA liefert derselbe Pfad HTTP 200 mit echtem
+Inhalt (92 KB "MyEMSL – Upload Report"). Die Pipeline selbst ist davon **nicht** betroffen —
+sie sendet immer `hub_lib.UA`, nie den bloßen `curl`-Standard-UA-String. Der Fund betrifft nur
+Ad-hoc-Prüfungen der Urteilsroutine selbst: Ein rohes `curl` ohne UA-Header kann hier einen
+falschen Negativbefund erzeugen, der wie ein bestätigter Zugriff aussieht (Status 200), es
+aber nicht ist. **Regel daraus:** Bei jeder Ad-hoc-HTTP-Prüfung während der Urteilsroutine
+`hub_lib.UA` oder eine Browser-UA mitschicken, nicht den bloßen curl-Standard — sonst sieht
+ein Bot-Block wie eine Bestätigung aus, das genaue Gegenteil der 403/404-Fälle, aber derselbe
+Verwechslungstyp wie beim HEAD-Befund vom 26.07.
+
+**figshare-Paare (Obstetric admissions to intensive care units in Nepal):** Nur Version 5 ist
+über `api.figshare.com/v2/articles/31801396/versions/{n}` noch öffentlich abrufbar (v1–v4
+HTTP 404). Die geharvestete Relation von v2 (`dh-211feedacfee9146`) ist `IsIdenticalTo` →
+Basis-DOI — dadurch bereits automatisch auf Fassungsebene mit der Basis zusammengeführt (R2,
+gleiche `fassung_id`). v1 (`dh-521737fedf16a5f9`) trägt dagegen nur `IsPreviousVersionOf` →
+Basis-DOI, eine Werk-, keine Fassungsrelation — die Quelle unterscheidet v1 damit selbst von
+v2/Basis. Beide vorgelegten Paare (v2/v1, v1/Basis) `kein_merge`, konsistent mit der
+Quellenrelation, ganz ohne Dateivergleich nötig.
+
+**ArcGIS-OSM-„Medical"-Vierergruppe (Afrika, Asien, Nord-, Südamerika):** Je ein `_Areas`- und
+ein unbenanntes Pendant mit identischem Basistitel. `FeatureServer/0?f=json` für alle acht
+Layer geprüft: `_Areas` liefert durchweg `geometryType: esriGeometryPolygon` (Flächen), das
+Pendant durchweg `esriGeometryPoint` (Einzelstandorte) — unterschiedliche Geometrietypen
+derselben Kategorie, kein Dublettenfall trotz gleichlautenden Titels.
+
+**Stichprobe (15 Einträge): 15/15 plausibel, nichts markiert.** 3× DASI-Epigraphen (Titel im
+gerenderten `<h1>` bestätigt, mit UA wie oben), 2× GBIF/CCDC-artige Bot-Sperren (GBIF 403 und
+CCDC 404, beide Titel über die jeweilige API bestätigt — etablierte Fälle), 4× ArcGIS (`name`-
+Feld gegen Titel geprüft; bei „Drainage Ways" nur der interne CAD-Layername `MR_D_ALLP` ohne
+inhaltliche Bestätigung einsehbar — plausibel, aber nicht positiv verifizierbar, nicht
+markiert mangels konkretem Gegenbeleg), 3× DiSSCo (Titel über `api.datacite.org` bestätigt),
+1× Zenodo (Titel bestätigt), 2× EMSL/OSTI (dazu oben — mit korrekter UA bestätigt).
+
+**Nicht getan:** Keine neue Quelle unter den Kandidaten oder in der Stichprobe. Keine Änderung
+an `kandidaten.py`/`aufloese.py`/`normalisiere.py` vorgenommen — der Ausschluss reiner
+`IsVersionOf`-Paare aus der Fassungs-Kandidatenliste (Vorschlag vom 19.09.) bleibt offen.
+
 ## 2026-09-20 — Siebenundvierzigster Lauf: zwei weitere SITG-Fassungsmerges, FEMA-„Live"-Umnummerierung bestätigt sich ein zweites Mal, erste Redivis- und COCOON-Funde unter den Kandidaten
 
 Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 47 Vorläufen). `--aus-snapshot`
