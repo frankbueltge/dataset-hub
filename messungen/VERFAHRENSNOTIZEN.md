@@ -3,6 +3,56 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-09-23 — Neunundvierzigster Lauf: zwei Verfahrensfunde vor dem Urteil — Ernte seit 58 Tagen stumm, `kandidaten.py` lädt seit derselben Zeit das falsche Bestands-Asset
+
+**Fund 1: Die „Nächtliche Ernte" ist seit ihrem ersten Lauf nie wieder gelaufen.**
+`actions_list list_workflow_runs` für `.github/workflows/nightly.yml` meldet
+`total_count: 1` — genau der eine Lauf vom 2026-07-27T06:43Z, den die Notiz vom selben
+Tag bereits als „zu spät, aber lief" verzeichnet hat. Seither: kein einziger weiterer
+Lauf, weder geplant noch manuell. Passend dazu: Das jüngste Snapshot-Release ist
+weiterhin `snapshot-2026-07-27c` (veröffentlicht 2026-07-27T18:34Z) — dasselbe, das
+schon der 44.–48. Lauf beurteilt hat. Zwischen dem 27.07. und heute (58 Tage, 48
+Urteilsroutine-Läufe) ist **kein einziger neuer Datenstand entstanden.** Ob das an der
+Umstellung auf Scouts-Wachstum liegt (Entscheidung vom 27.07. abends, `CLAUDE.md`) oder
+schlicht daran, dass niemand nach dem ersten Lauf nachgesehen hat, kann diese Routine
+nicht unterscheiden — nur den Befund melden: Die Urteilsroutine urteilt seit fast zwei
+Monaten wiederholt über denselben eingefrorenen Stand.
+
+**Fund 2, dadurch erst sichtbar: `kandidaten.py::snapshot_holen()` lädt seit derselben
+Zeit das falsche `*.sqlite.gz`.** Das Release `snapshot-2026-07-27c` trägt entgegen der
+sonstigen Konvention **zwei** Bestands-Assets: `hub-2026-07-27.sqlite.gz` (das laut
+Release-Text „der ganze Bestand", 22.473 Einträge, so auch im git-committeten
+`snapshots/snapshot-2026-07-27c.manifest.json`) und einen liegengebliebenen, älteren
+`hub-2026-07-26.sqlite.gz`. Die Auswahlzeile
+
+```python
+asset = next((a for a in rel["assets"] if a["name"].endswith(".sqlite.gz")), None)
+```
+
+nimmt das erste Listentreffer nach GitHub-API-Reihenfolge — das ist hier
+`hub-2026-07-26.sqlite.gz`, nicht das kanonische. Nachgeprüft: `urteil/vorlage.json`
+dieses Laufs weist `"eintraege_gesamt": 17327` aus, während das für denselben Tag
+committete Manifest `22473` nennt — Differenz 5.146 Einträge (rund 23 % des Bestands),
+die seit Release `c` **nie** in einen Merge-Kandidatenlauf oder eine Stichprobe gelangt
+sein können. Die einzelnen Urteile in diesem und früheren Läufen bleiben davon
+unberührt (jedes wurde gegen die reale Quelle verifiziert, nicht gegen die Datei
+selbst) — betroffen ist die **Vollständigkeit der Abdeckung**, nicht ihre Richtigkeit.
+
+**Nicht getan:** `kandidaten.py` reparieren. Diese Routine committet nur Journal und
+Verfahrensnotizen (URTEILSROUTINE.md), ein Pipeline-Fix gehört in einen eigenen,
+bewussten Commit außerhalb dieses Laufs.
+
+**Regel/Prüfauftrag daraus:**
+1. Klären, warum `nightly.yml` nach dem 27.07. nicht mehr gelaufen ist (Workflow noch
+   aktiv? `schedule`-Trigger noch vorhanden? Secrets/Berechtigungen entzogen?) — bis
+   geklärt bleibt jeder „beurteilter_stand: snapshot-2026-07-27c" ein Hinweis auf
+   denselben eingefrorenen Tag, kein Fortschritt.
+2. `snapshot_holen()` muss das *benannte* Bestands-Asset wählen, nicht das erste
+   `*.sqlite.gz` — z. B. über den im Release-Text oder `manifest.json` genannten
+   Dateinamen, oder indem Releases mit mehr als einem `*.sqlite.gz`-Treffer als Fehler
+   behandelt werden (`AUSFALL`, analog zur bestehenden Behandlung eines fehlenden
+   Assets), statt still das kleinste/älteste zu nehmen.
+
 ## 2026-09-21 — Achtundvierzigster Lauf: 40/40 kein_merge, Tombstone-Duplicate-Fund mit benanntem Ziel aber gelöschtem Dateiinhalt, OSTI/MyEMSL täuscht bei nacktem curl einen WAF-Block mit HTTP 200 vor
 
 Beurteilter Stand: `snapshot-2026-07-27c` (unverändert seit 48 Vorläufen). `--aus-snapshot`
