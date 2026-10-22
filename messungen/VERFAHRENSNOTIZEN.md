@@ -3,6 +3,18 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-10-22 — Achtundfünfzigster Lauf: 0 neue Merge-Kandidaten, 1 weiterer markierter Zugangsstatus-Wechsel in der Stichprobe (zweiter Fund dieses Musters), `kandidaten.py`-Fehlauswahl 29 Tage später weiterhin unbehoben
+
+Beurteilter Stand: weiterhin `snapshot-2026-07-27c`, `eintraege_gesamt: 17327` (Soll laut committetem Manifest: 22473). `--aus-snapshot` lief fehlerfrei durch, lädt aber unverändert seit dem 49. Lauf `hub-2026-07-26.sqlite.gz` statt `hub-2026-07-27.sqlite.gz` — derselbe Fehler in `kandidaten.py::snapshot_holen()` (Zeile 64), jetzt 29 Tage und neun Läufe später unverändert. **Nicht getan:** `kandidaten.py` reparieren, aus demselben Grund wie in den Vorläufen vermerkt.
+
+**Keine Merge-Kandidaten vorgelegt (0 gefunden, 0 gekappt, 2.297 bereits beurteilte Paare übersprungen).** Derselbe eingefrorene Stand wie im 57. Lauf liefert weiterhin keine neuen, noch nicht beurteilten Paare — erwartbar, solange kein neuer Bestand entsteht. Es gab nichts zu beurteilen.
+
+**Stichprobe (15 Einträge): 14/15 bestätigt, 1 markiert.** 9× DataCite (Titel, Urheber, Herausgeber und URL exakt per `api.datacite.org` bestätigt: 3× DASI-Epigraphen `dasi.cnr.it`, 2× DiSSCo `disscover.dissco.eu`, je 1× OSTI/EMSL, GBIF-Datensatz, GBIF-Occurrence-Download, Zenodo-Anonymisierungsbündel), 6× ArcGIS (Titel/Herausgeber per Item-API `sharing/rest/content/items/<id>` bestätigt — bei „Equity Index 2018 (Tacoma)" weicht der interne FeatureServer-Layername „Equity/Opportunity Overall Index 2018" vom Item-Titel ab, dasselbe harmlose Muster wie seit dem 50. Lauf bei den CAD-Layernamen).
+
+**Markiert: ein zweiter ArcGIS-Dienst mit demselben Zugangsstatus-Wechsel wie im 57. Lauf** (`dh-73302f10bb1d2bd8`, City of Vancouver „Operating Permit Water Quality Reports"). Der registrierte FeatureServer-Layer und sein Wurzelpfad antworten jetzt mit HTTP 200 auf einen `"Token Required"`-Fehlerkörper (Code 499); die ArcGIS-Item-API liefert für dasselbe Item HTTP 403 „You do not have permissions"; eine Suche nach der Item-ID im öffentlichen ArcGIS-Index liefert `total: 0` — das Item ist dort nicht mehr gelistet. Titel/Herausgeber/Urheber stammen wörtlich aus der Fundstelle, kein Fehler im Eintrag. Mit diesem zweiten Fund binnen zwei Läufen zeichnet sich ein wiederkehrendes Muster ab: ArcGIS-Hub-Dienste können nach der Ernte von öffentlich auf tokenpflichtig wechseln, ohne aus der Fundstelle selbst erkennbar zu sein. Noch zu früh für eine deterministische Regel (zwei Fälle), aber ein Kandidat für eine künftige periodische Nachprüfung bereits aufgenommener ArcGIS-Zugriffswege außerhalb der Urteilsroutine.
+
+**Ergebnis:** 0 Merge-Kandidaten beurteilt (keine vorgelegt), 15 Stichprobeneinträge gesichtet, davon 1 markiert und 14 bestätigt. 2.297 bereits beurteilte Paare übersprungen.
+
 ## 2026-10-21 — Siebenundfünfzigster Lauf: 0 neue Merge-Kandidaten (Rückstau vollständig abgearbeitet), 1 markierter Zugangsstatus-Wechsel in der Stichprobe, `kandidaten.py`-Fehlauswahl 28 Tage später weiterhin unbehoben
 
 Beurteilter Stand: weiterhin `snapshot-2026-07-27c`, `eintraege_gesamt: 17327` (Soll laut committetem Manifest: 22473). `--aus-snapshot` lief fehlerfrei durch, lädt aber unverändert seit dem 49. Lauf `hub-2026-07-26.sqlite.gz` statt `hub-2026-07-27.sqlite.gz` — derselbe Fehler in `kandidaten.py::snapshot_holen()` (Zeile 64), jetzt 28 Tage und acht Läufe später unverändert. **Nicht getan:** `kandidaten.py` reparieren, aus demselben Grund wie in den Vorläufen vermerkt.
