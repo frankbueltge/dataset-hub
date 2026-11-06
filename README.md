@@ -9,13 +9,18 @@ Two uses, equally weighted:
 2. **A queryable base for machine-run research practices** — versioned snapshots
    (SQLite + Parquet as release assets) instead of re-researching every question.
 
-The register grows continuously through gated automatic intake; everything admitted
-automatically is visibly marked unverified.
-
-**Status: Phase 2 — core in operation.** Schema v0.1.0 is frozen (`schema/`), the
-first adapter (DataCite, incremental) is live, and snapshots are published as
-tagged releases. Every source is measured and gated *before* an adapter may be
-built; measurements and the GO/NO-GO register live in `messungen/`.
+**Status (2026-10-25): Phase 2, after the rollback of 2026-07-27.** The bulk register built
+from DataCite (some 22,000 entries) measured the wrong thing: of 89 DOIs the practices had
+actually cited, none was in it. It was rolled back that evening, and the register is meant to
+grow from the research outward instead — through scouts that search from the practices' work,
+for datasets and, in a second catalogue, papers
+([decision record](https://github.com/frankbueltge/frankbueltge.de/blob/main/docs/design/2026-07-27-register-rueckbau-und-scouts.md)).
+The website no longer reads this hub at build time; its curated register is committed in
+`frankbueltge.de → src/data/register/`. Holdings, harvests and snapshots here stay as quarry and
+measurement evidence. Schema v0.1.0 is frozen (`schema/`); four harvest adapters exist (DataCite,
+ArcGIS, Hugging Face, Kaggle — Kaggle held back on legal grounds); a daily judgment routine
+(`URTEILSROUTINE.md`) works through merge candidates. Every source is measured and gated
+*before* an adapter may be built; measurements and the GO/NO-GO register live in `messungen/`.
 
 ## Design
 
