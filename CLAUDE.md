@@ -90,3 +90,14 @@ python3 -m unittest discover -s tests
 cd oberflaeche
 python3 generiere_index.py       # Bestand → public/daten/ (NUR Kernbestand)
 ```
+
+## Unbeaufsichtigte Läufe: Befehlsformen, die auf Freigabe warten
+
+Die Urteilsroutine läuft ohne Zuschauer. Einige Befehlsformen verlangen immer die Freigabe eines Menschen, gleich was
+die Berechtigungsregeln sagen, und der Lauf hängt dann, ohne etwas zu pushen. Vermeiden:
+
+- **Nie einen Download in einen Interpreter pipen** (`curl … | python3 -c …`, `… | sh`). Erst mit `curl -o datei`
+  speichern, dann die Datei in einem eigenen Schritt lesen. So ist die Urteilsroutine am 2026-11-06 hängen geblieben.
+- **Nie `cd` und einen git-Befehl in einem Bash-Aufruf** (`cd pipeline && git …`). `cd` allein aufrufen, git im
+  nächsten Aufruf.
+- **Ein Zweck pro Bash-Aufruf:** Dateien mit dem Write-Werkzeug schreiben, Commit und Push getrennt davon.
