@@ -12,9 +12,12 @@ Schranken, Bestandsbau. Die Routine bekommt fertige Vorlagen und gibt Urteile zu
 ## Ablauf
 
 ```bash
-git pull
-cd pipeline && python3 kandidaten.py --saat $(date -u +%Y%m%d) --aus-snapshot
+python3 pipeline/kandidaten.py --aus-snapshot
 ```
+
+Die Saat ist ohne Angabe das heutige UTC-Datum. Der Aufruf ruft am Ende auch gleich alle
+Zugriffswege ab (`pipeline/belege.py`, siehe unten) — **du selbst rufst keine URL per
+`curl` auf**.
 
 `--aus-snapshot` holt den **jüngsten veröffentlichten Bestand** — nicht einen lokalen Bau,
 den es in deinem Checkout gar nicht gibt. Damit hängst du nicht daran, ob die nächtliche
@@ -29,6 +32,26 @@ Das erzeugt drei Dateien in `urteil/`:
 | `kandidaten.jsonl` | Merge-Kandidaten: gleicher normalisierter Titel, gemeinsamer Urheber oder Herausgeber, noch nicht dieselbe Fassung. Je Paar beide Einträge vollständig mit Beleg |
 | `stichprobe.jsonl` | Zufallsstichprobe automatisch aufgenommener Einträge (`status: ungeprueft`) |
 | `vorlage.json` | Zähler des Laufs, inklusive **gekappter** Kandidaten |
+| `belege.jsonl` | Je Zugriffsweg: HTTP-Status, finale URL, Inhaltstyp, Größe, Seitentitel, ob der registrierte Titel im Text steht; bei GBIF und ArcGIS zusätzlich die Antwort der öffentlichen API (`api`, `abgeleitet: true`) |
+
+### Zugriffswege prüfen, ohne Freigabe
+
+Die Routine läuft unbeaufsichtigt. Eigene Prüfungen per `curl` — Schleifen mit
+Variablen, `curl … | python3`, `cd` vor git — lässt die Befehlsausführung **immer** von
+einem Menschen freigeben, und dann hängt der Lauf (2026-11-06 und 2026-11-07, bis zu
+zehn Rückfragen pro Lauf). Deshalb:
+
+- Lies `urteil/belege.jsonl` mit dem Read-Werkzeug. Das ist der Beleg, den du nennst
+  („Zugriffsweg 200, Seitentitel X, registrierter Titel im Text gefunden").
+- Brauchst du eine weitere URL (etwa eine, auf die eine Seite weiterleitet), dann genau
+  so, mit der URL wörtlich und ohne Variablen:
+  `python3 pipeline/belege.py --url "https://…" --suche "Text, der dort stehen soll"`.
+  Das Ergebnis wird an `urteil/belege.jsonl` angehängt.
+- Wo der Text der Routine noch sagt, du sollst die Zugriffswege „per curl" aufrufen, ist
+  seit 2026-11-07 dieser Weg gemeint.
+- Steht `titel_im_text: false`, heißt das oft nur, dass die Seite ihren Inhalt per
+  JavaScript nachlädt — dann zählt der `api`-Beleg oder der Seitentitel. Ein `status:
+  null` ist ein Ausfall, kein Befund über die Ressource.
 
 ## Was zu tun ist
 
@@ -37,8 +60,8 @@ Das erzeugt drei Dateien in `urteil/`:
 Je Paar entscheiden: **dasselbe Ding, verschiedene Fassungen desselben Werks, oder
 verschiedene Dinge?** Maßgeblich ist das Identitätsmodell in `schema/SCHEMA.md`.
 
-Belege prüfen, nicht Titel vergleichen. Nützlich sind: die Zugriffswege tatsächlich
-aufrufen und vergleichen, die Quell-IDs (aufeinanderfolgende DOIs deuten auf eine
+Belege prüfen, nicht Titel vergleichen. Nützlich sind: die abgerufenen Zugriffswege in
+`urteil/belege.jsonl` vergleichen (wohin leiten sie weiter, welchen Titel zeigen sie), die Quell-IDs (aufeinanderfolgende DOIs deuten auf eine
 Doppelablage oder eine mehrteilige Einreichung), Jahr und Herausgeber.
 
 **Häufigster Fehlerfall, gemessen:** Serien sehen aus wie Dubletten. Herbarbelege
@@ -82,7 +105,9 @@ python3 -m unittest discover -s pipeline/tests
 ```
 
 Dann **nur das Journal** committen (`journal/entscheidungen.jsonl`, dazu ggf.
-`messungen/VERFAHRENSNOTIZEN.md`) und pushen — explizite Pfade, nie `git add -A`.
+`messungen/VERFAHRENSNOTIZEN.md`) und pushen — explizite Pfade, nie `git add -A`. Jeder
+Schritt ein eigener, kurzer Bash-Aufruf ohne `cd` davor: `git add journal/entscheidungen.jsonl`,
+dann `git commit -m "…"`, dann `git push`.
 
 **Du baust den Bestand nicht selbst.** Urteile sind Journal-Ereignisse; sie wirken beim
 nächsten nächtlichen Bau, der sie anwendet. Das ist so gewollt: Dein Beitrag ist das

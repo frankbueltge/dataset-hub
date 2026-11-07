@@ -18,6 +18,7 @@ Bereits beurteilte Paare werden übersprungen: Das Journal führt `merge` UND
 `kein_merge`, damit dieselbe Frage nicht monatlich neu gestellt wird.
 """
 import argparse
+import datetime
 import gzip
 import itertools
 import json
@@ -158,7 +159,8 @@ def merge_kandidaten(eintraege, beurteilt):
     return kandidaten
 
 
-def main(stichprobe_n: int, max_kandidaten: int, saat: int, aus_snapshot: bool):
+def main(stichprobe_n: int, max_kandidaten: int, saat: int, aus_snapshot: bool,
+         mit_belegen: bool = True):
     URTEIL.mkdir(exist_ok=True)
     stand = "lokaler Bau"
     if aus_snapshot or not (BESTAND / "hub.sqlite").exists():
@@ -213,15 +215,26 @@ def main(stichprobe_n: int, max_kandidaten: int, saat: int, aus_snapshot: bool):
         print(f"HINWEIS: {gekappt} Kandidaten wurden NICHT vorgelegt (Kappe "
               f"{max_kandidaten}). Sie verschwinden nicht — der nächste Lauf legt sie vor.")
 
+    # Die Zugriffswege gleich mit abrufen: Die Urteilsroutine liest danach nur noch
+    # urteil/belege.jsonl und braucht keinen eigenen curl-Aufruf, an dem eine
+    # unbeaufsichtigte Sitzung auf Freigabe warten würde (2026-11-07, belege.py).
+    if mit_belegen:
+        import belege
+        belege.main([])
+
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--stichprobe", type=int, default=15)
     p.add_argument("--max-kandidaten", type=int, default=40)
-    p.add_argument("--saat", type=int, required=True,
-                   help="Zufallssaat (z. B. YYYYMMDD) — macht den Lauf reproduzierbar")
+    p.add_argument("--saat", type=int,
+                   default=int(datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d")),
+                   help="Zufallssaat (Standard: heutiges UTC-Datum YYYYMMDD) — macht den Lauf "
+                        "reproduzierbar")
     p.add_argument("--aus-snapshot", action="store_true",
                    help="den jüngsten veröffentlichten Bestand holen statt eines lokalen Baus "
                         "(Standard, wenn lokal keiner existiert)")
+    p.add_argument("--ohne-belege", action="store_true",
+                   help="die Zugriffswege nicht abrufen (belege.py)")
     a = p.parse_args()
-    main(a.stichprobe, a.max_kandidaten, a.saat, a.aus_snapshot)
+    main(a.stichprobe, a.max_kandidaten, a.saat, a.aus_snapshot, not a.ohne_belege)

@@ -96,8 +96,10 @@ python3 generiere_index.py       # Bestand → public/daten/ (NUR Kernbestand)
 Die Urteilsroutine läuft ohne Zuschauer. Einige Befehlsformen verlangen immer die Freigabe eines Menschen, gleich was
 die Berechtigungsregeln sagen, und der Lauf hängt dann, ohne etwas zu pushen. Vermeiden:
 
-- **Nie einen Download in einen Interpreter pipen** (`curl … | python3 -c …`, `… | sh`). Erst mit `curl -o datei`
-  speichern, dann die Datei in einem eigenen Schritt lesen. So ist die Urteilsroutine am 2026-11-06 hängen geblieben.
+- **Kein eigenes `curl`.** Zugriffswege ruft `pipeline/belege.py` ab (läuft mit `kandidaten.py` automatisch;
+  einzelne URL: `python3 pipeline/belege.py --url "https://…" --suche "…"`), das Ergebnis steht in
+  `urteil/belege.jsonl`. Schleifen mit Variablen und `curl … | python3` haben die Urteilsroutine am 2026-11-06 und
+  2026-11-07 mit bis zu zehn Rückfragen pro Lauf hängen lassen.
 - **Nie `cd` und einen git-Befehl in einem Bash-Aufruf** (`cd pipeline && git …`). `cd` allein aufrufen, git im
   nächsten Aufruf.
 - **Ein Zweck pro Bash-Aufruf:** Dateien mit dem Write-Werkzeug schreiben, Commit und Push getrennt davon.
