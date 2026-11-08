@@ -37,6 +37,18 @@ URTEIL = WURZEL / "urteil"
 REPO = "frankbueltge/dataset-hub"
 
 
+def waehle_asset(assets: list) -> dict | None:
+    """Der jüngste Bestand eines Releases: das *.sqlite.gz mit dem größten Namen.
+
+    Die Namen tragen das Baudatum (hub-YYYY-MM-DD.sqlite.gz). Bis 2026-11-08 nahm
+    `next()` das erste passende Asset, und im Release snapshot-2026-07-27c war das
+    hub-2026-07-26 statt hub-2026-07-27 — seit dem 49. Lauf (23.09.) beurteilte die
+    Routine damit 17.327 statt 22.473 Einträge.
+    """
+    passend = [a for a in assets or [] if a.get("name", "").endswith(".sqlite.gz")]
+    return max(passend, key=lambda a: a["name"]) if passend else None
+
+
 def snapshot_holen() -> pathlib.Path:
     """Holt den jüngsten veröffentlichten Bestand.
 
@@ -49,26 +61,31 @@ def snapshot_holen() -> pathlib.Path:
     nutzen ist kein Behelf, sondern der Vertrag. Welcher Stand beurteilt wurde, steht
     anschließend in `urteil/vorlage.json`.
     """
-    kopf = {"User-Agent": UA, "Accept": "application/vnd.github+json"}
+    # Das Token nur an die API schicken. Der Asset-Download leitet auf eine signierte
+    # objects.githubusercontent.com-URL weiter, und mit Authorization-Header antwortet
+    # die Kette mit 504 (gemessen im 74. Lauf, 2026-11-08). Die Releases sind öffentlich.
+    api_kopf = {"User-Agent": UA, "Accept": "application/vnd.github+json"}
     if os.environ.get("GITHUB_TOKEN"):
-        kopf["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
+        api_kopf["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
+    datei_kopf = {"User-Agent": UA, "Accept": "application/octet-stream"}
 
-    def hole(url, roh=False):
-        with urllib.request.urlopen(urllib.request.Request(url, headers=kopf), timeout=120) as r:
+    def hole(url, kopf, roh=False):
+        with urllib.request.urlopen(urllib.request.Request(url, headers=kopf), timeout=300) as r:
             return r.read() if roh else json.loads(r.read())
 
-    releases = [r for r in hole(f"https://api.github.com/repos/{REPO}/releases")
+    releases = [r for r in hole(f"https://api.github.com/repos/{REPO}/releases", api_kopf)
                 if r["tag_name"].startswith("snapshot-") and not r["draft"]]
     if not releases:
         sys.exit("AUSFALL: kein Snapshot-Release gefunden — das ist kein leeres Register.")
     rel = sorted(releases, key=lambda r: r["tag_name"], reverse=True)[0]
-    asset = next((a for a in rel["assets"] if a["name"].endswith(".sqlite.gz")), None)
+    asset = waehle_asset(rel["assets"])
     if not asset:
         sys.exit(f"AUSFALL: im Release {rel['tag_name']} fehlt der Bestand (*.sqlite.gz).")
     BESTAND.mkdir(exist_ok=True)
     ziel = BESTAND / "hub.sqlite"
-    print(f"… beurteilt wird {rel['tag_name']} ({asset['size'] / 1e6:.0f} MB)", flush=True)
-    ziel.write_bytes(gzip.decompress(hole(asset["browser_download_url"], roh=True)))
+    print(f"… beurteilt wird {rel['tag_name']} / {asset['name']} "
+          f"({asset['size'] / 1e6:.0f} MB)", flush=True)
+    ziel.write_bytes(gzip.decompress(hole(asset["browser_download_url"], datei_kopf, roh=True)))
     return ziel, rel["tag_name"]
 
 
