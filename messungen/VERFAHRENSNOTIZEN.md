@@ -3,6 +3,55 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-10 — Sechsundsiebzigster Lauf: 40 weitere Merge-Kandidaten aus dem Rückstau beurteilt, Konzept-DOI kann auf eine dritte, nicht registrierte Fassung zeigen, figshare-Versionspaar erstmals als Merge-Kandidat
+
+`kandidaten.py --saat 20261110 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand: weiterhin
+`snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473` — deckungsgleich mit
+dem committeten Manifest, wie seit dem 75. Lauf. `merge_kandidaten_gefunden: 3901` (der im 75. Lauf
+gemeldete Rückstau abzüglich der dort beurteilten 40), davon 40 vorgelegt (Kappe), 3.861 weiterhin
+gekappt für künftige Läufe. 2.337 bereits beurteilte Paare korrekt übersprungen.
+
+**40 Kandidaten beurteilt: 32× merge (Ebene Fassung), 8× merge (Ebene Werk), 0× kein_merge.** Belege
+je Paar: beide Zugriffswege per `belege.py` aufgerufen und verglichen; bei abweichenden finalen URLs
+zusätzlich die Zenodo-API (`api.zenodo.org/api/records/<id>`) auf `conceptrecid` befragt.
+
+**Neues Muster: eine Zenodo-Konzept-DOI kann auf eine dritte, im Register gar nicht vorhandene
+Fassung zeigen — das ist kein Gegenbeweis für denselben Werk.** Bei zwei der acht Werk-Merges
+(Record 6857713 im Cosmological-Initial-Conditions-Cluster, Record 16936476 im
+Multi-Taxonomy-Vulnerability-Cluster) löste die Konzept-DOI nicht auf eine der beiden registrierten
+Fundstellen auf, sondern auf eine dritte, aktuellere Fassung (7498063 bzw. 18417576), die im Register
+gar nicht vorkommt. Naiv geprüft („Konzept-URL und Versions-URL verschiedene finale Ziele") hätte das
+wie `kein_merge` ausgesehen. Erst die Zenodo-API (`belege.py --url
+"https://zenodo.org/api/records/<registrierte-id>" --suche "conceptrecid <konzept-id>"`) klärte, dass
+beide Fundstellen dieselbe `conceptrecid` tragen und damit zum selben Werk gehören — nur eben zu
+verschiedenen, nicht identischen Fassungen (Ebene `werk`, nicht `fassung`). Festzuhalten für künftige
+Läufe: Ein Nicht-Treffer beim naiven URL-Vergleich einer Konzept-DOI ist ein Hinweis auf weitere,
+im Register fehlende Fassungen desselben Werks — kein Beleg gegen den Merge. Die `conceptrecid`-Probe
+über die API ist der zuverlässigere Test.
+
+**Neues Muster: figshare-Versionspaar erstmals als Merge-Kandidat, nicht nur als Einzelfund.** Für
+die Artikel-ID 31827295 (Driving factors of atmospheric nitrogen oxides…) lagen Version 1, Version 2
+und die versionslose Basis-URL als drei separate Fundstellen vor. Die Landingpages selbst liefern wie
+seit dem 75. Lauf bekannt HTTP 202 ohne Text; aufgelöst über `api.figshare.com/v2/articles/31827295`
+(ohne Version, zeigt laut Feldinhalt `"version":2` — also aktuell Version 2) und
+`.../versions/<n>` für die einzelnen Fassungen. Da dieselbe Artikel-ID strukturell dasselbe Werk mit
+mehreren Fassungen definiert (kein Analogieschluss nötig wie bei Zenodo/Mendeley), beide Paare als
+`merge`, Ebene `werk` beurteilt.
+
+**Stichprobe (15 Einträge): 15/15 bestätigt, nichts markiert.** Darunter 5× figshare/Subdomains mit
+dem bekannten HTTP-202-ohne-Text-Muster (Titel je per `api.figshare.com` bestätigt), 1× ArcGIS
+(Miami „Business Tax Receipts Issued since 2018" — Host nutzt `/gis/rest/services/…` statt
+`/arcgis/rest/services/…`, weshalb `belege.py`s automatische API-Ableitung nicht griff; Titel über die
+ArcGIS-Item-API `arcgis.com/sharing/rest/content/items/<quell_id>` einzeln bestätigt, interner
+Layername „BTR_Issued2018" weicht erwartungsgemäß ab), 1× Harvard Dataverse (Citation-Seite HTTP 202
+ohne Text, Titel über `api.datacite.org` bestätigt), übrige Zenodo-Einträge mit und ohne
+Konzept-/Geschwister-Titeldrift, alle Titel exakt bestätigt.
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (32 Fassung, 8 Werk, 0 abgelehnt), 15 Stichprobeneinträge
+gesichtet (15 bestätigt, 0 markiert). 3.861 Kandidaten bleiben gekappt für künftige Läufe. Zwei neue
+Muster erstmals festgehalten: Konzept-DOI auf dritte, fehlende Fassung (Zenodo) und
+Mehrfassungs-Werk über figshare-Versionsschema.
+
 ## 2026-11-09 — Fünfundsiebzigster Lauf: Fix aus dem 74. Lauf bestätigt, erster vollständiger Bestand seit dem 49. Lauf (23.09.) legt einen Rückstau von 3.941 Merge-Kandidaten frei
 
 `kandidaten.py --saat 20261109 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand: `snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473` — zum ersten Mal deckungsgleich mit dem committeten Manifest (`snapshots/snapshot-2026-07-27c.manifest.json`: `22473`), nicht mehr die seit dem 49. Lauf (23.09., 46 Tage, fünfundzwanzig Läufe) eingefrorenen 17.327. Der Fix aus Commit `a19ba5c` (PR #4, zwischen dem 74. und diesem Lauf eingespielt) behebt beide im 74. Lauf benannten Ursachen zugleich: `waehle_asset()` wählt jetzt das jüngste `*.sqlite.gz` statt des ersten, und der `Authorization`-Header geht nur noch an die GitHub-API, nicht an den signierten Asset-Download.
