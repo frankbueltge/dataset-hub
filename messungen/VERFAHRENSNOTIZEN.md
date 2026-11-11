@@ -3,6 +3,63 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-11 — Siebenundsiebzigster Lauf: 40 Merge-Kandidaten (29 Fassung, 11 Werk, 0 kein_merge), institutionelle White-Label-Domain abseits der bekannten Muster, zweimal Konzept-DOI auf dritte Fassung
+
+`kandidaten.py --saat 20261111 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand: weiterhin
+`snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473` — deckungsgleich mit dem
+committeten Manifest. `merge_kandidaten_gefunden: 3861` (Rückstau aus dem 76. Lauf abzüglich der dort
+beurteilten 40), davon 40 vorgelegt (Kappe), 3.821 weiterhin gekappt für künftige Läufe. 2.377 bereits
+beurteilte Paare korrekt übersprungen.
+
+**40 Kandidaten beurteilt: 29× merge (Ebene Fassung), 11× merge (Ebene Werk), 0× kein_merge.** Belege je
+Paar: beide Zugriffswege per `belege.py` aufgerufen und verglichen; bei fünf Paaren mit unterschiedlichen
+finalen URLs zusätzlich Zenodo-API (`conceptrecid`) bzw. DataCite-API befragt, da naiver URL-Vergleich
+allein hier in die Irre geführt hätte.
+
+**Neue Variante des bekannten Musters: White-Label-Domain der Mendeley/Digital-Commons-Data-Plattform kann
+beliebig institutionsfremd aussehen.** Für `dh-26b499637f4f2c8b`/`dh-6cb67b08a5974bc4` (Mendeley
+`10.17632/dv52g48ypb` und `.1`, PestLens-Biosurveillance-Datensatz, Barney Caton) lösten beide
+Zugriffswege auf `https://data.demo-uni.com/datasets/dv52g48ypb/1` auf — eine Domain, die auf den ersten
+Blick nach Testdaten oder einem Fremdkörper aussieht, zumal der registrierte Herausgeber im Bestand
+„Demo Uni" statt „Mendeley" lautet. Vor dem Urteil geprüft, nicht vermutet: `api.datacite.org` für dieselbe
+DOI enthält sowohl den String „Mendeley" als auch „Demo Uni" wörtlich — die Plattform bleibt technisch
+Mendeley/Digital Commons Data, nur unter einer institutionseigenen Marke samt eigener Domain gehostet.
+**Im selben Lauf bestätigt sich dasselbe Mechanismus-Muster unabhängig in der Stichprobe:**
+`dh-5d0855f80e3fb2b7` (Mendeley `10.17632/nnxkt6p2rp.1`) löst auf `https://unicatt.digitalcommonsdata.com/…`
+auf (Università Cattolica), Titel dort exakt bestätigt. **Festzuhalten für künftige Läufe:** Eine von
+`data.mendeley.com` abweichende finale Domain ist für sich allein kein Hinweis auf eine falsche oder
+verfälschte Ressource — das Weiterleitungsziel entscheidet (Inhalt/Titel stimmt überein), nicht der
+Domainname. Trotzdem gemeldet, weil das Muster bisher nur mit `digitalcommonsdata.com`-Subdomains bekannt
+war, nicht mit vollständig institutionseigenen Domains wie hier.
+
+**Konzept-DOI-auf-dritte-Fassung-Muster (erstmals im 76. Lauf dokumentiert) zweimal erneut beobachtet,
+diesmal mit expliziter `conceptrecid`-Prüfung vor dem Urteil statt danach:**
+- `dh-5153b63e9d536703`/`dh-774ab0b1a765f0a1` (Zenodo 21612216/21612215, Texas-Comptroller-Bienen-Survey):
+  21612216 bleibt auf sich selbst stehen, 21612215 löst auf `records/22800706` auf (nicht im Register).
+  `zenodo.org/api/records/21612216` und `.../records/22800706` enthalten beide die Kennung „21612215"
+  (gemeinsame `conceptrecid`) — Ebene Werk.
+- `dh-2350139a0729bdc1`/`dh-3e61199f4a377590` (Zenodo 17693220/17693221, LLM-Faktencheck-Paper): 17693221
+  bleibt auf sich selbst stehen, 17693220 löst auf `records/19709981` auf (nicht im Register). Beide
+  Zielrecords enthalten die Kennung „17693220" — Ebene Werk.
+
+**Stichprobe (15 Einträge): 14/15 direkt bestätigt, 1 weder bestätigt noch widerlegt (kein Markieren
+nötig).** `dh-0f98b6a91d1812e6` (SAGE-Figshare, `10.25384/sage.21564900`): Landing-Page HTTP 202 ohne Text
+(bekanntes figshare-Muster), `api.figshare.com/v2/articles/21564900` antwortet mit HTTP 404 (anders als bei
+den drei übrigen figshare-Stichprobeneinträgen dieses Laufs, die über die generische API bestätigt werden
+konnten — SAGE scheint eine eigene, von der generischen figshare-API getrennte ID-Zählung zu verwenden),
+und der DOI-Resolver selbst scheitert an einer Cloudflare-Challenge (`doi.org/10.25384/sage.21564900` →
+HTTP 403 „Just a moment…"). Immerhin löste der Resolver so weit auf, dass das Weiterleitungsziel
+(`journals.sagepub.com/doi/full/10.1177/11769351221135141`) exakt die DOI enthält, die im registrierten
+Titel selbst steckt (`sj-xlsx-3-cix-10.1177_11769351221135141`) — ein in sich stimmiger, aber nicht
+HTTP-bestätigter Befund (`zugang.geprueft: versucht`, kein Beleg gegen den Eintrag). Übrige 14: 3× figshare
+über `api.figshare.com` bestätigt, 1× Språkbanken (Domain-Umzug `.gu.se` → `.se`, Titel im Text), 1×
+Mendeley mit institutionseigener Domain (siehe oben), übrige Zenodo/PANGAEA/RADAR/SciDB direkt mit
+Titelabgleich bestätigt. Nichts markiert.
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (29 Fassung, 11 Werk, 0 abgelehnt), 15 Stichprobeneinträge
+gesichtet (14 bestätigt, 1 unentschieden ohne Befund gegen den Eintrag, 0 markiert). 3.821 Kandidaten
+bleiben gekappt für künftige Läufe.
+
 ## 2026-11-10 — Sechsundsiebzigster Lauf: 40 weitere Merge-Kandidaten aus dem Rückstau beurteilt, Konzept-DOI kann auf eine dritte, nicht registrierte Fassung zeigen, figshare-Versionspaar erstmals als Merge-Kandidat
 
 `kandidaten.py --saat 20261110 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand: weiterhin
