@@ -3,6 +3,81 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-14 — Achtundsiebzigster Lauf: 40 Merge-Kandidaten (27 Fassung, 8 Werk, 5 kein_merge), dreimal Serie statt Dublette per Zenodo-API widerlegt, ArcGIS-Fund mit allen drei Pruefwegen erfolglos
+
+`kandidaten.py --saat 20261114 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand: weiterhin
+`snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473` — deckungsgleich mit dem
+committeten Manifest. `merge_kandidaten_gefunden: 3821` (Rückstau aus dem 77. Lauf abzüglich der dort
+beurteilten 40), davon 40 vorgelegt (Kappe), 3.781 weiterhin gekappt für künftige Läufe. 2.417 bereits
+beurteilte Paare korrekt übersprungen.
+
+**40 Kandidaten beurteilt: 27× merge (Ebene Fassung), 8× merge (Ebene Werk), 5× kein_merge.** Belege je
+Paar: beide Zugriffswege per `belege.py` aufgerufen und verglichen; bei drei Clustern zusätzlich die
+Zenodo-API befragt, weil der naive URL-Vergleich hier in zwei Richtungen in die Irre geführt hätte.
+
+**Dreimal der im Auftrag als häufigster Fehlerfall benannte Fall bestätigt: eine Serie sieht wie eine
+Dublette aus, und dieses Mal mit Beleg GEGEN den Merge statt nur mit Beleg dafür.** In allen drei Fällen
+teilen sich mehrere Fundstellen denselben Titel, dieselben Urheber und denselben Herausgeber — aber nicht
+denselben Endpunkt:
+
+- **RNN-Dimensionsreduktion-Cluster (Zenodo, drei Fundstellen zu „Data of Recurrent Neural Networks (RNNs)
+  with dimensionality reduction…“):** `dh-2694d648461525a4` (10.5281/zenodo.5668390) bleibt auf sich selbst
+  stehen, `dh-8715b5d44db0e532` (.5653232) löst per Weiterleitung auf denselben Endpunkt (`records/5668390`,
+  154.133 Byte beide) auf — klares R3-Kriterium, als `merge`/Fassung beurteilt. Die dritte Fundstelle,
+  `dh-fd694dd20cf9492d` (.5653233), bleibt dagegen auf ihrer **eigenen** finalen URL (`records/5653233`,
+  114.780 Byte — andere Größe) stehen. Zwei der drei möglichen Paare mit dieser dritten Fundstelle als
+  `kein_merge` beurteilt.
+- **LIGO-Emulator-Cluster (Zenodo, drei Fundstellen zu „Data Release: A neural network emulator of the
+  Advanced LIGO and Advanced Virgo selection function“):** `dh-06d860ff32373fd9` (.13362900, bleibt auf
+  sich selbst) und `dh-685e68a09752863f` (.13362691, löst auf denselben Endpunkt `records/13362900` auf,
+  88.591 Byte beide) als `merge`/Fassung beurteilt. Die dritte Fundstelle `dh-d8fab0926ee754e6` (.13362692)
+  bleibt auf ihrem eigenen Endpunkt (`records/13362692`, 86.841 Byte) stehen — **zusätzlich per Zenodo-API
+  geprüft, nicht nur am naiven URL-Vergleich**, weil das Konzept-DOI-Muster der letzten beiden Läufe (76.,
+  77. Lauf) nahelegt, dass unterschiedliche finale URLs trotzdem dasselbe Werk sein können: `api.zenodo.org
+  /api/records/13362692` enthält die Ziffernfolge „13362900“ nicht, und `.../records/13362900` enthält
+  „13362692“ ebenfalls nicht — keine gemeinsame `conceptrecid`, keine deklarierte Relation in beide
+  Richtungen. Beide Paare mit der dritten Fundstelle als `kein_merge` beurteilt.
+- **MosaiSC-RNA-Cluster (Zenodo, zwei Fundstellen zu „Data resource of MosaiSC-RNA“):**
+  `dh-4803d9379b7e82eb` (.21615270) bleibt auf sich selbst stehen, `dh-629f9297a8602725` (.21059390) löst
+  auf eine **dritte**, im Register gar nicht vorhandene Fassung (`records/21873714`, 148.004 Byte) auf —
+  äußerlich genau das Konzept-DOI-auf-dritte-Fassung-Muster aus dem 76./77. Lauf. Per Zenodo-API in beide
+  Richtungen widerlegt: `records/21873714` enthält „21615270“ nicht, `records/21615270` enthält „21873714“
+  nicht — anders als beim 76./77.-Lauf-Muster liegt hier keine gemeinsame `conceptrecid` vor. Als
+  `kein_merge` beurteilt.
+
+**Festzuhalten für künftige Läufe: Das Konzept-DOI-auf-dritte-Fassung-Muster (76./77. Lauf) und das
+Serie-sieht-aus-wie-Dublette-Muster (Kernwarnung des Auftrags) sehen am naiven URL-Vergleich identisch
+aus — unterschiedliche finale URL bei gemeinsamem Titel/Urheber/Herausgeber.** Nur die Zenodo-API
+(`conceptrecid`-Probe in beide Richtungen) unterscheidet beide Fälle zuverlässig: Treffer heißt Werk-Merge
+trotz abweichender URL, kein Treffer in beide Richtungen heißt eigenständiger Datensatz trotz identischem
+Titel. Vor diesem Lauf wurde die API-Probe nur zur Bestätigung von Merges eingesetzt (76./77. Lauf); dies
+ist der erste Lauf, in dem sie einen Merge aktiv widerlegt hat.
+
+**Neuer, bisher nicht dokumentierter Unterfall der ArcGIS-`serviceItemId`-Indirektion (seit dem 64. Lauf in
+mehreren Ausprägungen bekannt): Alle drei üblichen Prüfwege scheitern gleichzeitig.** Stichprobeneintrag
+`dh-592a5615580f634d` (ArcGIS, „Assets - River Works (Polygon)“, Waikato Regional Council, `quell_id
+a487c8eb7277463eb39a1245ad975fcd`): Die Landing-Page liefert HTTP 200, aber nur die generische
+ArcGIS-„Home“-Seite ohne Dateninhalt. Geprüft, nicht vermutet — alle drei sonst verfügbaren Prüfwege:
+(1) der registrierte FeatureServer-Layer selbst per `?f=json` verlangt ein Token (`Token Required`,
+bestätigt per `belege.py --suche "Token Required"`); (2) `arcgis.com/sharing/rest/content/items/<quell_id>
+?f=json` liefert einen Fehler (`error`-Feld bestätigt, kein Item auflösbar); (3) `arcgis.com/sharing/rest
+/search?q=id:<quell_id>&f=json` liefert kein Ergebnis (Owner „WaikatoRegionalCouncil“ nicht im Treffer
+gefunden). In jedem bisher dokumentierten Fall dieser Kategorie (64./65./66./70./71./72. Lauf) bestätigte
+mindestens einer der alternativen Prüfwege Titel oder Owner — hier schlagen alle drei fehl. Als `markiert`
+ins Journal, nicht als Ausfall des Eintrags selbst gewertet (der Datensatz kann zugangsbeschränkt statt tot
+sein), aber auch keine Bestätigung möglich.
+
+**Stichprobe (15 Einträge): 14/15 direkt bestätigt, 1 markiert (siehe ArcGIS oben).** Harvard Dataverse
+(Citation-Seite HTTP 202 ohne Text, Titel über `api.datacite.org` bestätigt), 2× figshare (beide Landing-
+Pages HTTP 202 ohne Text, Titel je über `api.figshare.com` bestätigt — Malaria-Surveillance und
+Teacher-Needs-Analysis), Språkbanken (Domain-Umzug `.gu.se` → `.se`, Titel im Text), IADB (CKAN-Redirect auf
+sprechende URL, Titel im Seitentitel), übrige Zenodo-Einträge (teils mit, teils ohne Concept-/
+Geschwister-Titeldrift) direkt mit Titelabgleich bestätigt.
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (27 Fassung, 8 Werk, 5 abgelehnt), 15 Stichprobeneinträge
+gesichtet (14 bestätigt, 1 markiert). 3.781 Kandidaten bleiben gekappt für künftige Läufe. Drei neue
+Serie-statt-Dublette-Fälle und ein neuer ArcGIS-Unterfall hier erstmals festgehalten.
+
 ## 2026-11-11 — Siebenundsiebzigster Lauf: 40 Merge-Kandidaten (29 Fassung, 11 Werk, 0 kein_merge), institutionelle White-Label-Domain abseits der bekannten Muster, zweimal Konzept-DOI auf dritte Fassung
 
 `kandidaten.py --saat 20261111 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand: weiterhin
