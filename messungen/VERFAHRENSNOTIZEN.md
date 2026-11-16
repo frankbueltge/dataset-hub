@@ -3,6 +3,45 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-16 — Achtzigster Lauf: 40 Merge-Kandidaten (30 Fassung, 4 Werk, 6 kein_merge), Versionsschema-als-Werk-Regel erstmals ohne einsehbare Seite angewandt, zwei Paare per Wiederverwendung bereits beurteilter API-Belege entschieden
+
+`kandidaten.py --saat 20261116 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand weiterhin
+`snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473`. `merge_kandidaten_gefunden:
+3741`, davon 40 vorgelegt (Kappe), 3.701 weiterhin gekappt. 2.497 bereits beurteilte Paare korrekt
+übersprungen — darunter ein Paar aus dem 79. Lauf (Infektionskontroll-Datenbank 2011-2020), dessen
+Zenodo-API-Gegenprobe (5418580 gegen 5597750, keine gemeinsame conceptrecid) direkt für ein *anderes*,
+diesmal vorgelegtes Paar mit denselben beiden Records wiederverwendet werden konnte, statt die Frage
+erneut zu stellen — genau der in der Routine vorgesehene Zweck des Journals.
+
+**30× merge (Ebene Fassung), 4× merge (Ebene Werk), 6× kein_merge.**
+
+**Die im 79. Lauf geschärfte Regel (Mendeley-/figshare-/4TU-Versionspaare mit mehr als einer tatsächlich
+existierenden Fassung als Werk statt Fassung einordnen) erstmals auf eine Quelle angewandt, deren Seiten
+beide mit HTTP 403 blockiert waren** (University of Illinois Databank, `dh-57030dc0d3213ebf`/
+`dh-a4b820a144d5de3b`, „Dataset: Breaking the barrier of human-annotated training data…“): kein
+inhaltlicher Abgleich möglich (Bot-Schutz wie beim bekannten GBIF-Muster), aber die quell_id selbst trägt
+die Versionsstruktur explizit (`10.13012/b2idb-8462244_v1` / `_v2`, identischer Stamm `8462244`, nur
+Suffix unterschiedlich) — deterministisch genug für `merge`/Werk, ohne dass eine Seite je gesehen wurde.
+Festzuhalten: Diese Regel war bisher nur für tatsächlich einsehbare Seiten mit Versions-URL-Mustern belegt;
+hier trägt allein die DOI-Struktur die Entscheidung.
+
+**Erneut (viertes Mal nach 76./77./78. Lauf) das Konzept-DOI-Muster bestätigt, zweimal auf eine bereits
+dokumentierte, namentlich dieselbe bewegliche Concept-DOI** (ACAP-HPAI-Datenbank, `.17683269`): löste am
+2026-09-12 auf Record 22276493, heute auf Record 23395676 — beide nicht im Register, beide nicht das
+Vergleichsziel des jeweiligen Kandidatenpaars. Zwei weitere Zenodo-Cluster mit identischem Titel/Autoren,
+aber ohne URL-Kollaps und ohne durch die API bestätigte gemeinsame conceptrecid, ebenfalls als kein_merge
+beurteilt (ContiNet-Cluster, Cluster „inversely graded bands“).
+
+**Stichprobe (15 Einträge): 15/15 bestätigt, nichts markiert.** Vier Einträge ohne direkten Titelabgleich
+im HTML (figshare/SciELO ×2 über `api.figshare.com`, Harvard Dataverse und eine OSF-Registrierung über
+`api.datacite.org` bestätigt — die native OSF-API (`api.osf.io/v2/nodes/` und `/v2/guids/`) lieferte für
+die geprüfte GUID beide Male HTTP 500, DataCite als Fallback funktionierte). Elf Einträge direkt per
+Titelabgleich im Text bestätigt, davon drei über eine Zenodo-Versions-Weiterleitung auf die jeweils neueste
+Fassung.
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (30 Fassung, 4 Werk, 6 kein_merge), 15 Stichprobeneinträge
+gesichtet (15 bestätigt, 0 markiert). 3.701 Kandidaten bleiben gekappt für künftige Läufe.
+
 ## 2026-11-14 — Achtundsiebzigster Lauf: 40 Merge-Kandidaten (27 Fassung, 8 Werk, 5 kein_merge), dreimal Serie statt Dublette per Zenodo-API widerlegt, ArcGIS-Fund mit allen drei Pruefwegen erfolglos
 
 `kandidaten.py --saat 20261114 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand: weiterhin
