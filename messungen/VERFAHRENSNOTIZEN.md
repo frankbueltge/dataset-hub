@@ -3,6 +3,73 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-17 — Einundachtzigster Lauf: 40 Merge-Kandidaten (28 Fassung, 12 Werk, 0 kein_merge), Zenodo-API-Weiterleitung erstmals als R3-Ersatz bei HTTP-500-Landingpages genutzt, zwei Stichprobenfunde markiert
+
+`kandidaten.py --saat 20261117 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand weiterhin
+`snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473`. `merge_kandidaten_gefunden:
+3701`, davon 40 vorgelegt (Kappe), 3.661 weiterhin gekappt. 2.537 bereits beurteilte Paare korrekt
+uebersprungen.
+
+**28x merge (Ebene Fassung), 12x merge (Ebene Werk), 0x kein_merge.** Dieser Stapel bestand durchweg aus
+DataCite-Dublettenpaaren derselben Werke (Zenodo/Mendeley/figshare/4TU, Basis-DOI gegen Versions-DOI) -
+nicht aus dem im Auftrag benannten Serie-sieht-aus-wie-Dublette-Risiko (keine Herbarbelege, keine
+Messreihen in diesem Stapel), daher plausibel keine Ablehnung noetig.
+
+**Neu: Bei mehreren Zenodo-Paaren antwortete die Landing-Page mit HTTP 500 (Internal server error) -
+diesmal wiederholt und bei mindestens sechs von 40 Eintraegen, offenbar eine vorbuergehende
+Zenodo-Stoerung waehrend des Laufs, keine Eigenschaft der Ressourcen.** Statt die Paare deshalb
+offenzulassen, wurde erstmals gezielt `zenodo.org/api/records/<id>` abgefragt: Bei drei Paaren
+(dh-74cf1c23bfe7c775/dh-c1dc5a1ad0c0a10a, dh-404c01488c74cf13/dh-d8e3fb44e8bf7d3a und indirekt bei
+zwei weiteren ueber die Partnerseite) leitete die API-Anfrage fuer die 500-fehlerhafte ID direkt auf die
+API-Antwort der anderen, funktionierenden ID weiter - ein R3-Ersatzbeleg (identische aufgeloeste
+Ressource), der ohne die Landing-Page auskommt. Diese Technik ist eine Erweiterung der bisherigen
+Zenodo-API-Konzeptrecid-Gegenprobe (seit 78. Lauf) auf den Fall, dass gar keine Seite mehr direkt
+einsehbar ist.
+
+**Zweimal das bekannte Konzept-DOI-Muster (76./77./79./80. Lauf: Basis-DOI loest auf eine dritte, im
+Register nicht vorhandene Fassung auf) erneut angetroffen** (dh-1e2fdf3f5845351e/dh-55cbe1ef0691e520,
+dh-0b31352868dc2ff8/dh-c72ac6ab00664d95) - **diesmal aber, anders als beim ACAP-HPAI- und
+MosaiSC-RNA-Muster (78./80. Lauf), als Werk bestaetigt statt als kein_merge verworfen**, weil die API
+der jeweils aelteren, ueberholten ID die Ziffernfolge der juengeren, im Registrierungs-Kandidatenpaar
+gelisteten ID direkt in der eigenen Antwort enthielt (einseitige, aber eindeutige deklarierte
+Vorversion-Relation) - anders als bei ACAP-HPAI/MosaiSC, wo in keiner Richtung ein Treffer vorlag.
+**Festzuhalten: Das Konzept-DOI-Muster ist nicht automatisch kein_merge - entscheidend ist, ob die API in
+mindestens einer Richtung die andere ID direkt referenziert, nicht ob die Landing-Page-Aufloesung beim
+naiven URL-Vergleich zur dritten Fassung driftet.**
+
+**figshare-Versionspaare (zwei Werke, je drei Kandidaten: Artikel 30712835 und 30149236) nach der
+76./79. Lauf-Regel als Werk eingeordnet**, obwohl alle sechs figshare-Landing-Pages HTTP 202 ohne Inhalt
+lieferten (bekanntes JS-Rendering-Muster) - Entscheidung stuetzt sich wie beim Illinois-Databank-Fall
+(80. Lauf) allein auf die deterministische `.v1`/`.v2`-Suffix-Struktur der DOI. Bei den Basis-DOI-gegen-
+Version-Paaren (ungeklaert, ob die Basis-DOI aktuell v1 oder v2 entspricht) wurde die vorsichtigere
+Einordnung Werk statt Fassung gewaehlt, um eine moegliche verdeckte Versionsdifferenz nicht durch eine
+Fassung-Gleichsetzung zu kaschieren.
+
+**Ein Versuch, die UCL-Research-Data-Repository-API analog zu `api.figshare.com` unter
+`api.rdr.ucl.ac.uk` abzufragen, schlug mit AUSFALL fehl** (kein HTTP-Status, Verbindung scheiterte) -
+die Landing-Page selbst lieferte aber HTTP 202 mit zum Titel passendem URL-Slug, daher nicht als
+Ausfall der Ressource gewertet, nur als nicht abschliessend bestaetigt. Kein Hostname-Raten ueber
+diesen einen plausiblen Versuch hinaus (Bauregel: nie URLs konstruieren).
+
+**Stichprobe (15 Eintraege): 13 bestaetigt, 2 markiert.**
+- `dh-4fe1063d40bbd1a4` (Zenodo .21618047): Titel 'ForceVital: Full Buying Guide—Is It Worth the Price?'
+  steht tatsaechlich auf der Zenodo-Seite (technisch kein Ausfall), liest sich aber wie eine kommerzielle
+  Werbe-/Nahrungsergaenzungsmittel-Seite statt wie ein Forschungsdatensatz; Urheber-Feld traegt einen
+  fehlerhaften fuehrenden Apostroph. Passt zum bekannten Problem von Spam-Deposits auf Zenodo - als
+  Plausibilitaetsproblem markiert, nicht als Zugriffsausfall.
+- `dh-0401f6928b559253`: registrierter Titel 'LLM-generated Boundary Explanations' vs. tatsaechlicher
+  Zenodo-Titel 'LLM-generated Boundary Test Explanations' - das Wort 'Test' fehlt im Bestand. Markiert.
+
+Vier weitere Eintraege ohne direkten Titelabgleich im HTML (figshare/springernature.figshare.com ueber
+`api.figshare.com` bestaetigt, UCL RDR indirekt über URL-Slug). Elf Eintraege direkt per Titelabgleich im
+Text bestaetigt, davon einer (IEEE DataPort) nur ueber den sichtbaren Seitentitel, da der automatische
+Abgleich am Pfeilzeichen (→) im registrierten Titel scheiterte (Encoding-Artefakt, kein Befund gegen die
+Ressource).
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (28 Fassung, 12 Werk, 0 kein_merge), 15 Stichprobeneintraege
+gesichtet (13 bestaetigt, 2 markiert). 3.661 Kandidaten bleiben gekappt fuer kuenftige Laeufe.
+`pipeline/tests`: 100 Tests, alle bestanden.
+
 ## 2026-11-16 — Achtzigster Lauf: 40 Merge-Kandidaten (30 Fassung, 4 Werk, 6 kein_merge), Versionsschema-als-Werk-Regel erstmals ohne einsehbare Seite angewandt, zwei Paare per Wiederverwendung bereits beurteilter API-Belege entschieden
 
 `kandidaten.py --saat 20261116 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand weiterhin
