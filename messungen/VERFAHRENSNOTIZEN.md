@@ -3,6 +3,92 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-19 — Dreiundachtzigster Lauf: lokaler Checkout einen Commit hinter origin/main, erster Durchlauf komplett verworfen und mit synchronisiertem Journal wiederholt — 26 merge Fassung, 7 merge Werk, 7 kein_merge, Mendeley-Versionspaar-Regel erstmals auf drei Cluster in einem Lauf angewandt
+
+**Vorfall zuerst:** Der Checkout dieser Sitzung stand bei `git checkout main` auf dem 81. Lauf
+(683ee3f), einen Commit hinter dem bereits auf origin veröffentlichten 82. Lauf (f2a0315) —
+`git fetch` hatte das vorher korrekt gezeigt, aber `checkout` (statt `merge --ff-only`/`pull`)
+hat den lokalen `main`-Zeiger nicht mitgezogen. `kandidaten.py --aus-snapshot` liest den
+Bestand aus dem veröffentlichten Snapshot-Release, aber den Ausschluss „bereits beurteilter
+Paare" aus dem **lokalen** `journal/entscheidungen.jsonl` — und dieses war damit ohne die
+40 Urteile des 82. Laufs. Ergebnis: Der erste Durchlauf dieser Sitzung legte **exakt dieselben
+40 Kandidatenpaare** vor, die der 82. Lauf tags zuvor bereits beurteilt hatte, mit identischen
+Belegen (gleiche finale URLs, byte-genau gleiche Seitengrößen) und identischen Schlussfolgerungen
+— eine vollständige, aber unbemerkte Doppelbeurteilung. Beim Versuch, den fertig geprüften
+Journal-Eintrag mit dem inzwischen gepushten 82. Lauf zu rebasen, zeigte der Konflikt in
+`journal/entscheidungen.jsonl` die Doppelung unmittelbar.
+
+**Korrektur:** Der fehlerhafte lokale Commit wurde verworfen (`git reset --hard origin/main`,
+unveröffentlicht, daher ohne Verlust für Dritte), der lokale Checkout damit auf den 82. Lauf
+gebracht, und `kandidaten.py --saat 20261119 --aus-snapshot` **erneut** ausgeführt — diesmal mit
+korrekt gefülltem Journal. `merge_kandidaten_gefunden` fiel entsprechend von 3661 auf 3621 (um
+genau die 40 nun korrekt übersprungenen Paare), `bereits_beurteilte_paare` stieg von 2577 auf
+2617. Die Stichprobe (15 Einträge, identisch zur ersten Ziehung — sie hängt nicht vom
+Kandidaten-Journal ab) musste nicht wiederholt werden; die bereits durchgeführten
+Figshare-API- und ArcGIS-API-Prüfungen blieben gültig.
+
+**Regel daraus:** Nach `git fetch` genügt der Vergleich mit `origin/main` nicht — **vor** einem
+`kandidaten.py`-Lauf muss der lokale `main`-Zeiger per `git merge --ff-only origin/main` (oder
+gleichwertig) tatsächlich auf den aktuellen Stand gebracht werden, sonst filtert der
+Ausschluss bereits beurteilter Paare am lokalen, veralteten Journal vorbei. Ein `git fetch`
+allein zeigt nur, dass man hinterherhängt — es holt den lokalen Zweig nicht nach.
+
+---
+
+`kandidaten.py --saat 20261119 --aus-snapshot` lief (im zweiten, gültigen Durchlauf) fehlerfrei
+durch. Beurteilter Stand weiterhin `snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`,
+`eintraege_gesamt: 22473`. `merge_kandidaten_gefunden: 3621`, davon 40 vorgelegt (Kappe), 3.581
+weiterhin gekappt. 2.617 bereits beurteilte Paare korrekt übersprungen.
+
+**26× merge (Ebene Fassung), 7× merge (Ebene Werk), 7× kein_merge.** Wie in den vorangehenden
+Läufen durchweg DataCite-Dublettenpaare derselben Werke (Zenodo-Record gegen Zenodo-Record,
+Mendeley-Versionssuffix gegen -Versionssuffix) — kein Herbarbeleg-/Messreihen-Fall.
+
+**Die seit 79./80. Lauf geschärfte Mendeley-Versionspaar-Regel (mehr als eine tatsächlich
+existierende, eigenständig abrufbare Fassung desselben DOI-Stamms → Werk statt Fassung) traf in
+diesem Lauf auf drei verschiedene Cluster gleichzeitig** (DOI-Stämme `26cy79sv84`, `brgfhwndz6`,
+`pvskpn6tbs`, dazu ein viertes Mendeley-Paar `w44p2zcwt8` ohne Bare-DOI-Mitglied) — bisher war
+sie je Lauf höchstens einmal angewandt worden. In allen vier Fällen lagen zwei explizit
+versionierte Seiten (`.1`/`.2`) **beide tatsächlich mit eigenem, abweichendem Inhalt (Bytes,
+teils Titel) abrufbar** vor; bei dreien löste die Bare-DOI zusätzlich auf dieselbe URL wie die
+jeweils neueste Version auf (R3, separat als Fassung gewertet). Festzuhalten: Die Bare-DOI
+„zählt" für R3 wie die Version, auf die sie aktuell zeigt — sie ist kein drittes eigenständiges
+Mitglied.
+
+**Erstmals eine Byte-Abweichung bei sonst identischer finaler URL beobachtet** (DOI-Stamm
+`pvskpn6tbs`: Bare-DOI und Version `.2` lösen beide auf `.../pvskpn6tbs/2` auf, 117413 gegen
+117412 Bytes — ein Byte Differenz). Als R3-Treffer gewertet, weil die finale URL identisch ist;
+die Byte-Zahl ist seit jeher ein Zusatzindiz zur Bestätigung, kein eigenständiges Kriterium, und
+ein Ein-Byte-Unterschied zwischen zwei Abrufen Sekunden auseinander ist plausibler dynamischer
+Seiteninhalt (Zähler, Zeitstempel) als eine echte Abweichung. Bisher war die Byte-Zahl bei jedem
+R3-Treffer exakt gleich; sollte eine größere Abweichung bei identischer finaler URL auftreten,
+verdient das eine genauere Prüfung statt automatischer Gleichsetzung.
+
+**Zwei Zenodo-Dreiergruppen (Spin-Symmetry-Schrödinger-Cluster, Super-Resolution-EDSR-Cluster)
+nach dem etablierten Muster behandelt:** je zwei Mitglieder lösen per R3 auf denselben Endpunkt
+auf (merge/Fassung), das dritte bleibt auf einem eigenen Endpunkt; Zenodo-API-Gegenprobe
+(`api/records/<id>`) in beiden Richtungen ohne Verweis auf die jeweils andere ID — keine
+deklarierte Relation, daher kein_merge. Beim Super-Resolution-Cluster trägt das dritte Mitglied
+zudem einen Koautor weniger als die anderen beiden (Indiz, nicht alleiniger Grund).
+
+**Stichprobe (15 Einträge, identisch zur ersten Ziehung dieses Laufs): 14 bestätigt, 1
+markiert.** Fünf figshare/springernature.figshare-Einträge lieferten HTTP 202 ohne Inhalt auf
+der Landing-Page und wurden über `api.figshare.com/v2/articles/<id>` bestätigt. Ein
+ArcGIS-Layer (Roanoke, „Contour - 20 Foot") per Layer-API (`?f=json`, „20ft Contour") bestätigt
+— Umformulierung, kein Plausibilitätsproblem. Ein Eintrag (UPenn-Repository) lieferte beim
+zweiten Belege-Abruf HTTP 500 (generische DSpace-Fehlerseite), beim ersten Abruf desselben Laufs
+aber HTTP 200 mit wortgleichem Seitentitel — als transiente Serverstörung gewertet, nicht als
+Befund gegen die Ressource (der erste, erfolgreiche Abruf bleibt der Beleg).
+
+**Markiert:** `dh-5072501be07d9ec2` — registrierter Titel trägt die Versionsziffer „_v1.1", der
+Concept-DOI löst aber auf eine Zielseite auf, deren eigener Titel „_v1.0" trägt (records/18104830,
+HTTP 200, `titel_im_text: false`). Kein Zugriffsausfall, sondern ein Widerspruch zwischen
+registrierter und aktuell aufgelöster Versionsziffer.
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (26 Fassung, 7 Werk, 7 kein_merge), 15
+Stichprobeneinträge gesichtet (14 bestätigt, 1 markiert). 3.581 Kandidaten bleiben gekappt für
+künftige Läufe. `pipeline/tests`: 100 Tests, alle bestanden.
+
 ## 2026-11-17 — Einundachtzigster Lauf: 40 Merge-Kandidaten (28 Fassung, 12 Werk, 0 kein_merge), Zenodo-API-Weiterleitung erstmals als R3-Ersatz bei HTTP-500-Landingpages genutzt, zwei Stichprobenfunde markiert
 
 `kandidaten.py --saat 20261117 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand weiterhin
