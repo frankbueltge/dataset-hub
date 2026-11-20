@@ -3,6 +3,67 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-20 — Vierundachtzigster Lauf: 40 Merge-Kandidaten (31 Fassung, 9 Werk, 0 kein_merge), figshare-Versionen erstmals über Groessenvergleich der API-Antwort statt nur Titelabgleich als Werk bestaetigt, Zenodo-Konzept-DOI-Dreiergruppe mit zwei unabhaengigen Werk-Faellen
+
+`kandidaten.py --saat 20261120 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand weiterhin
+`snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473`. `merge_kandidaten_gefunden:
+3581`, davon 40 vorgelegt (Kappe), 3.541 weiterhin gekappt. 2.657 bereits beurteilte Paare korrekt
+uebersprungen.
+
+**31x merge (Ebene Fassung), 9x merge (Ebene Werk), 0x kein_merge.** Wie in den Laeufen seit dem 75.
+durchweg DataCite-Dublettenpaare derselben Werke (Zenodo-Record gegen Zenodo-Record, Mendeley-Basis
+gegen -Version, figshare-Version gegen -Version) - kein Herbarbeleg-/Messreihen-Fall in diesem Stapel.
+
+**Hosaka-Dreiergruppe (zenodo.14551716 Konzept-DOI, zenodo.16919166, zenodo.14551717):** Konzept-DOI und
+die juengere Version loesen beide auf dieselbe finale URL (records/16919166, 60547 Bytes) auf - R3,
+Fassung. Die aeltere, eigenstaendig abrufbare Version (zenodo.14551717, Jahr 2024, 61104 Bytes, andere
+finale URL) bildet mit beiden anderen je ein Werk-Paar. Dieselbe Konzept-DOI-Figur einzeln nochmal bei
+`dh-0f64ef14846f7f6e`/`dh-3d1570b222d5c817` (Qualitative Laboratory, Draelants) und bei
+`dh-242e79e4223b7d8f`/`dh-9d84f1a9aa2758b4` (Closed-boundary shallow water waves, Demir) angetroffen -
+in beiden Faellen zeigt eine der beiden registrierten DOIs inzwischen auf eine dritte, im Kandidatenpaar
+nicht vorgelegte Fassung, waehrend die andere auf der urspruenglich registrierten Fassung stehen bleibt.
+Nach der seit dem 76./77. Lauf etablierten Regel als Werk gewertet.
+
+**Multi-Agent-LLM-Dreiergruppe (zenodo.17214037/17214038/17232845, Title-Abstract Screening):** zwei der
+drei Fundstellen (17214037, 17232845) loesen auf dieselbe finale URL (records/17232845, 60398 Bytes) auf
+- Fassung. Die dritte (17214038, 58559 Bytes, eigene finale URL) bildet mit beiden anderen je ein
+Werk-Paar - dieselbe Struktur wie bei den Zenodo-Dreiergruppen frueherer Laeufe, nur hier mit drei
+tatsaechlich verschiedenen Fundstellen statt einer Konzept-DOI-Indirektion.
+
+**Zwei figshare-Versionscluster (Artikel 28514210 und 29023172) nach der seit dem 76. Lauf etablierten
+figshare-Regel als Werk eingeordnet, diesmal erstmals mit einem ueber den reinen Titelabgleich
+hinausgehenden Beleg:** Alle beteiligten Landing-Pages lieferten HTTP 202 ohne Inhalt (bekanntes
+JS-Rendering-Muster), daher ueber `api.figshare.com/v2/articles/<id>/versions/<n>` abgefragt. Bei Artikel
+28514210 (v2 gegen v3) sind die beiden API-Antworten mit identischem Titel, aber unterschiedlicher Groesse
+(11632 vs. 11991 Bytes JSON) zurueckgekommen - ein ueber den Titel hinausgehendes Indiz fuer inhaltlich
+unterschiedliche Versionen. Bei Artikel 29023172 (v1 gegen v2 gegen Basis-URL ohne Versionsnummer) zeigte
+sich zusaetzlich: Die Basis-URL (aktuell neueste Fassung) trug einen **anderen Titel** ('Dataset for
+FB2BPMN') als v1 und v2 ('Dataset for Translating User Feedback into BPMN using NLP, LLM, and Fuzzy String
+Matching') - der Artikel wurde ueber Versionen hinweg umbenannt. Das bestaetigt zweifelsfrei eigenstaendige,
+inhaltlich unterschiedliche Fassungen und nicht bloss dieselbe Seite unter drei URLs. **Festzuhalten: Wo
+die figshare-Landing-Page keinen Inhalt liefert, ist der Groessen- oder Titelvergleich der versionsspezifischen
+API-Antwort (`/versions/<n>`) ein staerkerer Beleg als der reine DOI-Suffix-Musterabgleich der Vorlaeufe.**
+
+**Zweimal das Mendeley-Basis-/Versions-Muster (dys3m2ht8x, ncy5btsk4m) angetroffen, beide als Fassung
+gewertet:** Basis-URL und Version `/1` loesen auf dieselbe finale URL auf, mit einer Differenz von je
+einem Byte (dynamischer Seiteninhalt, kein Werk-Indiz - wie seit dem 83. Lauf dokumentiert).
+
+**Stichprobe (15 Eintraege): 15 bestaetigt, 0 markiert.** Fuenf figshare/springernature.figshare-Eintraege
+lieferten HTTP 202 ohne Inhalt und wurden ueber `api.figshare.com/v2/articles/<id>` bzw.
+`/versions/<n>` bestaetigt. Ein Harvard-Dataverse-Eintrag lieferte ebenfalls HTTP 202 ohne Inhalt auf der
+Citation-Seite; ueber die oeffentliche Dataverse-API
+(`dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:...`) bestaetigt (Titel im JSON-Text
+gefunden, auch wenn die einfache `title`/`name`-Feldsuche von `belege.py` an der verschachtelten
+Dataverse-Metadatenstruktur vorbeigreift - kein Befund gegen die Ressource). Ein Eintrag
+(`dh-4ee8805df8347c57`, cehidatahub.org) lieferte bei zwei getrennten Abrufen innerhalb des Laufs beide
+Male HTTP 500 - als Zugriffsausfall vermerkt (das Schema-Feld `zugang.geprueft: versucht` deckt genau
+diesen Fall), nicht als Plausibilitaetsbefund markiert, da es sich bislang um einen einzelnen Lauf ohne wiederholtes
+Muster ueber mehrere Tage handelt.
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (31 Fassung, 9 Werk, 0 kein_merge), 15 Stichprobeneintraege
+gesichtet (15 bestaetigt, 0 markiert). 3.541 Kandidaten bleiben gekappt fuer kuenftige Laeufe.
+`pipeline/tests`: 100 Tests, alle bestanden.
+
 ## 2026-11-19 — Dreiundachtzigster Lauf: lokaler Checkout einen Commit hinter origin/main, erster Durchlauf komplett verworfen und mit synchronisiertem Journal wiederholt — 26 merge Fassung, 7 merge Werk, 7 kein_merge, Mendeley-Versionspaar-Regel erstmals auf drei Cluster in einem Lauf angewandt
 
 **Vorfall zuerst:** Der Checkout dieser Sitzung stand bei `git checkout main` auf dem 81. Lauf
