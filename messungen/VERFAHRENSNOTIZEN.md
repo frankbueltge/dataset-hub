@@ -3,6 +3,73 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-21 — Fünfundachtzigster Lauf: 40 Merge-Kandidaten (32 Fassung, 8 Werk, 0 kein_merge), zwei Zenodo-Konzept-DOI-Dreiergruppen (Bioinformatik-LLM-Review, MT-Evaluationsmetriken) und eine Mendeley-Dreiergruppe mit eigenstaendiger `.1`-Fassung nach der seit 79./80. Lauf etablierten Regel aufgeteilt, Konzept-DOI mit ueber Versionen hinweg umbenannter Zielfassung erneut bestaetigt
+
+Der Checkout dieser Sitzung stand auf `HEAD` detached drei Commits hinter `origin/main`
+(lokale `main`-Referenz war noch beim 81. Lauf) — stale-Branch-Falle wie am 12.08. und
+09./19.09./19.11. dokumentiert, diesmal **vor** dem ersten Kandidatenlauf bemerkt: `git fetch
+origin main` zeigte den tatsaechlichen Stand (85cdb06, 84. Lauf), `git checkout main` +
+`git merge --ff-only origin/main` hat den lokalen Zeiger korrekt nachgezogen, bevor
+`kandidaten.py` lief. Kein Doppelbeurteilungsrisiko wie am 19.11., da vor dem Lauf korrigiert.
+
+`kandidaten.py --saat 20261121 --aus-snapshot` lief danach fehlerfrei durch. Beurteilter Stand
+weiterhin `snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473`.
+`merge_kandidaten_gefunden: 3541`, davon 40 vorgelegt (Kappe), 3.501 weiterhin gekappt. 2.697
+bereits beurteilte Paare korrekt uebersprungen.
+
+**32× merge (Ebene Fassung), 8× merge (Ebene Werk), 0× kein_merge.** Wie in den Laeufen seit
+dem 75. durchweg DataCite-Dublettenpaare derselben Werke (Zenodo-Record gegen Zenodo-Record,
+Mendeley-Basis gegen -Version) — kein Herbarbeleg-/Messreihen-Fall in diesem Stapel.
+
+**Evapotranspirations-Mendeley-Dreiergruppe (DOI-Stamm ftxt6x83jh, Basis/.1/.2):** Die Basis-URL
+loest auf `/2` auf (157648 vs. 157649 Bytes, Ein-Byte-Differenz, kein Werk-Indiz) — Basis/.2 also
+Fassung. `.1` loest auf eine eigene, von Basis und `.2` verschiedene finale URL auf (157654
+Bytes) — eine dritte, eigenstaendig abrufbare Fassung desselben DOI-Stamms. Nach der seit 79./80.
+Lauf geschärften Mendeley-Versionspaar-Regel sind beide Paare mit `.1` daher Werk, nur Basis/.2
+Fassung — exakt die "mehr als eine tatsaechlich existierende Fassung"-Konstellation, hier zum
+ersten Mal mit allen drei Mitgliedern im selben Kandidatenstapel statt verteilt auf mehrere
+Laeufe.
+
+**Bioinformatik-LLM-Review-Dreiergruppe (zenodo.15589100 Konzept-DOI, 15589101, 16419266):**
+Konzept-DOI (15589100) loest auf records/16892005 auf — eine dritte, in keinem der drei
+Kandidatenpaare vorgelegte Fassung. Die beiden anderen (15589101, 16419266) loesen je auf sich
+selbst auf, mit unterschiedlicher Groesse (92663 vs. 81301 Bytes). Alle drei Paare dieser Gruppe
+daher Werk, konsistent mit der Konzept-DOI-Regel seit dem 76./77./78. Lauf.
+
+**MT-Evaluationsmetriken-Dreiergruppe (zenodo.17841954, 17344595 Konzept-DOI, 17344596):**
+17344595 (Konzept-DOI) loest auf dieselbe URL wie 17841954 auf (identische 59787 Bytes) — Fassung.
+17344596 bleibt eigenstaendig auf einer eigenen URL (58323 Bytes) — Werk gegenueber beiden
+anderen. Dieselbe Struktur wie die Evapotranspirations-Gruppe, nur mit Konzept-DOI-Indirektion
+statt direkter Basis-URL.
+
+**Journal-AI-Digital-Marketing-Paar (zenodo.17627772/17627773):** Der Konzept-DOI (17627772)
+loest inzwischen auf records/19426273 auf, dessen Seitentitel ("Dataset Journal SLR Combined with
+Empirical Machine Learning...") nichts mehr mit dem registrierten Titel gemein hat; 17627773
+bleibt auf der urspruenglichen, titelgleichen Fassung stehen. Gleicher Autor (Ardyani, Amalia)
+bei beiden. Wie beim figshare-Fall des 84. Laufs (Artikel 29023172, uebers Versionen hinweg
+umbenannt) als Werk gewertet — die Umbenennung selbst ist kein Gegenbeleg, da die Konzept-DOI-
+Weiterleitung die Kontinuitaet der Ablage bestaetigt, nicht deren Titeltreue.
+
+**TableLabler-Paar (zenodo.13871976, zenodo.11626801) trotz grossem numerischem DOI-Abstand
+(ueber zwei Millionen) als Fassung gewertet:** Beide loesen tatsaechlich auf dieselbe finale URL
+auf (records/13871976, identische 70014 Bytes) — der Beleg stuetzt sich auf die HTTP-Aufloesung,
+nicht auf den DOI-Abstand, der isoliert betrachtet fuer eine spaetere, unabhaengige Einreichung
+gesprochen haette.
+
+**Stichprobe (15 Eintraege): 15 bestaetigt, 0 markiert.** Vier figshare-Eintraege (davon einer
+institutionell, rs.figshare.com bzw. tandf.figshare.com) lieferten HTTP 202 ohne Inhalt und
+wurden ueber `api.figshare.com/v2/articles/<id>` bzw. `/versions/<n>` bestaetigt — die institutionellen
+figshare-Subdomains teilen sich die numerische Artikel-ID mit der zentralen API, wie bereits am
+20.11. beobachtet. Ein Harvard-Dataverse-Eintrag lieferte ebenfalls HTTP 202 auf der Citation-Seite,
+ueber die native Dataverse-API bestaetigt (Titel im JSON-Text, `seitentitel: None` nur wegen der
+verschachtelten Metadatenstruktur — kein Befund gegen die Ressource, wie am 20.11. dokumentiert).
+Ein IEEE-DataPort-Eintrag lieferte HTTP 403 — bekanntes Bot-Schutz-Muster dieses Hosts (zuletzt
+dokumentiert), als Zugriffsausfall vermerkt, nicht markiert.
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (32 Fassung, 8 Werk, 0 kein_merge), 15
+Stichprobeneintraege gesichtet (15 bestaetigt, 0 markiert). 3.501 Kandidaten bleiben gekappt fuer
+kuenftige Laeufe. `pipeline/tests`: 100 Tests, alle bestanden.
+
 ## 2026-11-20 — Vierundachtzigster Lauf: 40 Merge-Kandidaten (31 Fassung, 9 Werk, 0 kein_merge), figshare-Versionen erstmals über Groessenvergleich der API-Antwort statt nur Titelabgleich als Werk bestaetigt, Zenodo-Konzept-DOI-Dreiergruppe mit zwei unabhaengigen Werk-Faellen
 
 `kandidaten.py --saat 20261120 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand weiterhin
