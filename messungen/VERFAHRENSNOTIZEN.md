@@ -3,6 +3,84 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-22 — Sechsundachtzigster Lauf: 40 Merge-Kandidaten (28 Fassung, 12 Werk, 0 kein_merge), erstmals ein Merge-Kandidat ohne deklarierte R2-Relation nach DOI-Versionssuffix-Muster als Werk gewertet (4TU), vier Dreiergruppen nach dem etablierten Konzept-/Versions-DOI-Muster aufgeteilt
+
+Der Checkout dieser Sitzung stand auf `HEAD` detached auf dem 85. Lauf (a961c39, bereits der
+aktuelle `origin/main`-Stand), die lokale `main`-Referenz dagegen vier Commits zurück beim 81.
+Lauf — dieselbe stale-Branch-Falle wie am 12.08., 09./19.09., 19.11. und 21.11. dokumentiert,
+diesmal vor dem ersten Kandidatenlauf bemerkt: `git checkout main` gefolgt von `git merge
+--ff-only origin/main` hat den lokalen Zeiger korrekt auf a961c39 nachgezogen, bevor
+`kandidaten.py` lief. Kein Doppelbeurteilungsrisiko, da vor dem Lauf korrigiert.
+
+`kandidaten.py --saat 20261122 --aus-snapshot` lief danach fehlerfrei durch. Beurteilter Stand
+weiterhin `snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473`.
+`merge_kandidaten_gefunden: 3501`, davon 40 vorgelegt (Kappe), 3.461 weiterhin gekappt. 2.737
+bereits beurteilte Paare korrekt uebersprungen.
+
+**28× merge (Ebene Fassung), 12× merge (Ebene Werk), 0× kein_merge.** Wie in den Laeufen seit
+dem 75. durchweg DataCite-Dublettenpaare derselben Werke (Zenodo-Record gegen Zenodo-Record,
+Mendeley-Basis gegen -Version) — kein Herbarbeleg-/Messreihen-Fall in diesem Stapel.
+
+**Vier Dreiergruppen nach dem etablierten Konzept-/Versions-DOI-Muster aufgeteilt** (Conceptual-
+Modeling-Cluster Liddle/Mayr/Pastor Lopez/Storey/Thalheim; Jaccard-Similarity-Cluster Surendran;
+Low-Code-Programming-Cluster Liu; Aircraft-De-icing-Cluster Vasić): in jeder Gruppe loesen genau
+zwei der drei Mitglieder auf dieselbe finale URL mit identischer Groesse auf (R3, Fassung), das
+dritte bleibt auf einer eigenen, unabhaengig abrufbaren URL mit abweichender Groesse (Werk zu
+beiden anderen). Durchweg war fuer alle drei Paarbeziehungen bereits `gleiches_werk_bereits:
+true` gesetzt (R2-Relation in den DataCite-Metadaten deklariert) — die Urteile bestaetigen nur
+die Fassungsebene, nicht die ohnehin schon bestehende Werk-Zuordnung.
+
+**Mendeley-Dreiergruppe (Risk of Fear and Anxiety, DOI-Stamm 5ydxbt5m49) nach der seit 79./80.
+Lauf geschaerften Versionspaar-Regel behandelt:** Basis loest auf `/2` auf (identische 127526
+Bytes) — Fassung. `/1` loest auf eine eigene, unabhaengig abrufbare URL auf, trotz exakt
+gleicher Bytezahl (127526) — nach der Regel zaehlt die eigenstaendige finale URL, nicht die
+Bytegleichheit, daher beide Paare mit `/1` als Werk gewertet.
+
+**Zenodo-Konzept-DOI-Paar (hygienic-sanitary conditions of food establishments, Zenodo) mit
+drittem, nicht vorgelegtem Ziel:** Die Konzept-DOI (zenodo.15391867) loest auf records/23845874
+auf — eine dritte Fassung, die in diesem Kandidatenpaar gar nicht auftaucht; das zweite Mitglied
+(zenodo.21618220) bleibt auf der eigenen, deutlich kleineren Seite (126450 vs. 136693 Bytes).
+R2-Relation war bereits deklariert; nach der seit dem 76./77./78. Lauf etablierten
+Konzept-DOI-Regel als Werk gewertet, nicht als Fassung.
+
+**Erstmals ein Merge-Kandidat ohne jede deklarierte R2-Relation beurteilt** (4TU.ResearchData,
+„Heritage Beyond Singular Narratives", Foroughi): `gleiches_werk_bereits` stand hier als einziges
+von 40 Paaren auf `false` — DataCite verzeichnet keine Versions-Relation zwischen der Basis-DOI
+und der Variante mit explizitem `.v2`-Suffix desselben DOI-Stamms. Die Basis-URL loest dabei
+NICHT auf die `/2`-URL um (anders als bei den Zenodo-Concept- und Mendeley-Basis-Faellen),
+sondern bleibt auf einer eigenen Seite stehen, mit nur 16 Byte Unterschied zu `/2` (29135 vs.
+29151 Bytes). Titel, Urheber, Herausgeber und Jahr sind bei beiden identisch. Beurteilt als Werk
+— gestuetzt allein auf das DOI-Versionssuffix-Muster (`.v2` gegen suffixlose Basis) und die
+Textidentitaet, ausdruecklich NICHT auf eine Quellrelation, die hier fehlt. Festzuhalten fuer
+kuenftige Laeufe: Wo `gleiches_werk_bereits: false` bei sonst vollstaendiger Titel-/Urheber-/
+Jahresuebereinstimmung auftritt, ersetzt das DOI-Suffix-Muster die fehlende Relation nicht
+automatisch — hier trug es, weil das Suffix-Schema (`.v2`) selbst eine Versionsaussage ist, ist
+aber kein Freibrief fuer kuenftige Faelle ohne dieses Muster; im Zweifel bliebe `kein_merge` die
+richtige Wahl.
+
+**Stichprobe (15 Eintraege): 15 bestaetigt, 0 markiert.** Vier figshare/springernature-Eintraege
+und ein als Figshare-Backend laufendes institutionelles Repositorium (Loughborough) lieferten
+HTTP 202 ohne Inhalt auf der Landing-Page und wurden ueber `api.figshare.com/v2/articles/<id>`
+bzw. `/versions/<n>` bestaetigt. Ein GBIF-Eintrag lieferte HTTP 403 (bekanntes Bot-Schutz-Muster,
+„Just a moment...") und wurde ueber `api.gbif.org` bestaetigt. Ein Harvard-Dataverse-Eintrag
+lieferte HTTP 202 auf der Citation-Seite, ueber die native Dataverse-API bestaetigt
+(`seitentitel: None` nur wegen der verschachtelten Metadatenstruktur, Titel im JSON-Text
+gefunden — kein Befund gegen die Ressource, wie am 20./21.11. dokumentiert). Alle uebrigen
+Eintraege loesten direkt mit HTTP 200 und Titelbestaetigung auf.
+
+**Zwei Beobachtungen ohne Markierung, da Zugriffsweg und Titel beide in Ordnung sind:**
+Ein Eintrag (`dh-bbf9ae5f32d5f316`, VOCs-Entscheidungsrahmen) traegt als Urheberfeld woertlich
+`["1, 1"]` — ein Platzhalter aus der Quelle, kein Zugriffs- oder Zuordnungsproblem, daher nicht
+markiert; eine Metadatenqualitaetsfrage, keine Stichprobenfrage. Ein weiterer Eintrag
+(`dh-b92d963755094286`) ist selbst explizit als „LLM Claude output of transplant immunology"
+betitelt — der registrierte Titel kuendigt also an, dass der Datensatz LLM-generierte Ausgabe
+ist; Zugriffsweg und Titel stimmen, das ist kein Fall fuer die Urteilsroutine (die prueft
+Plausibilitaet der Registrierung, nicht die Herkunftsart der Daten).
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (28 Fassung, 12 Werk, 0 kein_merge), 15
+Stichprobeneintraege gesichtet (15 bestaetigt, 0 markiert). 3.461 Kandidaten bleiben gekappt fuer
+kuenftige Laeufe. `pipeline/tests`: 100 Tests, alle bestanden.
+
 ## 2026-11-21 — Fünfundachtzigster Lauf: 40 Merge-Kandidaten (32 Fassung, 8 Werk, 0 kein_merge), zwei Zenodo-Konzept-DOI-Dreiergruppen (Bioinformatik-LLM-Review, MT-Evaluationsmetriken) und eine Mendeley-Dreiergruppe mit eigenstaendiger `.1`-Fassung nach der seit 79./80. Lauf etablierten Regel aufgeteilt, Konzept-DOI mit ueber Versionen hinweg umbenannter Zielfassung erneut bestaetigt
 
 Der Checkout dieser Sitzung stand auf `HEAD` detached drei Commits hinter `origin/main`
