@@ -3,6 +3,59 @@
 Was beim Bauen schiefging, mit Datum. Nach demselben Prinzip wie das
 Ablehnungsregister: nicht stillschweigend korrigieren, sondern mitschreiben.
 
+## 2026-11-27 — Einundneunzigster Lauf: 40 Merge-Kandidaten (29 Fassung, 10 Werk, 1 kein_merge), figshare-Byte-Gleichheit als unzureichender Beleg fuer Fassungsidentitaet erkannt, erstes IEEE-DataPort-Paar mit wortgleicher Zugriffs-URL auf kein_merge entschieden
+
+Checkout stand `HEAD` detached exakt auf `origin/main` (60ad052, 90. Lauf) — vor dem ersten Kandidatenlauf
+mit `git checkout main` + `git merge --ff-only origin/main` korrigiert (dieselbe Vorsichtsmassnahme wie
+beim 86. Lauf und frueher dokumentiert, hier ohne tatsaechlichen Versatz).
+
+`kandidaten.py --saat 20261127 --aus-snapshot` lief fehlerfrei durch. Beurteilter Stand weiterhin
+`snapshot-2026-07-27c` / `hub-2026-07-27.sqlite.gz`, `eintraege_gesamt: 22473`. `merge_kandidaten_gefunden:
+3301`, davon 40 vorgelegt (Kappe), 3.261 weiterhin gekappt. 2.937 bereits beurteilte Paare uebersprungen.
+
+**Figshare-Versionscluster (Artikel 23982912, drei Paare v1/v2, v5/v4, v4/Basis) durchweg als Werk
+gewertet — mit einer Praezisierung der seit dem 84. Lauf etablierten Groessenvergleichsregel:** Fuer v1
+gegen v2 lieferte `api.figshare.com/.../versions/{1,2}` identischen Titel UND identische JSON-Groesse
+(3.180 Bytes). Anders als beim 84. Lauf (wo unterschiedliche Groesse = Werk-Beleg war) ist hier
+**Groessengleichheit kein Beleg fuer Fassungsidentitaet**: Versionsnummer (1 vs. 2) und Datumsfelder sind im
+JSON gleich lang, sodass zwei inhaltlich verschiedene Versionen zufaellig dieselbe Gesamtgroesse ergeben
+koennen. Ohne Datei-Checksummen-Vergleich (den `belege.py` nicht leistet) bleibt dieses Paar daher auf
+Werk-Ebene, dem fuer figshare-Versionsnummern etablierten Standardfall. v5/v4 und v4/Basis zeigten dagegen
+unterschiedliche Groessen UND einen ueber Versionen hinweg umbenannten Titel ("...physical activity..." zu
+"...physical activity frequency...") — klarer Werk-Beleg wie im 84. Lauf. **Festzuhalten: Bei
+figshare-Versions-API-Vergleichen zeigt nur ein Groessen- oder Titelunterschied Werk an; Groessengleichheit
+alleine zeigt nichts und rechtfertigt keinen Fassungs-Merge.**
+
+**Zwei Dreiergruppen nach dem etablierten Zwei-loesen-auf-dieselbe-Seite-/-eines-bleibt-eigenstaendig-Muster
+aufgeteilt** (DIVERSE Stance-Dataset Cruickshank/Ng/Soofi; "Do Large Language Models Understand Performance
+Optimization" Bowen; "Do Large Vision Language Models Undertstand 3D shapes" Eppel) — je zwei Mitglieder
+loesen auf dieselbe finale Seite mit identischer Bytegroesse (Fassung), das dritte bleibt auf einer eigenen,
+unabhaengig abrufbaren Seite (Werk zu beiden anderen).
+
+**Erstmals ein Kandidatenpaar mit wortgleich identischer Zugriffs-URL in beiden DataCite-Eintraegen auf
+kein_merge entschieden (IEEE DataPort, "DNN-GP Training Dataset", DOIs .q4vd-qg73 und .7zqy-0a08):** Beide
+Eintraege nennen in den Quellmetadaten dieselbe Zugriffs-URL
+(`ieee-dataport.org/documents/dnn-gp-training-dataset`) — staerker als blosse Titelgleichheit, da es sich um
+das von der Quelle selbst gelieferte URL-Feld handelt, nicht um einen von uns verglichenen Titel. Die
+Zugriffs-URL fuehrt bei beiden Eintraegen inzwischen aber auf ein voellig anderes, thematisch fremdes
+Dataset ("IEEE 802.11ac performance dataset") — dieselbe fehlgeleitete-Landing-Page-Figur wie beim
+markierten Fund vom 26.11. (dh-0bbb669bba09745a). Die URL-Gleichheit allein war nicht als hinreichender
+Beleg fuer dasselbe Ding gewertet, weil die einzige Verifikationsmoeglichkeit (die Zugriffs-URL selbst) auf
+eine fremde Seite fuehrt und damit nichts mehr ueber die beiden DOIs aussagt — **im Zweifel kein_merge, auch
+wenn Titel, Urheber, Jahr und Herausgeber vollstaendig uebereinstimmen.** Beide Eintraege zusaetzlich einzeln
+als `markiert` ins Journal aufgenommen (fehlgeleiteter Zugriffsweg, unabhaengig von der Merge-Frage).
+
+**Stichprobe (15 Eintraege): 15 bestaetigt, 0 markiert.** Ein Harvard-Dataverse-Eintrag und drei
+figshare-Eintraege lieferten HTTP 202 ohne Inhalt; der Dataverse-Eintrag wurde ueber die oeffentliche
+Dataverse-API bestaetigt (Suchtext im JSON gefunden), ein figshare-Eintrag mit auffaelliger
+Titel-/URL-Slug-Abweichung (Artikel 29227016, URL-Slug nennt "Data_AI_Applications...", Registertitel
+"Reimagining Quality...") ueber `api.figshare.com/v2/articles/29227016/versions/3` bestaetigt — der Artikel
+wurde nach Anlage des URL-Slugs umbenannt, kein Befund gegen die Ressource.
+
+**Ergebnis:** 40 Merge-Kandidaten beurteilt (29 Fassung, 10 Werk, 1 kein_merge), 2 zusaetzliche
+Markierungen, 15 Stichprobeneintraege gesichtet (15 bestaetigt, 0 markiert). 3.261 Kandidaten bleiben
+gekappt fuer kuenftige Laeufe. `pipeline/tests`: 100 Tests, alle bestanden.
+
 ## 2026-11-22 — Sechsundachtzigster Lauf: 40 Merge-Kandidaten (28 Fassung, 12 Werk, 0 kein_merge), erstmals ein Merge-Kandidat ohne deklarierte R2-Relation nach DOI-Versionssuffix-Muster als Werk gewertet (4TU), vier Dreiergruppen nach dem etablierten Konzept-/Versions-DOI-Muster aufgeteilt
 
 Der Checkout dieser Sitzung stand auf `HEAD` detached auf dem 85. Lauf (a961c39, bereits der
